@@ -474,7 +474,7 @@ export async function POST(
       action: "create",
       resourceType: "import_batch",
       resourceId: batchId,
-      details: {
+      metadata: {
         patientCount: insertedPatients?.length || 0,
         appointmentCount: insertedAppointments?.length || 0,
         outcomeCount: measureInserts.length,

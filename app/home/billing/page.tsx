@@ -23,7 +23,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { MetricCardSkeleton } from "@/design-system/components/ui/skeleton";
-import { getBillingSummary, type BillingSummary } from "@/src/lib/queries/billing";
+import { useBillingSummary } from "@/src/lib/queries";
 
 interface MetricCardProps {
   title: string;
@@ -185,28 +185,15 @@ function formatCurrency(value: number): string {
 }
 
 export default function BillingPage() {
-  const [summary, setSummary] = React.useState<BillingSummary | null>(null);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  // Use React Query for billing data
+  const {
+    data: summary,
+    isLoading: loading,
+    error: queryError,
+    refetch: loadBilling,
+  } = useBillingSummary();
 
-  // Load billing summary from Supabase
-  const loadBilling = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getBillingSummary();
-      setSummary(data);
-    } catch (err) {
-      console.error("Failed to load billing:", err);
-      setError("Unable to load billing data. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    loadBilling();
-  }, [loadBilling]);
+  const error = queryError ? "Unable to load billing data. Please try again." : null;
 
   return (
     <div className="flex h-screen flex-col pb-24 lg:pb-0">

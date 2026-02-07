@@ -5,9 +5,11 @@ import { ScheduleRowCard } from "@/design-system/components/ui/schedule-row-card
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/design-system/lib/utils";
-import { getTodayAppointments } from "@/src/lib/queries/appointments";
-import { isDatabasePopulated } from "@/src/lib/queries/practice";
-import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
+import {
+  useTodayAppointments,
+  useIsDatabasePopulated,
+  type AppointmentWithPatient,
+} from "@/src/lib/queries";
 import type { OrchestrationContext } from "@/src/lib/orchestration/types";
 
 type AppointmentStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED";
@@ -71,35 +73,14 @@ interface TodaysPatientsListProps {
 }
 
 export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatientsListProps) {
-  const [appointments, setAppointments] = React.useState<AppointmentWithPatient[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [dbReady, setDbReady] = React.useState<boolean | null>(null);
+  // Use React Query for database population check
+  const { data: dbReady = null, isLoading: dbCheckLoading } = useIsDatabasePopulated();
 
-  React.useEffect(() => {
-    async function loadAppointments() {
-      try {
-        setLoading(true);
+  // Use React Query for today's appointments
+  const { data: appointments = [], isLoading: apptsLoading } = useTodayAppointments();
 
-        // Check if database is populated
-        const populated = await isDatabasePopulated();
-        setDbReady(populated);
-
-        if (!populated) {
-          setLoading(false);
-          return;
-        }
-
-        const data = await getTodayAppointments();
-        setAppointments(data);
-      } catch (err) {
-        console.error("Failed to load today's appointments:", err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadAppointments();
-  }, []);
+  // Combined loading state
+  const loading = dbCheckLoading || apptsLoading;
 
   // Loading state
   if (loading) {

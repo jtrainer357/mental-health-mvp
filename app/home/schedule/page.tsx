@@ -26,10 +26,7 @@ import {
   isSameDay,
   parseISO,
 } from "date-fns";
-import {
-  getUpcomingAppointments,
-  type AppointmentWithPatient,
-} from "@/src/lib/queries/appointments";
+import { useUpcomingAppointments, type AppointmentWithPatient } from "@/src/lib/queries";
 import { DEMO_DATE_OBJECT } from "@/src/lib/utils/demo-date";
 // Voice command integration uses custom events instead of store
 
@@ -420,34 +417,21 @@ export default function SchedulePage() {
   const [viewType, setViewType] = React.useState<CalendarViewType>("week");
   const [activeFilter, setActiveFilter] = React.useState("all");
   const [completedEvents, setCompletedEvents] = React.useState<Set<string>>(new Set());
-  const [appointments, setAppointments] = React.useState<AppointmentWithPatient[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+
+  // Use React Query for appointments
+  const {
+    data: appointments = [],
+    isLoading: loading,
+    error: queryError,
+    refetch: loadAppointments,
+  } = useUpcomingAppointments(undefined, 14, "all");
+
+  const error = queryError ? "Unable to load schedule. Please try again." : null;
 
   // Voice command integration
   const [selectedEventId, setSelectedEventId] = React.useState<string | null>(null);
   const [_movedEventId, setMovedEventId] = React.useState<string | null>(null);
   const [localDemoEvents, setLocalDemoEvents] = React.useState<CalendarEvent[]>([]);
-
-  // Load appointments from Supabase
-  const loadAppointments = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      // Fetch 2 weeks of appointments (all statuses for filter tabs to work)
-      const data = await getUpcomingAppointments(undefined, 14, "all");
-      setAppointments(data);
-    } catch (err) {
-      console.error("Failed to load appointments:", err);
-      setError("Unable to load schedule. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    loadAppointments();
-  }, [loadAppointments]);
 
   // Note: selectedEventId is used by the voice-move-appointment event listener below
 

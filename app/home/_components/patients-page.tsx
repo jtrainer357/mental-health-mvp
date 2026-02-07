@@ -17,17 +17,15 @@ import {
   type PatientReview,
 } from "./patient-detail-view";
 import {
-  getPatients,
-  getPatientDetails as getPatientDetailsQuery,
-  getPatientVisitSummaries,
-  type VisitSummary,
+  usePatients,
+  usePatientDetails,
+  usePatientVisitSummaries,
+  usePatientPriorityActions,
+  useIsDatabasePopulated,
   type Communication,
-} from "@/src/lib/queries/patients";
-import {
-  getPatientPriorityActions,
-  type PatientPriorityAction,
-} from "@/src/lib/queries/priority-actions";
-import { isDatabasePopulated } from "@/src/lib/queries/practice";
+} from "@/src/lib/queries";
+import type { VisitSummary } from "@/src/lib/queries/patients";
+import type { PatientPriorityAction } from "@/src/lib/queries/priority-actions";
 import type {
   Patient as DbPatient,
   Appointment,
@@ -417,126 +415,86 @@ export function PatientsPage({
   initialPatientName,
   initialTab,
 }: PatientsPageProps) {
-  const [loading, setLoading] = React.useState(true);
-  const [dbReady, setDbReady] = React.useState<boolean | null>(null);
-  const [patients, setPatients] = React.useState<DbPatient[]>([]);
   const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
-  const [patientDetails, setPatientDetails] = React.useState<PatientDetail | null>(null);
-  const [detailLoading, setDetailLoading] = React.useState(false);
   const [activeFilter, setActiveFilter] = React.useState("all");
 
-  // Stabilize props for useEffect dependencies
+  // Stabilize props for effect dependencies
   const patientIdKey = initialPatientId ?? "";
   const patientNameKey = initialPatientName ?? "";
 
-  // Load initial patients list
+  // Use React Query for database population check
+  const { data: dbReady = null, isLoading: dbCheckLoading } = useIsDatabasePopulated();
+
+  // Use React Query for patients list
+  const { data: patients = [], isLoading: patientsLoading } = usePatients();
+
+  // Combined loading state
+  const loading = dbCheckLoading || patientsLoading;
+
+  // Select patient from URL param or default to first patient when data loads
   React.useEffect(() => {
-    async function loadPatients() {
-      try {
-        setLoading(true);
+    if (loading || !dbReady || patients.length === 0) return;
+    if (selectedPatient) return; // Already selected
 
-        // Check if database is populated
-        const populated = await isDatabasePopulated();
-        setDbReady(populated);
+    let targetPatient: DbPatient | undefined;
 
-        if (!populated) {
-          setLoading(false);
-          return;
-        }
-
-        // Load patients list
-        const patientsData = await getPatients();
-        setPatients(patientsData);
-
-        // Select patient from URL param (by ID or name), or default to first patient
-        let targetPatient: DbPatient | undefined;
-
-        if (patientNameKey) {
-          // Search by name (case-insensitive, fuzzy)
-          const searchName = patientNameKey.toLowerCase();
-          // Try exact match first
-          targetPatient = patientsData.find((p) => {
-            const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
-            return fullName === searchName;
-          });
-          // Try starts-with match for partial names
-          if (!targetPatient) {
-            targetPatient = patientsData.find((p) => {
-              const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
-              return fullName.startsWith(searchName);
-            });
-          }
-          // Try first name only match
-          if (!targetPatient) {
-            targetPatient = patientsData.find((p) => {
-              return p.first_name.toLowerCase() === searchName;
-            });
-          }
-        } else if (patientIdKey) {
-          targetPatient = patientsData.find((p) => p.id === patientIdKey);
-        }
-
-        if (targetPatient) {
-          setSelectedPatient(dbPatientToListItem(targetPatient));
-        } else if (patientsData.length > 0 && patientsData[0]) {
-          setSelectedPatient(dbPatientToListItem(patientsData[0]));
-        }
-      } catch {
-        // Error loading patients
-      } finally {
-        setLoading(false);
+    if (patientNameKey) {
+      const searchName = patientNameKey.toLowerCase();
+      // Try exact match first
+      targetPatient = patients.find((p) => {
+        const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
+        return fullName === searchName;
+      });
+      // Try starts-with match for partial names
+      if (!targetPatient) {
+        targetPatient = patients.find((p) => {
+          const fullName = `${p.first_name} ${p.last_name}`.toLowerCase();
+          return fullName.startsWith(searchName);
+        });
       }
+      // Try first name only match
+      if (!targetPatient) {
+        targetPatient = patients.find((p) => {
+          return p.first_name.toLowerCase() === searchName;
+        });
+      }
+    } else if (patientIdKey) {
+      targetPatient = patients.find((p) => p.id === patientIdKey);
     }
 
-    void loadPatients();
-  }, [patientIdKey, patientNameKey]);
-
-  // Load selected patient details
-  React.useEffect(() => {
-    if (!selectedPatient || !dbReady) return;
-
-    const patientId = selectedPatient.id;
-    let cancelled = false;
-
-    async function loadPatientDetails() {
-      try {
-        setDetailLoading(true);
-
-        // Fetch patient details, priority actions, and visit summaries in parallel
-        const [details, priorityActions, visitSummaries] = await Promise.all([
-          getPatientDetailsQuery(patientId),
-          getPatientPriorityActions(patientId),
-          getPatientVisitSummaries(patientId),
-        ]);
-
-        if (cancelled) return;
-
-        if (details) {
-          const detailData = createPatientDetail(
-            details.patient,
-            details.appointments,
-            details.invoices,
-            visitSummaries,
-            details.messages,
-            details.outcomeMeasures,
-            details.reviews
-          );
-          // Add priority actions to the detail data
-          detailData.prioritizedActions = priorityActions.map(dbActionToUiAction);
-          setPatientDetails(detailData);
-        }
-      } catch {
-        // Error loading patient details
-      } finally {
-        if (!cancelled) setDetailLoading(false);
-      }
+    if (targetPatient) {
+      setSelectedPatient(dbPatientToListItem(targetPatient));
+    } else if (patients[0]) {
+      setSelectedPatient(dbPatientToListItem(patients[0]));
     }
+  }, [loading, dbReady, patients, patientIdKey, patientNameKey, selectedPatient]);
 
-    void loadPatientDetails();
-    return () => {
-      cancelled = true;
-    };
-  }, [selectedPatient, dbReady]);
+  // Use React Query for patient details
+  const selectedPatientId = selectedPatient?.id ?? "";
+  const { data: patientDetailsData, isLoading: detailsLoading } =
+    usePatientDetails(selectedPatientId);
+  const { data: visitSummaries = [] } = usePatientVisitSummaries(selectedPatientId);
+  const { data: priorityActionsData = [] } = usePatientPriorityActions(selectedPatientId);
+
+  // Combine all data into PatientDetail format
+  const patientDetails = React.useMemo(() => {
+    if (!patientDetailsData || !selectedPatient) return null;
+
+    const detailData = createPatientDetail(
+      patientDetailsData.patient,
+      patientDetailsData.appointments,
+      patientDetailsData.invoices,
+      visitSummaries,
+      patientDetailsData.messages,
+      patientDetailsData.outcomeMeasures,
+      patientDetailsData.reviews
+    );
+    // Add priority actions to the detail data
+    detailData.prioritizedActions = priorityActionsData.map(dbActionToUiAction);
+    return detailData;
+  }, [patientDetailsData, visitSummaries, priorityActionsData, selectedPatient]);
+
+  const detailLoading = detailsLoading;
 
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);

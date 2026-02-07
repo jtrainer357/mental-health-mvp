@@ -126,3 +126,18 @@ export {
   isDatabasePopulated,
   getRecentAnalysisRuns,
 } from "./practice";
+
+// Practice React Query Hooks
+export {
+  useDemoPractice,
+  useDashboardStats,
+  useIsDatabasePopulated,
+  useRecentAnalysisRuns,
+} from "./use-practice";
+
+// Priority Action React Query Hooks
+export {
+  usePriorityActions,
+  usePatientPriorityActionsQuery,
+  useActionCounts,
+} from "./use-priority-actions";

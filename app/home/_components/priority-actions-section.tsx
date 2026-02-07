@@ -9,12 +9,14 @@ import { Heading, Text } from "@/design-system/components/ui/typography";
 import { AlertTriangle, Database } from "lucide-react";
 import { PriorityActionCardSkeleton, Skeleton } from "@/design-system/components/ui/skeleton";
 import { Button } from "@/design-system/components/ui/button";
-import { getPriorityActions } from "@/src/lib/queries/priority-actions";
-import { getTodayAppointments } from "@/src/lib/queries/appointments";
-import { isDatabasePopulated } from "@/src/lib/queries/practice";
+import {
+  usePriorityActions,
+  useTodayAppointments,
+  useIsDatabasePopulated,
+  type AppointmentWithPatient,
+} from "@/src/lib/queries";
 import { formatDemoDate } from "@/src/lib/utils/demo-date";
 import type { PrioritizedActionWithPatient } from "@/src/lib/supabase/types";
-import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
 import type { OrchestrationContext } from "@/src/lib/orchestration/types";
 import { useCompletedPatients } from "@/src/components/orchestration";
 
@@ -145,46 +147,25 @@ export function PriorityActionsSection({
   onSelectPatient,
   hideHeader = false,
 }: PriorityActionsSectionProps) {
-  const [actions, setActions] = React.useState<PrioritizedActionWithPatient[]>([]);
-  const [todayAppts, setTodayAppts] = React.useState<AppointmentWithPatient[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
-  const [dbReady, setDbReady] = React.useState<boolean | null>(null);
   const completedPatientIds = useCompletedPatients();
 
-  React.useEffect(() => {
-    async function loadData() {
-      try {
-        setLoading(true);
-        setError(null);
+  // Use React Query for database population check
+  const { data: dbReady = null, isLoading: dbCheckLoading } = useIsDatabasePopulated();
 
-        // Check if database is populated
-        const populated = await isDatabasePopulated();
-        setDbReady(populated);
+  // Use React Query for priority actions and appointments
+  const {
+    data: allActions = [],
+    isLoading: actionsLoading,
+    error: actionsError,
+  } = usePriorityActions();
+  const { data: todayAppts = [], isLoading: apptsLoading } = useTodayAppointments();
 
-        if (!populated) {
-          setLoading(false);
-          return;
-        }
+  // Combined loading state
+  const loading = dbCheckLoading || actionsLoading || apptsLoading;
+  const error = actionsError ? "Failed to load data. Please try again." : null;
 
-        // Fetch priority actions and today's appointments in parallel
-        const [actionsData, apptsData] = await Promise.all([
-          getPriorityActions(),
-          getTodayAppointments(),
-        ]);
-
-        setActions(actionsData.slice(0, 3)); // Show top 3
-        setTodayAppts(apptsData);
-      } catch (err) {
-        console.error("Failed to load priority actions:", err);
-        setError("Failed to load data. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadData();
-  }, []);
+  // Show top 3 actions
+  const actions = React.useMemo(() => allActions.slice(0, 3), [allActions]);
 
   // Listen for voice command to open patient actions
   React.useEffect(() => {

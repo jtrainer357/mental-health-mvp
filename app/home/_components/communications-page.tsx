@@ -12,7 +12,7 @@ import { ArrowLeft, Plus, MessageSquare, AlertTriangle, RefreshCw } from "lucide
 import { ConversationCardSkeleton, Skeleton } from "@/design-system/components/ui/skeleton";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Heading } from "@/design-system/components/ui/typography";
-import { getCommunicationThreads, type Communication } from "@/src/lib/queries/communications";
+import { useCommunicationThreads, type Communication } from "@/src/lib/queries";
 import { DEMO_DATE_OBJECT } from "@/src/lib/utils/demo-date";
 
 const messageFilterTabs = [
@@ -107,31 +107,23 @@ export function CommunicationsPage({ className }: CommunicationsPageProps) {
   const [activeContact, setActiveContact] = React.useState<string | undefined>();
   const [mobileView, setMobileView] = React.useState<MobileView>("list");
   const [activeFilter, setActiveFilter] = React.useState("all");
-  const [threads, setThreads] = React.useState<ThreadData[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
 
-  // Load communications from Supabase
-  const loadCommunications = React.useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getCommunicationThreads();
-      setThreads(data);
-      // Select first thread by default if none selected
-      if (data.length > 0) {
-        setSelectedConversation((current) => current || data[0]!.patient.id);
-      }
-    } catch {
-      setError("Unable to load messages. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // Use React Query for communication threads
+  const {
+    data: threads = [],
+    isLoading: loading,
+    error: queryError,
+    refetch: loadCommunications,
+  } = useCommunicationThreads();
 
+  const error = queryError ? "Unable to load messages. Please try again." : null;
+
+  // Select first thread by default when data loads
   React.useEffect(() => {
-    loadCommunications();
-  }, [loadCommunications]);
+    if (threads.length > 0 && !selectedConversation) {
+      setSelectedConversation(threads[0]!.patient.id);
+    }
+  }, [threads, selectedConversation]);
 
   const handleSendMessage = (_message: string) => {
     // Message sending will be implemented
@@ -244,7 +236,7 @@ export function CommunicationsPage({ className }: CommunicationsPageProps) {
           <Text muted className="mb-4 max-w-sm text-center">
             {error}
           </Text>
-          <Button onClick={loadCommunications} variant="outline" className="gap-2">
+          <Button onClick={() => loadCommunications()} variant="outline" className="gap-2">
             <RefreshCw className="h-4 w-4" />
             Try Again
           </Button>
