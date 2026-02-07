@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { Button } from "@/design-system/components/ui/button";
-import { AlertTriangle } from "lucide-react";
+import { ErrorFallback } from "@/src/components/error";
+import { logger } from "@/src/lib/logger";
 
+/**
+ * Next.js root error page
+ * Catches errors at the application root level
+ */
 export default function Error({
   error,
   reset,
@@ -12,22 +16,22 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Application error:", error);
+    // Log error with structured logging
+    logger.error("Application error caught by error.tsx", error, {
+      module: "RootErrorPage",
+      action: "render",
+      digest: error.digest,
+    });
   }, [error]);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-4">
-      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-        <AlertTriangle className="h-8 w-8 text-red-600" />
-      </div>
-      <h2 className="text-xl font-semibold text-gray-900">Something went wrong</h2>
-      <p className="max-w-md text-center text-gray-600">
-        An unexpected error occurred. Please try again or contact support if the problem persists.
-      </p>
-      {error.digest && <p className="text-sm text-gray-400">Error ID: {error.digest}</p>}
-      <Button onClick={reset} className="mt-4">
-        Try again
-      </Button>
-    </div>
+    <ErrorFallback
+      error={error}
+      resetError={reset}
+      digest={error.digest}
+      showHomeLink={true}
+      showReportLink={true}
+      className="min-h-screen"
+    />
   );
 }

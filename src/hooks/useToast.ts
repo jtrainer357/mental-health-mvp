@@ -48,18 +48,9 @@ export interface PromiseToastOptions<T> {
 }
 
 /**
- * Return type for the enhanced toast function
- */
-interface ToastReturn {
-  id: string;
-  dismiss: () => void;
-  update: (props: Record<string, unknown>) => void;
-}
-
-/**
  * Show a success toast
  */
-function success(message: string, options?: ToastOptions): ToastReturn {
+function success(message: string, options?: ToastOptions) {
   return baseToast({
     title: options?.title || "Success",
     description: message,
@@ -73,11 +64,7 @@ function success(message: string, options?: ToastOptions): ToastReturn {
 /**
  * Show an error toast
  */
-function error(
-  message: string,
-  details?: string,
-  options?: Omit<ToastOptions, "title">
-): ToastReturn {
+function error(message: string, details?: string, options?: Omit<ToastOptions, "title">) {
   return baseToast({
     title: "Error",
     description: details ? `${message}\n${details}` : message,
@@ -90,7 +77,7 @@ function error(
 /**
  * Show a warning toast
  */
-function warning(message: string, options?: ToastOptions): ToastReturn {
+function warning(message: string, options?: ToastOptions) {
   return baseToast({
     title: options?.title || "Warning",
     description: message,
@@ -104,7 +91,7 @@ function warning(message: string, options?: ToastOptions): ToastReturn {
 /**
  * Show an info toast
  */
-function info(message: string, options?: ToastOptions): ToastReturn {
+function info(message: string, options?: ToastOptions) {
   return baseToast({
     title: options?.title || "Info",
     description: message,
