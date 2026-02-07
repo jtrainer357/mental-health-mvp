@@ -31,3 +31,7 @@ out/
 # POC artifacts
 poc/*/test-results.json
 .vercel
+
+# Capacitor native platform folders (generated)
+ios/
+android/
