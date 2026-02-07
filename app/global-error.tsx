@@ -2,6 +2,10 @@
 
 import { useEffect } from "react";
 
+/**
+ * Next.js global error boundary
+ * Catches errors in the root layout - uses inline styles since CSS may not be loaded
+ */
 export default function GlobalError({
   error,
   reset,
@@ -10,7 +14,13 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Global application error:", error);
+    // Log to console since logger may not be available at this level
+    console.error("[GlobalError] Critical application error:", {
+      message: error.message,
+      digest: error.digest,
+      stack: error.stack,
+      timestamp: new Date().toISOString(),
+    });
   }, [error]);
 
   return (
