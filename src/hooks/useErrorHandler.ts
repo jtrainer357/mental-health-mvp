@@ -53,32 +53,34 @@ function getUserFriendlyMessage(error: Error): string {
     return specificMessage;
   }
 
+  const defaultMsg = "An unexpected error occurred. Please try again.";
+
   // Check for common error patterns
   if (error.message.includes("network") || error.message.includes("fetch")) {
-    return DEFAULT_ERROR_MESSAGES.NetworkError;
+    return DEFAULT_ERROR_MESSAGES["NetworkError"] ?? defaultMsg;
   }
 
   if (error.message.includes("timeout")) {
-    return DEFAULT_ERROR_MESSAGES.TimeoutError;
+    return DEFAULT_ERROR_MESSAGES["TimeoutError"] ?? defaultMsg;
   }
 
   if (error.message.includes("401") || error.message.includes("unauthorized")) {
-    return DEFAULT_ERROR_MESSAGES.AuthenticationError;
+    return DEFAULT_ERROR_MESSAGES["AuthenticationError"] ?? defaultMsg;
   }
 
   if (error.message.includes("403") || error.message.includes("forbidden")) {
-    return DEFAULT_ERROR_MESSAGES.PermissionError;
+    return DEFAULT_ERROR_MESSAGES["PermissionError"] ?? defaultMsg;
   }
 
   if (error.message.includes("404") || error.message.includes("not found")) {
-    return DEFAULT_ERROR_MESSAGES.NotFoundError;
+    return DEFAULT_ERROR_MESSAGES["NotFoundError"] ?? defaultMsg;
   }
 
   if (error.message.includes("500") || error.message.includes("server error")) {
-    return DEFAULT_ERROR_MESSAGES.ServerError;
+    return DEFAULT_ERROR_MESSAGES["ServerError"] ?? defaultMsg;
   }
 
-  return DEFAULT_ERROR_MESSAGES.default;
+  return DEFAULT_ERROR_MESSAGES["default"] ?? defaultMsg;
 }
 
 /**
@@ -124,13 +126,18 @@ export function useErrorHandler() {
 
       // Log the error
       if (logError) {
-        const logMethod = severity === "critical" || severity === "high" ? "error" : "warn";
-        logger[logMethod](`Error in ${context}: ${normalizedError.message}`, normalizedError, {
+        const errorContext = {
           module: "ErrorHandler",
           action: context,
           severity,
           ...metadata,
-        });
+        };
+
+        if (severity === "critical" || severity === "high") {
+          logger.error(`Error in ${context}: ${normalizedError.message}`, normalizedError, errorContext);
+        } else {
+          logger.warn(`Error in ${context}: ${normalizedError.message}`, errorContext);
+        }
       }
 
       // Show toast notification

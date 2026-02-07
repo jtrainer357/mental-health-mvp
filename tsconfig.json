@@ -33,5 +33,5 @@
     "**/*.ts",
     "**/*.tsx"
   ],
-  "exclude": ["node_modules", "src/test/**/*"]
+  "exclude": ["node_modules", "src/test/**/*", "capacitor.config.ts"]
 }

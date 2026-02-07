@@ -1,9 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import { Pricing, PricingTier } from "@/design-system/components/ui/pricing-table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/design-system/components/ui/card";
-import { ExpressSetupModal } from "@/src/components/express-setup/ExpressSetupModal";
+
+// Dynamic import for ExpressSetupModal - only loaded when modal is opened
+const ExpressSetupModal = dynamic(
+  () =>
+    import("@/src/components/express-setup/ExpressSetupModal").then(
+      (mod) => mod.ExpressSetupModal
+    ),
+  { ssr: false }
+);
 
 const PRICING_TIERS: PricingTier[] = [
   {
