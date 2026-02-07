@@ -148,9 +148,10 @@ export function ActionOrchestrationModal() {
             {!isExecuting && (
               <button
                 onClick={closeModal}
-                className="rounded-full p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white"
+                aria-label="Close modal"
+                className="rounded-full p-1.5 text-white/80 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-teal-600"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" aria-hidden="true" />
               </button>
             )}
           </div>
