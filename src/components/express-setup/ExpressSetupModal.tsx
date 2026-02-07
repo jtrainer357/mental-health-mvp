@@ -174,8 +174,9 @@ export function ExpressSetupModal({ open, onOpenChange }: ExpressSetupModalProps
                 size="icon"
                 className="text-muted-foreground hover:text-foreground absolute top-4 right-4 z-30"
                 onClick={() => onOpenChange(false)}
+                aria-label="Close setup wizard"
               >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-5" />
+                <HugeiconsIcon icon={Cancel01Icon} className="size-5" aria-hidden="true" />
               </Button>
               <div className="mb-4 flex items-center justify-between">
                 <div className="text-muted-foreground text-xl font-bold">Express Setup</div>
