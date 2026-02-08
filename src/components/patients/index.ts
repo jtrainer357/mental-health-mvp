@@ -38,3 +38,9 @@ export {
 
 // Patient Management Components
 export { AddPatientModal, type AddPatientModalProps } from "./AddPatientModal";
+
+export {
+  EditPatientDemographics,
+  type EditPatientDemographicsProps,
+} from "./EditPatientDemographics";
+export { InsuranceTab, type InsuranceTabProps, type InsuranceInfo, type Authorization } from './InsuranceTab';
