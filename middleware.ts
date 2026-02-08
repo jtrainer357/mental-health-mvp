@@ -5,37 +5,179 @@ import type { NextRequest } from "next/server";
 const DEMO_PASSWORD = "TebeMHMVP2026!";
 const COOKIE_NAME = "mhmvp-auth";
 
+// === SECURITY HEADERS (ZETA) ===
+const SECURITY_HEADERS: Record<string, string> = {
+  // Prevent MIME type sniffing
+  "X-Content-Type-Options": "nosniff",
+  // Prevent clickjacking
+  "X-Frame-Options": "DENY",
+  // Enable XSS filter (legacy browsers)
+  "X-XSS-Protection": "1; mode=block",
+  // HTTPS enforcement
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  // Referrer policy for privacy
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  // Permissions policy - microphone allowed for Deepgram voice recording
+  "Permissions-Policy": "camera=(), microphone=(self), geolocation=()",
+  // Content Security Policy - strict with necessary exceptions
+  "Content-Security-Policy": [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these
+    "style-src 'self' 'unsafe-inline'", // Tailwind/inline styles
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://generativelanguage.googleapis.com https://api.deepgram.com wss://*.deepgram.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; "),
+};
+
+// === RATE LIMITING (ZETA) ===
+// In-memory rate limit store for Edge runtime
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+interface RateLimitConfig {
+  limit: number;
+  windowMs: number;
+}
+
+const RATE_LIMITS: Record<string, RateLimitConfig> = {
+  "/api/auth/mfa/": { limit: 5, windowMs: 60000 }, // 5/min for MFA
+  "/api/auth/": { limit: 10, windowMs: 60000 }, // 10/min for auth
+  "/api/substrate/": { limit: 20, windowMs: 60000 }, // 20/min for AI
+  "/api/ai/": { limit: 20, windowMs: 60000 }, // 20/min for AI
+  "/api/": { limit: 60, windowMs: 60000 }, // 60/min general
+};
+
+function getRateLimitConfig(pathname: string): RateLimitConfig | null {
+  // Check most specific patterns first
+  const patterns = Object.keys(RATE_LIMITS).sort((a, b) => b.length - a.length);
+  for (const prefix of patterns) {
+    if (pathname.startsWith(prefix)) {
+      return RATE_LIMITS[prefix];
+    }
+  }
+  return null;
+}
+
+function checkRateLimit(
+  ip: string,
+  pathname: string
+): { allowed: boolean; remaining: number; resetAfter: number } {
+  const config = getRateLimitConfig(pathname);
+  if (!config) {
+    return { allowed: true, remaining: -1, resetAfter: 0 };
+  }
+
+  // Normalize path to pattern level for rate limiting
+  const key = `${ip}:${pathname.split("/").slice(0, 4).join("/")}`;
+  const now = Date.now();
+  const record = rateLimitStore.get(key);
+
+  // Cleanup old entries periodically (simple approach)
+  if (rateLimitStore.size > 10000) {
+    for (const [k, v] of rateLimitStore.entries()) {
+      if (now > v.resetTime) {
+        rateLimitStore.delete(k);
+      }
+    }
+  }
+
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(key, { count: 1, resetTime: now + config.windowMs });
+    return { allowed: true, remaining: config.limit - 1, resetAfter: 0 };
+  }
+
+  if (record.count >= config.limit) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetAfter: Math.ceil((record.resetTime - now) / 1000),
+    };
+  }
+
+  record.count++;
+  return { allowed: true, remaining: config.limit - record.count, resetAfter: 0 };
+}
+
+/**
+ * Apply security headers to a response.
+ */
+function applySecurityHeaders(response: NextResponse): NextResponse {
+  for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(header, value);
+  }
+  return response;
+}
+// === END SECURITY (ZETA) ===
+
 export function middleware(request: NextRequest) {
-  // Skip auth for static files and API routes
+  // === RATE LIMITING FOR API ROUTES (ZETA) ===
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+      request.headers.get("x-real-ip") ||
+      "unknown";
+    const rateLimit = checkRateLimit(ip, request.nextUrl.pathname);
+
+    if (!rateLimit.allowed) {
+      const response = new NextResponse(
+        JSON.stringify({
+          error: "Too Many Requests",
+          message: `Rate limit exceeded. Try again in ${rateLimit.resetAfter} seconds.`,
+          retryAfter: rateLimit.resetAfter,
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": rateLimit.resetAfter.toString(),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+      return applySecurityHeaders(response);
+    }
+
+    // API routes pass through with security headers
+    const response = NextResponse.next();
+    response.headers.set("X-RateLimit-Remaining", rateLimit.remaining.toString());
+    return applySecurityHeaders(response);
+  }
+  // === END RATE LIMITING (ZETA) ===
+
+  // Skip auth for static files
   if (
     request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.startsWith("/api") ||
     request.nextUrl.pathname.includes(".")
   ) {
-    return NextResponse.next();
+    return applySecurityHeaders(NextResponse.next());
   }
 
   // Check for auth cookie
   const authCookie = request.cookies.get(COOKIE_NAME);
   if (authCookie?.value === "authenticated") {
-    return NextResponse.next();
+    return applySecurityHeaders(NextResponse.next());
   }
 
   // Check for password in query params (for initial auth)
   const password = request.nextUrl.searchParams.get("password");
   if (password === DEMO_PASSWORD) {
-    const response = NextResponse.redirect(new URL(request.nextUrl.pathname, request.url));
+    const response = NextResponse.redirect(
+      new URL(request.nextUrl.pathname, request.url)
+    );
     response.cookies.set(COOKIE_NAME, "authenticated", {
       httpOnly: true,
       secure: true,
       sameSite: "lax",
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
-    return response;
+    return applySecurityHeaders(response);
   }
 
-  // Show login page
-  return new NextResponse(
+  // Show login page with security headers
+  const loginResponse = new NextResponse(
     `<!DOCTYPE html>
 <html>
 <head>
@@ -126,7 +268,7 @@ export function middleware(request: NextRequest) {
   <script>
     document.getElementById('authForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      const password = document.getElementById('password').value;
+      var password = document.getElementById('password').value;
       window.location.href = window.location.pathname + '?password=' + encodeURIComponent(password);
     });
     if (window.location.search.includes('password=')) {
@@ -142,6 +284,8 @@ export function middleware(request: NextRequest) {
       },
     }
   );
+
+  return applySecurityHeaders(loginResponse);
 }
 
 export const config = {
