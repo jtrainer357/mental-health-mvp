@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
         first_name: firstName.trim(),
         last_name: lastName.trim(),
         date_of_birth: dateOfBirth,
-        phone: phone.replace(/\D/g, ""),
+        phone_mobile: phone.replace(/\D/g, ""),
         email: email.toLowerCase().trim(),
         gender: gender || null,
         pronouns: pronouns || null,
