@@ -75,7 +75,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       phone,
       email,
       gender,
-      pronouns,
       addressStreet,
       addressCity,
       addressState,
@@ -112,10 +111,9 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
     if (firstName !== undefined) updateData.first_name = firstName.trim();
     if (lastName !== undefined) updateData.last_name = lastName.trim();
     if (dateOfBirth !== undefined) updateData.date_of_birth = dateOfBirth;
-    if (phone !== undefined) updateData.phone = phone.replace(/\D/g, "");
+    if (phone !== undefined) updateData.phone_mobile = phone.replace(/\D/g, "");
     if (email !== undefined) updateData.email = email.toLowerCase().trim();
     if (gender !== undefined) updateData.gender = gender;
-    if (pronouns !== undefined) updateData.pronouns = pronouns;
     if (addressStreet !== undefined) updateData.address_street = addressStreet;
     if (addressCity !== undefined) updateData.address_city = addressCity;
     if (addressState !== undefined) updateData.address_state = addressState;
