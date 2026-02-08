@@ -35,3 +35,11 @@ export {
   ReviewsTabContent,
   type PatientTabsProps,
 } from "./PatientTabs";
+
+// Insurance Management
+export {
+  InsuranceTab,
+  type InsuranceTabProps,
+  type InsuranceInfo,
+  type Authorization,
+} from "./InsuranceTab";
