@@ -75,7 +75,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
       phone,
       email,
       gender,
-      pronouns,
       addressStreet,
       addressCity,
       addressState,
