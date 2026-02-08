@@ -1,40 +1,46 @@
+/**
+ * Next.js Middleware
+ * Handles authentication for both demo mode and NextAuth.js
+ *
+ * Set USE_NEXTAUTH=true in environment to enable NextAuth
+ * Otherwise, falls back to simple password protection for demo
+ */
+
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
-// Simple password protection for hackathon demo
-const DEMO_PASSWORD = "TebeMHMVP2026!";
+// Configuration
+const USE_NEXTAUTH = process.env.USE_NEXTAUTH === "true";
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "TebeMHMVP2026!";
 const COOKIE_NAME = "mhmvp-auth";
+const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET;
 
-export function middleware(request: NextRequest) {
-  // Skip auth for static files and API routes
-  if (
-    request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.startsWith("/api") ||
-    request.nextUrl.pathname.includes(".")
-  ) {
-    return NextResponse.next();
-  }
+// Public paths that skip authentication
+const PUBLIC_PATHS = ["/_next", "/api/auth", "/favicon.ico", "/login", "/api/health"];
 
-  // Check for auth cookie
+function isPublicPath(pathname: string): boolean {
+  return PUBLIC_PATHS.some((path) => pathname.startsWith(path)) || pathname.includes(".");
+}
+
+function handleDemoAuth(request: NextRequest): NextResponse | null {
   const authCookie = request.cookies.get(COOKIE_NAME);
   if (authCookie?.value === "authenticated") {
-    return NextResponse.next();
+    return null;
   }
 
-  // Check for password in query params (for initial auth)
   const password = request.nextUrl.searchParams.get("password");
   if (password === DEMO_PASSWORD) {
     const response = NextResponse.redirect(new URL(request.nextUrl.pathname, request.url));
     response.cookies.set(COOKIE_NAME, "authenticated", {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
     return response;
   }
 
-  // Show login page
   return new NextResponse(
     `<!DOCTYPE html>
 <html>
@@ -61,19 +67,9 @@ export function middleware(request: NextRequest) {
       width: 100%;
       text-align: center;
     }
-    .logo {
-      width: 120px;
-      margin-bottom: 24px;
-    }
-    h1 {
-      color: #1a1a1a;
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-    p {
-      color: #666;
-      margin-bottom: 32px;
-    }
+    .logo { width: 120px; margin-bottom: 24px; }
+    h1 { color: #1a1a1a; font-size: 24px; margin-bottom: 8px; }
+    p { color: #666; margin-bottom: 32px; }
     input {
       width: 100%;
       padding: 16px;
@@ -83,10 +79,7 @@ export function middleware(request: NextRequest) {
       margin-bottom: 16px;
       transition: border-color 0.2s;
     }
-    input:focus {
-      outline: none;
-      border-color: #E86C4F;
-    }
+    input:focus { outline: none; border-color: #E86C4F; }
     button {
       width: 100%;
       padding: 16px;
@@ -99,17 +92,9 @@ export function middleware(request: NextRequest) {
       cursor: pointer;
       transition: background 0.2s;
     }
-    button:hover {
-      background: #d55a3f;
-    }
-    .error {
-      color: #e74c3c;
-      margin-bottom: 16px;
-      display: none;
-    }
-    .error.show {
-      display: block;
-    }
+    button:hover { background: #d55a3f; }
+    .error { color: #e74c3c; margin-bottom: 16px; display: none; }
+    .error.show { display: block; }
   </style>
 </head>
 <body>
@@ -135,13 +120,45 @@ export function middleware(request: NextRequest) {
   </script>
 </body>
 </html>`,
-    {
-      status: 401,
-      headers: {
-        "Content-Type": "text/html",
-      },
-    }
+    { status: 401, headers: { "Content-Type": "text/html" } }
   );
+}
+
+async function handleNextAuth(request: NextRequest): Promise<NextResponse | null> {
+  try {
+    const token = await getToken({ req: request, secret: NEXTAUTH_SECRET });
+
+    if (!token) {
+      const signInUrl = new URL("/api/auth/signin", request.url);
+      signInUrl.searchParams.set("callbackUrl", request.url);
+      return NextResponse.redirect(signInUrl);
+    }
+
+    const response = NextResponse.next();
+    if (token.practiceId) response.headers.set("x-practice-id", token.practiceId as string);
+    if (token.id) response.headers.set("x-user-id", token.id as string);
+    if (token.role) response.headers.set("x-user-role", token.role as string);
+    return response;
+  } catch (error) {
+    console.error("NextAuth middleware error:", error);
+    const signInUrl = new URL("/api/auth/signin", request.url);
+    return NextResponse.redirect(signInUrl);
+  }
+}
+
+export async function middleware(request: NextRequest) {
+  if (isPublicPath(request.nextUrl.pathname)) {
+    return NextResponse.next();
+  }
+
+  if (USE_NEXTAUTH) {
+    return await handleNextAuth(request);
+  } else {
+    const demoResponse = handleDemoAuth(request);
+    if (demoResponse) return demoResponse;
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
