@@ -1,0 +1,514 @@
+{
+  "codes": [
+    {
+      "code": "F10.10",
+      "description": "Alcohol use disorder, mild",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F10.20",
+      "description": "Alcohol use disorder, moderate",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F10.21",
+      "description": "Alcohol use disorder, moderate, in remission",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F11.10",
+      "description": "Opioid use disorder, mild",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F11.20",
+      "description": "Opioid use disorder, moderate to severe",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F12.10",
+      "description": "Cannabis use disorder, mild",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F12.20",
+      "description": "Cannabis use disorder, moderate to severe",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F14.10",
+      "description": "Cocaine use disorder, mild",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F14.20",
+      "description": "Cocaine use disorder, moderate to severe",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F15.10",
+      "description": "Stimulant use disorder, mild",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F15.20",
+      "description": "Stimulant use disorder, moderate to severe",
+      "category": "Substance Use Disorders"
+    },
+    {
+      "code": "F20.0",
+      "description": "Paranoid schizophrenia",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F20.9",
+      "description": "Schizophrenia, unspecified",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F21",
+      "description": "Schizotypal disorder",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F22",
+      "description": "Delusional disorder",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F23",
+      "description": "Brief psychotic disorder",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F25.0",
+      "description": "Schizoaffective disorder, bipolar type",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F25.1",
+      "description": "Schizoaffective disorder, depressive type",
+      "category": "Schizophrenia Spectrum"
+    },
+    {
+      "code": "F31.0",
+      "description": "Bipolar I disorder, current episode hypomanic",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.10",
+      "description": "Bipolar I disorder, current episode manic without psychotic features, unspecified",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.11",
+      "description": "Bipolar I disorder, current episode manic without psychotic features, mild",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.12",
+      "description": "Bipolar I disorder, current episode manic without psychotic features, moderate",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.13",
+      "description": "Bipolar I disorder, current episode manic without psychotic features, severe",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.2",
+      "description": "Bipolar I disorder, current episode manic with psychotic features",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.30",
+      "description": "Bipolar I disorder, current episode depressed, mild",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.31",
+      "description": "Bipolar I disorder, current episode depressed, moderate",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.32",
+      "description": "Bipolar I disorder, current episode depressed, severe",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.4",
+      "description": "Bipolar I disorder, current episode depressed with psychotic features",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F31.81",
+      "description": "Bipolar II disorder",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F34.0",
+      "description": "Cyclothymic disorder",
+      "category": "Bipolar and Related Disorders"
+    },
+    {
+      "code": "F32.0",
+      "description": "Major depressive disorder, single episode, mild",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F32.1",
+      "description": "Major depressive disorder, single episode, moderate",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F32.2",
+      "description": "Major depressive disorder, single episode, severe without psychotic features",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F32.3",
+      "description": "Major depressive disorder, single episode, severe with psychotic features",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F32.4",
+      "description": "Major depressive disorder, single episode, in partial remission",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F32.5",
+      "description": "Major depressive disorder, single episode, in full remission",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.0",
+      "description": "Major depressive disorder, recurrent, mild",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.1",
+      "description": "Major depressive disorder, recurrent, moderate",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.2",
+      "description": "Major depressive disorder, recurrent, severe without psychotic features",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.3",
+      "description": "Major depressive disorder, recurrent, severe with psychotic features",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.40",
+      "description": "Major depressive disorder, recurrent, in partial remission",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F33.41",
+      "description": "Major depressive disorder, recurrent, in full remission",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F34.1",
+      "description": "Dysthymic disorder (Persistent depressive disorder)",
+      "category": "Depressive Disorders"
+    },
+    {
+      "code": "F40.10",
+      "description": "Social anxiety disorder (social phobia)",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.11",
+      "description": "Social anxiety disorder, performance type",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.00",
+      "description": "Agoraphobia, unspecified",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.210",
+      "description": "Arachnophobia",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.218",
+      "description": "Other animal type phobia",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.230",
+      "description": "Fear of blood",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.240",
+      "description": "Claustrophobia",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F40.248",
+      "description": "Other natural environment type phobia",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F41.0",
+      "description": "Panic disorder",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F41.1",
+      "description": "Generalized anxiety disorder",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F41.8",
+      "description": "Other specified anxiety disorders",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F41.9",
+      "description": "Anxiety disorder, unspecified",
+      "category": "Anxiety Disorders"
+    },
+    {
+      "code": "F42.2",
+      "description": "Mixed obsessional thoughts and acts",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F42.3",
+      "description": "Hoarding disorder",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F42.4",
+      "description": "Excoriation (skin-picking) disorder",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F42.8",
+      "description": "Other obsessive-compulsive disorder",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F42.9",
+      "description": "Obsessive-compulsive disorder, unspecified",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F45.22",
+      "description": "Body dysmorphic disorder",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F63.3",
+      "description": "Trichotillomania (hair-pulling disorder)",
+      "category": "OCD and Related Disorders"
+    },
+    {
+      "code": "F43.0",
+      "description": "Acute stress reaction",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.10",
+      "description": "Post-traumatic stress disorder, unspecified",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.11",
+      "description": "Post-traumatic stress disorder, acute",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.12",
+      "description": "Post-traumatic stress disorder, chronic",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.20",
+      "description": "Adjustment disorder, unspecified",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.21",
+      "description": "Adjustment disorder with depressed mood",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.22",
+      "description": "Adjustment disorder with anxiety",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.23",
+      "description": "Adjustment disorder with mixed anxiety and depressed mood",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.24",
+      "description": "Adjustment disorder with disturbance of conduct",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F43.25",
+      "description": "Adjustment disorder with mixed disturbance of emotions and conduct",
+      "category": "Trauma and Stressor-Related Disorders"
+    },
+    {
+      "code": "F50.00",
+      "description": "Anorexia nervosa, unspecified",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F50.01",
+      "description": "Anorexia nervosa, restricting type",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F50.02",
+      "description": "Anorexia nervosa, binge eating/purging type",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F50.2",
+      "description": "Bulimia nervosa",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F50.81",
+      "description": "Binge eating disorder",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F50.82",
+      "description": "Avoidant/restrictive food intake disorder",
+      "category": "Eating Disorders"
+    },
+    {
+      "code": "F51.01",
+      "description": "Primary insomnia",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F51.02",
+      "description": "Adjustment insomnia",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F51.11",
+      "description": "Primary hypersomnia",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F51.3",
+      "description": "Sleepwalking disorder",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F51.4",
+      "description": "Sleep terrors",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F51.5",
+      "description": "Nightmare disorder",
+      "category": "Sleep-Wake Disorders"
+    },
+    {
+      "code": "F60.0",
+      "description": "Paranoid personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.1",
+      "description": "Schizoid personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.2",
+      "description": "Antisocial personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.3",
+      "description": "Borderline personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.4",
+      "description": "Histrionic personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.5",
+      "description": "Obsessive-compulsive personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.6",
+      "description": "Avoidant personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.7",
+      "description": "Dependent personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F60.81",
+      "description": "Narcissistic personality disorder",
+      "category": "Personality Disorders"
+    },
+    {
+      "code": "F90.0",
+      "description": "ADHD, predominantly inattentive presentation",
+      "category": "ADHD"
+    },
+    {
+      "code": "F90.1",
+      "description": "ADHD, predominantly hyperactive/impulsive presentation",
+      "category": "ADHD"
+    },
+    {
+      "code": "F90.2",
+      "description": "ADHD, combined presentation",
+      "category": "ADHD"
+    },
+    {
+      "code": "F90.8",
+      "description": "ADHD, other type",
+      "category": "ADHD"
+    },
+    {
+      "code": "F90.9",
+      "description": "ADHD, unspecified type",
+      "category": "ADHD"
+    },
+    {
+      "code": "F84.0",
+      "description": "Autistic disorder",
+      "category": "Neurodevelopmental Disorders"
+    },
+    {
+      "code": "F84.5",
+      "description": "Asperger's syndrome",
+      "category": "Neurodevelopmental Disorders"
+    },
+    {
+      "code": "F93.0",
+      "description": "Separation anxiety disorder of childhood",
+      "category": "Childhood Disorders"
+    },
+    {
+      "code": "F94.0",
+      "description": "Selective mutism",
+      "category": "Childhood Disorders"
+    }
+  ]
+}
