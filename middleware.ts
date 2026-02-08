@@ -5,14 +5,128 @@ import type { NextRequest } from "next/server";
 const DEMO_PASSWORD = "TebeMHMVP2026!";
 const COOKIE_NAME = "mhmvp-auth";
 
+// === SECURITY HEADERS (ZETA) ===
+const SECURITY_HEADERS = {
+  // Prevent MIME type sniffing
+  "X-Content-Type-Options": "nosniff",
+  // Prevent clickjacking
+  "X-Frame-Options": "DENY",
+  // Enable XSS filter (legacy browsers)
+  "X-XSS-Protection": "1; mode=block",
+  // HTTPS enforcement
+  "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+  // Referrer policy for privacy
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  // Permissions policy - microphone allowed for Deepgram voice recording
+  "Permissions-Policy": "camera=(), microphone=(self), geolocation=()",
+  // Content Security Policy - strict with necessary exceptions
+  "Content-Security-Policy": [
+    "default-src 'self'",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Next.js requires these
+    "style-src 'self' 'unsafe-inline'", // Tailwind/inline styles
+    "img-src 'self' data: blob: https:",
+    "font-src 'self' data:",
+    "connect-src 'self' https://*.supabase.co https://api.anthropic.com https://generativelanguage.googleapis.com https://api.deepgram.com wss://*.deepgram.com",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; "),
+};
+
+// === RATE LIMITING (ZETA) ===
+// In-memory rate limit store for Edge runtime
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
+const RATE_LIMITS: Record<string, { limit: number; windowMs: number }> = {
+  "/api/auth/mfa/": { limit: 5, windowMs: 60000 }, // 5/min for MFA
+  "/api/auth/": { limit: 10, windowMs: 60000 }, // 10/min for auth
+  "/api/substrate/": { limit: 20, windowMs: 60000 }, // 20/min for AI
+  "/api/ai/": { limit: 20, windowMs: 60000 }, // 20/min for AI
+  "/api/": { limit: 60, windowMs: 60000 }, // 60/min general
+};
+
+function getRateLimitConfig(pathname: string): { limit: number; windowMs: number } | null {
+  for (const [prefix, config] of Object.entries(RATE_LIMITS)) {
+    if (pathname.startsWith(prefix)) {
+      return config;
+    }
+  }
+  return null;
+}
+
+function checkRateLimit(ip: string, pathname: string): { allowed: boolean; remaining: number; resetAfter: number } {
+  const config = getRateLimitConfig(pathname);
+  if (!config) {
+    return { allowed: true, remaining: -1, resetAfter: 0 };
+  }
+
+  const key = `${ip}:${pathname.split("/").slice(0, 4).join("/")}`;
+  const now = Date.now();
+  const record = rateLimitStore.get(key);
+
+  if (!record || now > record.resetTime) {
+    rateLimitStore.set(key, { count: 1, resetTime: now + config.windowMs });
+    return { allowed: true, remaining: config.limit - 1, resetAfter: 0 };
+  }
+
+  if (record.count >= config.limit) {
+    return {
+      allowed: false,
+      remaining: 0,
+      resetAfter: Math.ceil((record.resetTime - now) / 1000),
+    };
+  }
+
+  record.count++;
+  return { allowed: true, remaining: config.limit - record.count, resetAfter: 0 };
+}
+// === END SECURITY (ZETA) ===
+
 export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+
+  // === APPLY SECURITY HEADERS (ZETA) ===
+  for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(header, value);
+  }
+
+  // === RATE LIMITING FOR API ROUTES (ZETA) ===
+  if (request.nextUrl.pathname.startsWith("/api/")) {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+               request.headers.get("x-real-ip") ||
+               "unknown";
+    const rateLimit = checkRateLimit(ip, request.nextUrl.pathname);
+
+    if (!rateLimit.allowed) {
+      return new NextResponse(
+        JSON.stringify({
+          error: "Too Many Requests",
+          message: `Rate limit exceeded. Try again in ${rateLimit.resetAfter} seconds.`,
+          retryAfter: rateLimit.resetAfter,
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": rateLimit.resetAfter.toString(),
+            "X-RateLimit-Remaining": "0",
+          },
+        }
+      );
+    }
+
+    // Add rate limit headers to successful requests
+    response.headers.set("X-RateLimit-Remaining", rateLimit.remaining.toString());
+  }
+  // === END RATE LIMITING (ZETA) ===
+
   // Skip auth for static files and API routes
   if (
     request.nextUrl.pathname.startsWith("/_next") ||
     request.nextUrl.pathname.startsWith("/api") ||
     request.nextUrl.pathname.includes(".")
   ) {
-    return NextResponse.next();
+    return response;
   }
 
   // Check for auth cookie
