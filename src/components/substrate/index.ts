@@ -14,3 +14,6 @@ export type {
   PriorityActionData,
   ActionFilter,
 } from "./PriorityActionList";
+
+export { Patient360PriorityActions } from "./Patient360PriorityActions";
+export type { Patient360PriorityActionsProps } from "./Patient360PriorityActions";
