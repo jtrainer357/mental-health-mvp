@@ -35,3 +35,6 @@ export {
   ReviewsTabContent,
   type PatientTabsProps,
 } from "./PatientTabs";
+
+// Patient Management Components
+export { AddPatientModal, type AddPatientModalProps } from "./AddPatientModal";

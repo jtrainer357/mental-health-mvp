@@ -152,11 +152,18 @@ export type Database = {
           start_time: string;
           end_time: string;
           duration_minutes: number;
-          status: "Scheduled" | "Completed" | "No-Show" | "Cancelled";
+          status: "Scheduled" | "Confirmed" | "Checked-In" | "In Session" | "Completed" | "No-Show" | "Cancelled";
           service_type: string;
           cpt_code: string | null;
           location: string | null;
           notes: string | null;
+          appointment_type: string | null;
+          format: "in_person" | "telehealth" | null;
+          room: string | null;
+          recurring_group_id: string | null;
+          recurring_pattern: "weekly" | "biweekly" | "monthly" | null;
+          cancelled_reason: string | null;
+          cancelled_at: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -169,11 +176,18 @@ export type Database = {
           start_time: string;
           end_time: string;
           duration_minutes: number;
-          status: "Scheduled" | "Completed" | "No-Show" | "Cancelled";
+          status: "Scheduled" | "Confirmed" | "Checked-In" | "In Session" | "Completed" | "No-Show" | "Cancelled";
           service_type: string;
           cpt_code?: string | null;
           location?: string | null;
           notes?: string | null;
+          appointment_type?: string | null;
+          format?: "in_person" | "telehealth" | null;
+          room?: string | null;
+          recurring_group_id?: string | null;
+          recurring_pattern?: "weekly" | "biweekly" | "monthly" | null;
+          cancelled_reason?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -186,11 +200,18 @@ export type Database = {
           start_time?: string;
           end_time?: string;
           duration_minutes?: number;
-          status?: "Scheduled" | "Completed" | "No-Show" | "Cancelled";
+          status?: "Scheduled" | "Confirmed" | "Checked-In" | "In Session" | "Completed" | "No-Show" | "Cancelled";
           service_type?: string;
           cpt_code?: string | null;
           location?: string | null;
           notes?: string | null;
+          appointment_type?: string | null;
+          format?: "in_person" | "telehealth" | null;
+          room?: string | null;
+          recurring_group_id?: string | null;
+          recurring_pattern?: "weekly" | "biweekly" | "monthly" | null;
+          cancelled_reason?: string | null;
+          cancelled_at?: string | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -825,6 +846,57 @@ export type Database = {
           },
         ];
       };
+      appointment_reminders: {
+        Row: {
+          id: string;
+          practice_id: string;
+          appointment_id: string;
+          reminder_type: "24h" | "2h" | "custom";
+          scheduled_at: string;
+          sent_at: string | null;
+          channel: "email" | "sms" | "push";
+          status: "pending" | "sent" | "failed" | "cancelled";
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          practice_id: string;
+          appointment_id: string;
+          reminder_type: "24h" | "2h" | "custom";
+          scheduled_at: string;
+          sent_at?: string | null;
+          channel?: "email" | "sms" | "push";
+          status?: "pending" | "sent" | "failed" | "cancelled";
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          practice_id?: string;
+          appointment_id?: string;
+          reminder_type?: "24h" | "2h" | "custom";
+          scheduled_at?: string;
+          sent_at?: string | null;
+          channel?: "email" | "sms" | "push";
+          status?: "pending" | "sent" | "failed" | "cancelled";
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "appointment_reminders_practice_id_fkey";
+            columns: ["practice_id"];
+            isOneToOne: false;
+            referencedRelation: "practices";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "appointment_reminders_appointment_id_fkey";
+            columns: ["appointment_id"];
+            isOneToOne: false;
+            referencedRelation: "appointments";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       [_ in never]: never;
@@ -857,6 +929,49 @@ export type Review = Database["public"]["Tables"]["reviews"]["Row"];
 export type PrioritizedAction = Database["public"]["Tables"]["prioritized_actions"]["Row"];
 export type Communication = Database["public"]["Tables"]["communications"]["Row"];
 export type VisitSummary = Database["public"]["Tables"]["visit_summaries"]["Row"];
+
+// Scheduling types
+export type AppointmentReminder = Database["public"]["Tables"]["appointment_reminders"]["Row"];
+export type AppointmentReminderInsert = Database["public"]["Tables"]["appointment_reminders"]["Insert"];
+
+// Extended appointment status type
+export type AppointmentStatus = "Scheduled" | "Confirmed" | "Checked-In" | "In Session" | "Completed" | "No-Show" | "Cancelled";
+
+// Appointment type definitions with CPT codes
+export type AppointmentTypeCode =
+  | "initial_evaluation"
+  | "individual_therapy_30"
+  | "individual_therapy_45"
+  | "individual_therapy_53"
+  | "crisis_session"
+  | "medication_management";
+
+export interface AppointmentTypeConfig {
+  code: AppointmentTypeCode;
+  label: string;
+  cptCode: string;
+  defaultDuration: number;
+}
+
+export const APPOINTMENT_TYPES: AppointmentTypeConfig[] = [
+  { code: "initial_evaluation", label: "Initial Evaluation", cptCode: "90791", defaultDuration: 60 },
+  { code: "individual_therapy_30", label: "Individual Therapy 30min", cptCode: "90834", defaultDuration: 30 },
+  { code: "individual_therapy_45", label: "Individual Therapy 45min", cptCode: "90837", defaultDuration: 45 },
+  { code: "individual_therapy_53", label: "Individual Therapy 53min", cptCode: "90836", defaultDuration: 53 },
+  { code: "crisis_session", label: "Crisis Session", cptCode: "", defaultDuration: 60 },
+  { code: "medication_management", label: "Medication Management", cptCode: "", defaultDuration: 15 },
+];
+
+// Status state machine definition
+export const APPOINTMENT_STATUS_TRANSITIONS: Record<AppointmentStatus, AppointmentStatus[]> = {
+  "Scheduled": ["Confirmed", "Cancelled"],
+  "Confirmed": ["Checked-In", "Cancelled"],
+  "Checked-In": ["In Session", "No-Show"],
+  "In Session": ["Completed"],
+  "Completed": [], // Terminal state
+  "No-Show": [], // Terminal state
+  "Cancelled": [], // Terminal state (but can reschedule via new appointment)
+};
 
 // Insert types
 export type PatientInsert = Database["public"]["Tables"]["patients"]["Insert"];
