@@ -110,8 +110,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error("No active practice membership found");
         }
 
-        // Type guard for practice data
-        const practice = membership.practice as { id: string; name: string } | null;
+        // Type guard for practice data - Supabase returns relations as arrays
+        const practiceData = membership.practice as
+          | { id: string; name: string }[]
+          | { id: string; name: string }
+          | null;
+        const practice = Array.isArray(practiceData) ? practiceData[0] : practiceData;
         if (!practice) {
           throw new Error("Practice not found");
         }
