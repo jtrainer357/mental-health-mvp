@@ -35,6 +35,8 @@ export const patientKeys = {
 export const appointmentKeys = {
   all: ["appointments"] as const,
   lists: () => [...appointmentKeys.all, "list"] as const,
+  list: (filters: { startDate?: string; endDate?: string; patientId?: string; status?: string }) =>
+    [...appointmentKeys.lists(), filters] as const,
   byDate: (date: string) => [...appointmentKeys.lists(), "date", date] as const,
   byPatient: (patientId: string) => [...appointmentKeys.lists(), "patient", patientId] as const,
   today: (practiceId: string) => [...appointmentKeys.all, "today", practiceId] as const,
