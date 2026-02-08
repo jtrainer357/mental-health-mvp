@@ -17,3 +17,12 @@ export type {
 
 export { Patient360PriorityActions } from "./Patient360PriorityActions";
 export type { Patient360PriorityActionsProps } from "./Patient360PriorityActions";
+
+export { PreSessionBriefing } from "./PreSessionBriefing";
+export type {
+  PreSessionBriefingProps,
+  PreSessionBriefingData,
+  OutcomeScore,
+  Medication,
+  SessionNote,
+} from "./PreSessionBriefing";
