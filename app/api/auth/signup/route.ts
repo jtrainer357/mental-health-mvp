@@ -13,22 +13,28 @@ async function hashPassword(password: string): Promise<string> {
 }
 
 interface SignupRequest {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  phone?: string;
   practiceName: string;
   specialty: string;
   state: string;
+  npi?: string;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as SignupRequest;
-    const { fullName, email, password, practiceName, specialty, state } = body;
+    const { firstName, lastName, email, password, phone, practiceName, specialty, state, npi } =
+      body;
 
-    if (!fullName || !email || !password || !practiceName || !specialty || !state) {
+    if (!firstName || !lastName || !email || !password || !practiceName || !specialty || !state) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 });
     }
+
+    const fullName = `${firstName} ${lastName}`.trim();
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
@@ -67,6 +73,7 @@ export async function POST(request: NextRequest) {
         name: practiceName,
         specialty,
         state,
+        npi: npi || null,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
@@ -85,6 +92,7 @@ export async function POST(request: NextRequest) {
         email: email.toLowerCase(),
         password_hash: passwordHash,
         name: fullName,
+        phone: phone || null,
         is_active: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
