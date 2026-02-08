@@ -167,3 +167,145 @@ export function useCompleteAllPatientActions() {
     },
   });
 }
+
+// ============================================================================
+// PATIENT MUTATION TYPES
+// ============================================================================
+
+import type { Patient } from "@/src/lib/supabase/types";
+
+export interface CreatePatientData {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  phone: string;
+  email: string;
+  gender?: "M" | "F" | "Non-binary" | "Other" | "Prefer not to say";
+  pronouns?: "He/Him" | "She/Her" | "They/Them" | "Other";
+  addressStreet?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressZip?: string;
+  insuranceProvider?: string;
+  insuranceMemberId?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  practiceId: string;
+}
+
+export interface UpdatePatientData {
+  firstName?: string;
+  lastName?: string;
+  dateOfBirth?: string;
+  phone?: string;
+  email?: string;
+  gender?: "M" | "F" | "Non-binary" | "Other" | "Prefer not to say";
+  addressStreet?: string;
+  addressCity?: string;
+  addressState?: string;
+  addressZip?: string;
+  insuranceProvider?: string;
+  insuranceMemberId?: string;
+}
+
+export type PatientStatus = "Active" | "Inactive" | "Discharged";
+
+export interface UpdatePatientStatusData {
+  status: PatientStatus;
+  reason?: string;
+}
+
+export interface DuplicatePatientResponse {
+  error: "duplicate_found";
+  message: string;
+  existingPatient: { id: string; first_name: string; last_name: string; date_of_birth: string };
+}
+
+// ============================================================================
+// PATIENT MUTATION API FUNCTIONS
+// ============================================================================
+
+async function createPatientApi(data: CreatePatientData): Promise<{ patient?: Patient; duplicate?: DuplicatePatientResponse }> {
+  const res = await fetch("/api/patients", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+  const result = await res.json();
+  if (res.status === 409) return { duplicate: result as DuplicatePatientResponse };
+  if (!res.ok) throw new Error(result.error || "Failed to create patient");
+  return { patient: result.patient };
+}
+
+async function createPatientForcedApi(data: CreatePatientData): Promise<Patient> {
+  const res = await fetch("/api/patients?force=true", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, force: true }) });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error || "Failed to create patient");
+  return result.patient;
+}
+
+async function updatePatientApi(patientId: string, practiceId: string, data: UpdatePatientData): Promise<Patient> {
+  const res = await fetch(`/api/patients/${patientId}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, practiceId }) });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error || "Failed to update patient");
+  return result.patient;
+}
+
+async function updatePatientStatusApi(patientId: string, practiceId: string, data: UpdatePatientStatusData): Promise<Patient> {
+  const res = await fetch(`/api/patients/${patientId}/status`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...data, practiceId }) });
+  const result = await res.json();
+  if (!res.ok) throw new Error(result.error || "Failed to update status");
+  return result.patient;
+}
+
+async function archivePatientApi(patientId: string, practiceId: string): Promise<void> {
+  const res = await fetch(`/api/patients/${patientId}`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ practiceId }) });
+  if (!res.ok) { const result = await res.json(); throw new Error(result.error || "Failed to archive"); }
+}
+
+// ============================================================================
+// PATIENT MUTATION HOOKS
+// ============================================================================
+
+export function useCreatePatient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreatePatientData) => createPatientApi(data),
+    onSuccess: (result, variables) => { if (result.patient) queryClient.invalidateQueries({ queryKey: patientKeys.list(variables.practiceId) }); },
+  });
+}
+
+export function useCreatePatientForced() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreatePatientData) => createPatientForcedApi(data),
+    onSuccess: (_, variables) => { queryClient.invalidateQueries({ queryKey: patientKeys.list(variables.practiceId) }); },
+  });
+}
+
+export function useUpdatePatient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ patientId, practiceId = DEMO_PRACTICE_ID, data }: { patientId: string; practiceId?: string; data: UpdatePatientData }) => updatePatientApi(patientId, practiceId, data),
+    onMutate: async ({ patientId, data }) => {
+      await queryClient.cancelQueries({ queryKey: patientKeys.detail(patientId) });
+      const prev = queryClient.getQueryData<Patient>(patientKeys.detail(patientId));
+      if (prev) queryClient.setQueryData<Patient>(patientKeys.detail(patientId), { ...prev, first_name: data.firstName ?? prev.first_name, last_name: data.lastName ?? prev.last_name, updated_at: new Date().toISOString() });
+      return { prev };
+    },
+    onError: (_, { patientId }, ctx) => { if (ctx?.prev) queryClient.setQueryData(patientKeys.detail(patientId), ctx.prev); },
+    onSettled: (_, __, { patientId, practiceId }) => { queryClient.invalidateQueries({ queryKey: patientKeys.detail(patientId) }); queryClient.invalidateQueries({ queryKey: patientKeys.list(practiceId || DEMO_PRACTICE_ID) }); },
+  });
+}
+
+export function useUpdatePatientStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ patientId, practiceId = DEMO_PRACTICE_ID, data }: { patientId: string; practiceId?: string; data: UpdatePatientStatusData }) => updatePatientStatusApi(patientId, practiceId, data),
+    onSuccess: (_, { patientId, practiceId }) => { queryClient.invalidateQueries({ queryKey: patientKeys.detail(patientId) }); queryClient.invalidateQueries({ queryKey: patientKeys.list(practiceId || DEMO_PRACTICE_ID) }); },
+  });
+}
+
+export function useArchivePatient() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ patientId, practiceId = DEMO_PRACTICE_ID }: { patientId: string; practiceId?: string }) => archivePatientApi(patientId, practiceId),
+    onSuccess: (_, { patientId, practiceId }) => { queryClient.removeQueries({ queryKey: patientKeys.detail(patientId) }); queryClient.invalidateQueries({ queryKey: patientKeys.list(practiceId || DEMO_PRACTICE_ID) }); },
+  });
+}
