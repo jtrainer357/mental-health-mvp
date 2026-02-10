@@ -224,7 +224,7 @@ export function PatientsPage({
           <div className="flex min-h-0 flex-1 flex-col">
             {/* Add Patient Button - hidden when compact */}
             {!isRosterCompact && (
-              <div className="mb-4 flex items-center justify-end">
+              <div className="mb-4 flex min-h-[52px] items-end justify-end">
                 <Button
                   onClick={() => setAddPatientOpen(true)}
                   className="gap-1.5 text-sm sm:gap-2 sm:text-base"

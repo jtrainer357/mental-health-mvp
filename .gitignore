@@ -27,6 +27,8 @@ coverage/
 # Build
 dist/
 out/
+*.tsbuildinfo
+.turbo/
 
 # POC artifacts
 poc/*/test-results.json
