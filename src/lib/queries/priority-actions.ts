@@ -8,7 +8,63 @@ import { createLogger } from "@/src/lib/logger";
 import type { PriorityActionWithPatient, PriorityAction, Patient } from "@/src/lib/supabase/types";
 import { DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
 import { SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/synthetic-priority-actions";
+import { SYNTHETIC_PATIENTS } from "@/src/lib/data/synthetic-patients";
 import { getExternalIdFromUUID } from "@/src/lib/data/synthetic-adapter";
+
+// Build patient lookup map for synthetic data
+const syntheticPatientMap = new Map(
+  SYNTHETIC_PATIENTS.filter((p) => p.id.endsWith("-demo")).map((p) => [
+    p.id,
+    {
+      id: p.id,
+      first_name: p.first_name,
+      last_name: p.last_name,
+      date_of_birth: p.date_of_birth,
+      risk_level: p.risk_level,
+      avatar_url: p.avatar_url,
+    },
+  ])
+);
+
+/**
+ * Get synthetic priority actions with patient details (for demo mode)
+ */
+function getSyntheticPriorityActionsWithPatients(): PriorityActionWithPatient[] {
+  const urgencyOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
+
+  return SYNTHETIC_PRIORITY_ACTIONS.filter((action) => action.status === "pending")
+    .map((action) => {
+      const patient = syntheticPatientMap.get(action.patient_id);
+      if (!patient) return null;
+
+      return {
+        id: action.id,
+        practice_id: action.practice_id,
+        patient_id: action.patient_id,
+        title: action.title,
+        description: null,
+        urgency: action.urgency,
+        timeframe: action.timeframe,
+        confidence_score: action.confidence_score,
+        clinical_context: action.clinical_context,
+        ai_reasoning: action.clinical_context,
+        icon: null,
+        suggested_actions: action.suggested_actions,
+        status: "active" as const,
+        completed_at: null,
+        dismissed_at: null,
+        created_at: action.created_at,
+        updated_at: action.created_at,
+        patient,
+      } as unknown as PriorityActionWithPatient;
+    })
+    .filter((a): a is PriorityActionWithPatient => a !== null)
+    .sort((a, b) => {
+      const aOrder = urgencyOrder[a.urgency] ?? 4;
+      const bOrder = urgencyOrder[b.urgency] ?? 4;
+      return aOrder - bOrder;
+    });
+}
 
 const log = createLogger("queries/priority-actions");
 
@@ -31,11 +87,16 @@ function normalizeUrgency(urgency: string): "urgent" | "high" | "medium" | "low"
 
 /**
  * Get all pending priority actions for a practice with patient details
- * Queries substrate_actions table (created by substrate intelligence engine)
+ * Uses synthetic data for demo mode, falls back to Supabase if available
  */
 export async function getPriorityActions(
   practiceId: string = DEMO_PRACTICE_ID
 ): Promise<PriorityActionWithPatient[]> {
+  // For demo practice, use synthetic data directly (no Supabase required)
+  if (practiceId === DEMO_PRACTICE_ID) {
+    return getSyntheticPriorityActionsWithPatients();
+  }
+
   const supabase = createClient();
 
   // First try substrate_actions (new substrate engine table)
