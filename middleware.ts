@@ -7,6 +7,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+// Demo password protection (set via DEMO_PASSWORD env var, defaults to "tebra2026")
+const DEMO_PASSWORD = process.env.DEMO_PASSWORD || "tebra2026";
+const DEMO_COOKIE_NAME = "demo_access";
+
 // Public routes that don't require authentication
 const PUBLIC_ROUTES = [
   "/login",
@@ -18,6 +22,7 @@ const PUBLIC_ROUTES = [
   "/terms",
   "/privacy",
   "/baa",
+  "/demo-auth", // Password entry page
 ];
 
 // Check if a path is a public route
@@ -59,10 +64,28 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // DEMO MODE: Authentication disabled - using Vercel password protection instead
-  // To re-enable auth, uncomment the block below
-  /*
-  // Get the NextAuth JWT token
+  // DEMO MODE: Simple password protection (no user auth required)
+  const demoCookie = request.cookies.get(DEMO_COOKIE_NAME);
+  const hasValidDemoAccess = demoCookie?.value === DEMO_PASSWORD;
+
+  // If not authenticated for demo and not on demo-auth page, redirect to password page
+  if (!hasValidDemoAccess && pathname !== "/demo-auth") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/demo-auth";
+    url.searchParams.set("callbackUrl", pathname);
+    const response = NextResponse.redirect(url);
+    return addSecurityHeaders(response);
+  }
+
+  // If already authenticated and trying to access demo-auth, redirect to home
+  if (hasValidDemoAccess && pathname === "/demo-auth") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/home";
+    const response = NextResponse.redirect(url);
+    return addSecurityHeaders(response);
+  }
+
+  /* ORIGINAL AUTH (disabled for demo):
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
@@ -71,7 +94,6 @@ export async function middleware(request: NextRequest) {
   const isAuthenticated = !!token;
   const isPublic = isPublicRoute(pathname);
 
-  // Unauthenticated user trying to access protected route → redirect to login
   if (!isAuthenticated && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
@@ -80,7 +102,6 @@ export async function middleware(request: NextRequest) {
     return addSecurityHeaders(response);
   }
 
-  // Authenticated user trying to access auth pages → redirect to home
   if (isAuthenticated && isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/home";
