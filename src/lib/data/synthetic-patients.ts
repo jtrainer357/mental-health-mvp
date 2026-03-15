@@ -494,7 +494,7 @@ export const SYNTHETIC_PATIENTS: SyntheticPatient[] = [
     last_appointment: "2026-01-28",
     status: "Active",
     provider: "Dr. Demo",
-    avatar_url: "https://i.pravatar.cc/150?u=aaliyah-brooks-demo-f", // Has photo
+    avatar_url: "", // No photo - shows initials (25% rule)
     risk_level: "low",
     treatment_start_date: "2025-08-15",
     medications: ["Escitalopram 10mg daily"],
@@ -524,7 +524,7 @@ export const SYNTHETIC_PATIENTS: SyntheticPatient[] = [
     last_appointment: "2026-01-30",
     status: "Active",
     provider: "Dr. Demo",
-    avatar_url: "https://i.pravatar.cc/150?u=robert-fitzgerald-demo-m", // Has photo
+    avatar_url: "", // No photo - shows initials (25% rule)
     risk_level: "medium",
     treatment_start_date: "2025-07-01",
     medications: ["Mirtazapine 15mg at bedtime"],
