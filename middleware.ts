@@ -59,6 +59,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // DEMO MODE: Authentication disabled - using Vercel password protection instead
+  // To re-enable auth, uncomment the block below
+  /*
   // Get the NextAuth JWT token
   const token = await getToken({
     req: request,
@@ -84,6 +87,7 @@ export async function middleware(request: NextRequest) {
     const response = NextResponse.redirect(url);
     return addSecurityHeaders(response);
   }
+  */
 
   // Allow the request to proceed
   const response = NextResponse.next();
