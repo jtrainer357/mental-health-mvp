@@ -205,7 +205,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
 
       {/* Metrics Row - horizontally scrollable on mobile */}
       <motion.div
-        className="scrollbar-none -mx-4 flex items-center gap-3 overflow-x-auto px-4 pt-2 pb-1 lg:mx-0 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
+        className="scrollbar-none -mx-4 flex items-center gap-3 overflow-x-auto px-4 pt-2 pb-1 lg:mx-0 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-2"
         initial="hidden"
         animate="visible"
         variants={{
