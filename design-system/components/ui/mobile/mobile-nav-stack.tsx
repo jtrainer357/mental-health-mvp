@@ -38,7 +38,10 @@ export function MobileNavStack({
             initial={{ x: -60, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -60, opacity: 0 }}
-            transition={{ duration: SLIDE_DURATION, ease: SLIDE_EASING as unknown as number[] }}
+            transition={{
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASING as [number, number, number, number],
+            }}
             className="flex min-h-0 flex-1 flex-col"
           >
             {listView}
@@ -49,7 +52,10 @@ export function MobileNavStack({
             initial={{ x: 60, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 60, opacity: 0 }}
-            transition={{ duration: SLIDE_DURATION, ease: SLIDE_EASING as unknown as number[] }}
+            transition={{
+              duration: SLIDE_DURATION,
+              ease: SLIDE_EASING as [number, number, number, number],
+            }}
             className="flex min-h-0 flex-1 flex-col"
           >
             {enableSwipeBack && onBack ? (
