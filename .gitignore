@@ -33,3 +33,6 @@ out/
 # POC artifacts
 poc/*/test-results.json
 .vercel
+
+# Superpowers brainstorming artifacts
+.superpowers/
