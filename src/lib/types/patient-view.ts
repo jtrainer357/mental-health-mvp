@@ -37,7 +37,7 @@ export type LayoutConfig = Record<ViewState, LayoutDimensions>;
 export const LAYOUT_DIMENSIONS: LayoutConfig = {
   default: {
     rosterWidth: 400,
-    headerHeight: 180,
+    headerHeight: 210,
     rosterVisible: true,
     headerCompact: false,
   },
