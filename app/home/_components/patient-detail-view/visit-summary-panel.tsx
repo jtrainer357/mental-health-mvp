@@ -178,7 +178,7 @@ export function VisitSummaryPanel({
       </motion.div>
 
       {/* Visit details - staggered sections */}
-      <motion.div variants={containerVariants} className="flex-1 space-y-6 overflow-y-auto pr-2">
+      <motion.div variants={containerVariants} className="flex-1 space-y-6 pr-2 lg:overflow-y-auto">
         {/* Session Info Card */}
         <motion.div variants={itemVariants}>
           <Card className="border-border/40 from-muted/30 to-muted/10 overflow-hidden bg-gradient-to-br p-0 shadow-sm">

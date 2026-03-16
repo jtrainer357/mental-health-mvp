@@ -98,7 +98,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
       </div>
 
       {/* Note Content */}
-      <div className="flex-1 space-y-5 overflow-y-auto">
+      <div className="flex-1 space-y-5 lg:overflow-y-auto">
         {/* Patient & Session Info */}
         <Card className="bg-muted/30 p-4">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">

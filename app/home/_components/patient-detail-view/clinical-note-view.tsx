@@ -97,7 +97,7 @@ function NoteContentWrapper({
 }) {
   if (isFullView) {
     return (
-      <CardWrapper className="flex-1 space-y-5 overflow-y-auto">
+      <CardWrapper className="flex-1 space-y-5 lg:overflow-y-auto">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -285,7 +285,7 @@ export function ClinicalNoteView({
       {/* Note Content - Two column on desktop full view, single column on mobile */}
       <div
         className={cn(
-          "flex-1 overflow-y-auto",
+          "flex-1 lg:overflow-y-auto",
           isFullView && "flex flex-col gap-6 px-4 lg:flex-row"
         )}
       >
@@ -566,7 +566,7 @@ export function ClinicalNoteView({
             animate="visible"
             className="w-full shrink-0 lg:w-80"
           >
-            <CardWrapper className="h-full space-y-4 overflow-y-auto">
+            <CardWrapper className="h-full space-y-4 lg:overflow-y-auto">
               {/* Clinical History */}
               <Card className="border-border/40 p-4">
                 <div className="mb-3 flex items-center gap-2">

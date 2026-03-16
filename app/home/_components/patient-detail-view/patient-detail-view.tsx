@@ -203,17 +203,17 @@ export function PatientDetailView({
   }
 
   return (
-    <div className={cn("flex flex-col gap-2", className)} style={{ height: "100%" }}>
+    <div className={cn("flex flex-col gap-2 lg:h-full", className)}>
       {/* Adaptive Patient Header - shrinks based on view state */}
       <div className="shrink-0">
         <AdaptivePatientHeader patient={patient} onBackToRoster={onBackToRoster} />
       </div>
 
       {/* Main Content Area */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
         {/* Simplified: Always show default view when viewState is "default" */}
         {viewState === "default" && (
-          <CardWrapper className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <CardWrapper className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
@@ -240,15 +240,15 @@ export function PatientDetailView({
                 </TabsTrigger>
               </TabsList>
 
-              <TabsContent value="overview" className="mt-0 flex-1 overflow-y-auto">
+              <TabsContent value="overview" className="mt-0 flex-1 lg:overflow-y-auto">
                 <OverviewTab patient={patient} onActivitySelect={handleActivitySelect} />
               </TabsContent>
 
-              <TabsContent value="appointments" className="mt-0 flex-1 overflow-y-auto pr-1">
+              <TabsContent value="appointments" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
                 <AppointmentsTab patient={patient} />
               </TabsContent>
 
-              <TabsContent value="medical-records" className="mt-0 flex-1 overflow-y-auto pr-1">
+              <TabsContent value="medical-records" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
                 <MedicalRecordsTab patient={patient} />
               </TabsContent>
 
@@ -259,11 +259,11 @@ export function PatientDetailView({
                 <MessagesTab patient={patient} />
               </TabsContent>
 
-              <TabsContent value="billing" className="mt-0 flex-1 overflow-y-auto pr-1">
+              <TabsContent value="billing" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
                 <BillingTab patient={patient} />
               </TabsContent>
 
-              <TabsContent value="reviews" className="mt-0 flex-1 overflow-y-auto pr-1">
+              <TabsContent value="reviews" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
                 <ReviewsTab patient={patient} />
               </TabsContent>
             </Tabs>

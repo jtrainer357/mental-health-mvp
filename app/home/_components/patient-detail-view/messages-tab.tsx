@@ -220,7 +220,7 @@ export function MessagesTab({ patient }: MessagesTabProps) {
   return (
     <div className="flex h-full flex-col">
       {/* Messages area */}
-      <div className="flex-1 overflow-y-auto px-6 py-2">
+      <div className="flex-1 px-6 py-2 lg:overflow-y-auto">
         <div className="space-y-4">
           {patient.messages.map((message, index) => {
             const isOutbound = message.direction === "outbound";
