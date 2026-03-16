@@ -215,6 +215,25 @@ export function LeftNav({
               </Button>
             );
           })}
+        {/* User profile icon */}
+        {user && (
+          <Avatar
+            className="border-selected-border h-11 w-11 shrink-0 cursor-pointer rounded-full border-[0.5px] transition-all hover:bg-white/50"
+            onClick={user.onClick}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && user.onClick) {
+                e.preventDefault();
+                user.onClick();
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label={user.name ? `${user.name} profile` : "User profile"}
+          >
+            {user.avatarSrc && <AvatarImage src={user.avatarSrc} alt={user.name} />}
+            <AvatarFallback className="bg-muted text-xs font-bold">{user.initials}</AvatarFallback>
+          </Avatar>
+        )}
       </nav>
     </>
   );
