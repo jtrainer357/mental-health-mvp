@@ -282,14 +282,19 @@ export function ClinicalNoteView({
         </div>
       </motion.div>
 
-      {/* Note Content - Two column layout in full view */}
-      <div className={cn("flex-1 overflow-y-auto", isFullView && "flex gap-6 px-4")}>
+      {/* Note Content - Two column on desktop full view, single column on mobile */}
+      <div
+        className={cn(
+          "flex-1 overflow-y-auto",
+          isFullView && "flex flex-col gap-6 px-4 lg:flex-row"
+        )}
+      >
         {/* Left Column: Note Content - use CardWrapper only in full view */}
         <NoteContentWrapper isFullView={isFullView}>
           {/* Patient & Session Info */}
           <motion.div variants={sectionVariants}>
             <Card className="border-border/40 from-muted/40 to-muted/20 overflow-hidden bg-gradient-to-br p-0 shadow-sm">
-              <div className="divide-border/30 grid grid-cols-2 divide-x sm:grid-cols-4">
+              <div className="divide-border/30 grid grid-cols-1 divide-y sm:grid-cols-2 sm:divide-x sm:divide-y-0 lg:grid-cols-4">
                 <div className="p-4">
                   <Text
                     size="xs"
@@ -559,7 +564,7 @@ export function ClinicalNoteView({
             variants={sidePanelVariants}
             initial="hidden"
             animate="visible"
-            className="w-80 shrink-0"
+            className="w-full shrink-0 lg:w-80"
           >
             <CardWrapper className="h-full space-y-4 overflow-y-auto">
               {/* Clinical History */}
