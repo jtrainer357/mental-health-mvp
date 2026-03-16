@@ -11,6 +11,7 @@ import {
   MessageSquare,
   FileText,
   Video,
+  ChevronLeft,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Badge } from "@/design-system/components/ui/badge";
@@ -23,6 +24,7 @@ import type { PatientDetail } from "../types";
 interface FullDemographicsProps {
   patient: PatientDetail;
   className?: string;
+  onBackToRoster?: () => void;
 }
 
 // Elegant easing (typed as tuple for framer-motion)
@@ -76,7 +78,7 @@ const metricVariants: Variants = {
  * FullDemographics - 120px header for default state
  * Displays complete patient information with avatar, demographics, metrics, and action buttons
  */
-export function FullDemographics({ patient, className }: FullDemographicsProps) {
+export function FullDemographics({ patient, className, onBackToRoster }: FullDemographicsProps) {
   const initials = patient.name
     .split(" ")
     .map((n) => n[0])
@@ -105,8 +107,20 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
     >
       {/* Top Row: Avatar, Info, and Actions */}
       <div className="flex items-start justify-between gap-4">
-        {/* Left: Avatar and Demographics */}
+        {/* Left: Back button (mobile) + Avatar and Demographics */}
         <div className="flex items-start gap-3">
+          {/* Back button - mobile only */}
+          {onBackToRoster && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onBackToRoster}
+              className="text-muted-foreground hover:text-foreground -ml-1 h-11 w-11 shrink-0 rounded-full lg:hidden"
+              aria-label="Back to patients"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
           {/* Avatar - 56px */}
           <Avatar className="h-14 w-14 shrink-0">
             {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
@@ -152,7 +166,7 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
           </div>
         </div>
 
-        {/* Right: Action Buttons */}
+        {/* Right: Action Buttons - hide individual actions on mobile, show more menu */}
         <div className="flex shrink-0 items-center gap-1.5">
           <Button
             variant="ghost"
@@ -189,9 +203,9 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
         </div>
       </div>
 
-      {/* Metrics Row */}
+      {/* Metrics Row - horizontally scrollable on mobile */}
       <motion.div
-        className="flex items-center gap-4 pt-2"
+        className="scrollbar-none -mx-4 flex items-center gap-3 overflow-x-auto px-4 pt-2 pb-1 lg:mx-0 lg:gap-4 lg:overflow-visible lg:px-0 lg:pb-0"
         initial="hidden"
         animate="visible"
         variants={{
@@ -203,7 +217,7 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
         }}
       >
         {/* Last Visit */}
-        <motion.div variants={metricVariants} className="flex-1">
+        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <Calendar className="text-primary h-4 w-4" />
@@ -223,7 +237,7 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
         </motion.div>
 
         {/* Appointments */}
-        <motion.div variants={metricVariants} className="flex-1">
+        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <CalendarClock className="text-primary h-4 w-4" />
@@ -243,7 +257,7 @@ export function FullDemographics({ patient, className }: FullDemographicsProps) 
         </motion.div>
 
         {/* Balance */}
-        <motion.div variants={metricVariants} className="flex-1">
+        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <DollarSign className="text-primary h-4 w-4" />

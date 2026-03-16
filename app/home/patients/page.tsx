@@ -52,7 +52,7 @@ export default function PatientsRoute() {
           className="px-4 py-4 sm:px-6 sm:py-6 md:py-8"
         >
           <PageTransition>
-            <div className="mx-auto h-[calc(100vh-10rem)] max-w-[1600px] sm:h-[calc(100vh-9rem)] lg:h-[calc(100vh-8.5rem)]">
+            <div className="mx-auto h-[calc(100dvh-12rem)] max-w-[1600px] sm:h-[calc(100dvh-11rem)] lg:h-[calc(100vh-8.5rem)]">
               <React.Suspense fallback={<PatientsContentSkeleton />}>
                 <PatientsContent />
               </React.Suspense>

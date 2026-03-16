@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Plus } from "lucide-react";
 import { Button } from "@/design-system/components/ui/button";
 import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
@@ -23,6 +23,22 @@ import { PatientsPageSkeleton, PatientDetailSkeleton } from "./loading-skeleton"
 import { EmptyPatients, DatabaseNotReady } from "./empty-states";
 import type { Patient as DbPatientType } from "@/src/lib/supabase/types";
 
+/**
+ * Hook to detect mobile viewport (below lg breakpoint)
+ */
+function useIsMobileView(): boolean {
+  const [isMobile, setIsMobile] = React.useState(false);
+
+  React.useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  return isMobile;
+}
+
 export function PatientsPage({
   initialPatientId,
   initialPatientName,
@@ -36,6 +52,9 @@ export function PatientsPage({
   const [detailLoading, setDetailLoading] = React.useState(false);
   const [activeFilter, setActiveFilter] = React.useState("all");
   const [addPatientOpen, setAddPatientOpen] = React.useState(false);
+  // Mobile: show roster or detail (push/pop navigation)
+  const [mobileShowDetail, setMobileShowDetail] = React.useState(false);
+  const isMobile = useIsMobileView();
 
   // Get progressive disclosure state for dynamic layout
   const { layout, transition, isRosterCompact } = usePatientViewState();
@@ -155,6 +174,13 @@ export function PatientsPage({
 
   const handlePatientSelect = (patient: Patient) => {
     setSelectedPatient(patient);
+    if (isMobile) {
+      setMobileShowDetail(true);
+    }
+  };
+
+  const handleBackToRoster = () => {
+    setMobileShowDetail(false);
   };
 
   const handlePatientCreated = (newPatient: DbPatientType) => {
@@ -182,6 +208,80 @@ export function PatientsPage({
     return <DatabaseNotReady />;
   }
 
+  // Mobile: single-view push/pop navigation
+  if (isMobile) {
+    return (
+      <>
+        <div className="flex h-full flex-col overflow-hidden">
+          <AnimatePresence mode="wait" initial={false}>
+            {!mobileShowDetail ? (
+              <motion.div
+                key="roster"
+                initial={{ x: -60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -60, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {/* Filter Tabs + Add Button */}
+                <div className="mb-3 flex items-center justify-between">
+                  <FilterTabs
+                    tabs={patientFilterTabs}
+                    activeTab={activeFilter}
+                    onTabChange={setActiveFilter}
+                  />
+                  <Button
+                    onClick={() => setAddPatientOpen(true)}
+                    size="sm"
+                    className="gap-1.5 text-sm"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add
+                  </Button>
+                </div>
+                <PatientListSidebar
+                  patients={patientListItems}
+                  selectedPatientId={selectedPatient?.id}
+                  onPatientSelect={handlePatientSelect}
+                  activeFilter={activeFilter}
+                  compact={false}
+                  className="min-h-0 flex-1"
+                />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="detail"
+                initial={{ x: 60, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: 60, opacity: 0 }}
+                transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+                className="flex min-h-0 flex-1 flex-col"
+              >
+                {detailLoading ? (
+                  <PatientDetailSkeleton />
+                ) : (
+                  <PatientDetailView
+                    patient={patientDetails}
+                    className="min-h-0 flex-1"
+                    initialTab={initialTab}
+                    onBackToRoster={handleBackToRoster}
+                  />
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <AddPatientModal
+          open={addPatientOpen}
+          onOpenChange={setAddPatientOpen}
+          onPatientCreated={handlePatientCreated}
+        />
+      </>
+    );
+  }
+
+  // Desktop: two-column layout with animated widths
   return (
     <>
       <div className="flex h-full flex-col">

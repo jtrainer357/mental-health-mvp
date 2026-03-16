@@ -26,7 +26,7 @@ import { VisitSummaryPanel } from "./visit-summary-panel";
 import { ClinicalNoteView } from "./clinical-note-view";
 
 const tabTriggerStyles =
-  "rounded-none border-b-2 border-transparent bg-transparent shadow-none px-3 py-2 text-xl font-light text-foreground-strong whitespace-nowrap hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-4";
+  "rounded-none border-b-2 border-transparent bg-transparent shadow-none px-2.5 py-2 text-sm font-medium text-foreground-strong whitespace-nowrap hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-3 sm:text-base lg:px-4 lg:text-xl lg:font-light";
 
 // Smooth easing curve for entrance/exit (typed as tuple for framer-motion)
 const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
@@ -107,6 +107,7 @@ export function PatientDetailView({
   patient,
   className,
   initialTab = "overview",
+  onBackToRoster,
 }: PatientDetailViewProps) {
   // Get view state from store
   const viewState = useViewState();
@@ -205,7 +206,7 @@ export function PatientDetailView({
     <div className={cn("flex flex-col gap-2", className)} style={{ height: "100%" }}>
       {/* Adaptive Patient Header - shrinks based on view state */}
       <div className="shrink-0">
-        <AdaptivePatientHeader patient={patient} />
+        <AdaptivePatientHeader patient={patient} onBackToRoster={onBackToRoster} />
       </div>
 
       {/* Main Content Area */}
@@ -218,7 +219,7 @@ export function PatientDetailView({
               onValueChange={setActiveTab}
               className="flex h-full w-full flex-col"
             >
-              <TabsList className="border-border/50 mb-4 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
+              <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
                 <TabsTrigger value="overview" className={tabTriggerStyles}>
                   Overview
                 </TabsTrigger>
@@ -251,7 +252,10 @@ export function PatientDetailView({
                 <MedicalRecordsTab patient={patient} />
               </TabsContent>
 
-              <TabsContent value="messages" className="-mx-6 mt-0 -mb-6 flex-1 overflow-hidden">
+              <TabsContent
+                value="messages"
+                className="-mx-4 mt-0 -mb-4 flex-1 overflow-hidden sm:-mx-6 sm:-mb-6"
+              >
                 <MessagesTab patient={patient} />
               </TabsContent>
 

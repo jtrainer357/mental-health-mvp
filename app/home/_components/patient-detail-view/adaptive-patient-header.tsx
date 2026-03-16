@@ -13,6 +13,8 @@ import type { PatientDetail } from "./types";
 interface AdaptivePatientHeaderProps {
   patient: PatientDetail;
   className?: string;
+  /** Callback to navigate back to patient roster (mobile only) */
+  onBackToRoster?: () => void;
 }
 
 /**
@@ -61,7 +63,11 @@ function useIsMobile(): boolean {
  * - Sticky positioning for scroll
  * - Proper z-index layering
  */
-export function AdaptivePatientHeader({ patient, className }: AdaptivePatientHeaderProps) {
+export function AdaptivePatientHeader({
+  patient,
+  className,
+  onBackToRoster,
+}: AdaptivePatientHeaderProps) {
   const { viewState, layout, transition, goBack, transitionTo, selectedNoteId } =
     usePatientViewState();
   const isMobile = useIsMobile();
@@ -133,13 +139,16 @@ export function AdaptivePatientHeader({ patient, className }: AdaptivePatientHea
         )}
       >
         <AnimatePresence mode="wait" initial={false}>
-          {isFullHeader && <FullDemographics key="full" patient={patient} />}
+          {isFullHeader && (
+            <FullDemographics key="full" patient={patient} onBackToRoster={onBackToRoster} />
+          )}
 
           {isMinimalHeader && (
             <MinimalDemographics
               key="minimal"
               patient={patient}
               onExpand={!isMobile ? handleExpand : undefined}
+              onBackToRoster={onBackToRoster}
             />
           )}
 

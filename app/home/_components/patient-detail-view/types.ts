@@ -128,4 +128,6 @@ export interface PatientDetailViewProps {
   className?: string;
   /** Initial tab to display (overview, appointments, medical-records, messages, billing, reviews) */
   initialTab?: string;
+  /** Callback to navigate back to patient roster (mobile only) */
+  onBackToRoster?: () => void;
 }

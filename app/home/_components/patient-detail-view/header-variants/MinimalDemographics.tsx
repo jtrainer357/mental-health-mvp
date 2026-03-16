@@ -2,7 +2,14 @@
 
 import * as React from "react";
 import { motion, type Variants } from "framer-motion";
-import { Calendar, Phone, DollarSign, MoreHorizontal, ChevronDown } from "lucide-react";
+import {
+  Calendar,
+  Phone,
+  DollarSign,
+  MoreHorizontal,
+  ChevronDown,
+  ChevronLeft,
+} from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Button } from "@/design-system/components/ui/button";
@@ -20,6 +27,7 @@ import type { PatientDetail } from "../types";
 interface MinimalDemographicsProps {
   patient: PatientDetail;
   onExpand?: () => void;
+  onBackToRoster?: () => void;
   className?: string;
 }
 
@@ -55,7 +63,12 @@ const contentVariants: Variants = {
  * MinimalDemographics - 90px header for summary/note state
  * Displays compact patient information with essential details and dropdown actions
  */
-export function MinimalDemographics({ patient, onExpand, className }: MinimalDemographicsProps) {
+export function MinimalDemographics({
+  patient,
+  onExpand,
+  onBackToRoster,
+  className,
+}: MinimalDemographicsProps) {
   const initials = patient.name
     .split(" ")
     .map((n) => n[0])
@@ -84,8 +97,20 @@ export function MinimalDemographics({ patient, onExpand, className }: MinimalDem
     >
       {/* Main Row: Avatar, Name + Badge, Actions */}
       <div className="flex items-center justify-between gap-3">
-        {/* Left: Avatar and Name/Badge */}
-        <div className="flex items-center gap-3">
+        {/* Left: Back button (mobile) + Avatar and Name/Badge */}
+        <div className="flex items-center gap-2">
+          {/* Back button - mobile only */}
+          {onBackToRoster && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onBackToRoster}
+              className="text-muted-foreground hover:text-foreground -ml-2 h-9 w-9 shrink-0 rounded-full lg:hidden"
+              aria-label="Back to patients"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+          )}
           {/* Avatar - 40px */}
           <Avatar className="h-10 w-10 shrink-0">
             {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
@@ -162,7 +187,12 @@ export function MinimalDemographics({ patient, onExpand, className }: MinimalDem
       </div>
 
       {/* Compact Info Row: DOB | Phone | Last Visit | Balance */}
-      <div className="bg-muted/30 ml-[52px] flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg px-3 py-1.5">
+      <div
+        className={cn(
+          "bg-muted/30 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg px-3 py-1.5",
+          onBackToRoster ? "ml-[36px] lg:ml-[52px]" : "ml-[52px]"
+        )}
+      >
         {/* DOB */}
         <div className="flex items-center gap-1.5">
           <Calendar className="text-muted-foreground/70 h-3.5 w-3.5" />
