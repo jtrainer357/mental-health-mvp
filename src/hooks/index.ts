@@ -1,4 +1,5 @@
 export { useKeyboardNav } from "./useKeyboardNav";
+export { useMobileDetect } from "./useMobileDetect";
 export { useReducedMotion } from "./useReducedMotion";
 
 export { useToast, toast } from "./useToast";
