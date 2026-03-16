@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { LucideIcon, Bell } from "lucide-react";
+import { LucideIcon, Bell, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/design-system/lib/utils";
@@ -217,22 +217,16 @@ export function LeftNav({
           })}
         {/* User profile icon */}
         {user && (
-          <Avatar
-            className="border-selected-border h-11 w-11 shrink-0 cursor-pointer rounded-full border-[0.5px] transition-all hover:bg-white/50"
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={user.onClick}
-            onKeyDown={(e) => {
-              if ((e.key === "Enter" || e.key === " ") && user.onClick) {
-                e.preventDefault();
-                user.onClick();
-              }
-            }}
-            tabIndex={0}
-            role="button"
+            className="border-selected-border text-teal-dark h-11 w-11 rounded-full border-[0.5px] transition-all hover:bg-white/50"
             aria-label={user.name ? `${user.name} profile` : "User profile"}
           >
-            {user.avatarSrc && <AvatarImage src={user.avatarSrc} alt={user.name} />}
-            <AvatarFallback className="bg-muted text-xs font-bold">{user.initials}</AvatarFallback>
-          </Avatar>
+            <User className="h-5 w-5" />
+            <span className="sr-only">Profile</span>
+          </Button>
         )}
       </nav>
     </>
