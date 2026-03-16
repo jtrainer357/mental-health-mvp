@@ -217,7 +217,7 @@ export function ClinicalNoteView({
 
   return (
     <motion.div
-      className={cn("flex h-full flex-col", className)}
+      className={cn("flex flex-col lg:h-full", className)}
       initial="hidden"
       animate="visible"
     >
@@ -258,7 +258,12 @@ export function ClinicalNoteView({
               Signed & Locked
             </Badge>
           </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          {/* Full view button — desktop only (inline) */}
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="hidden lg:block"
+          >
             <Button
               variant="outline"
               size="sm"
@@ -269,18 +274,40 @@ export function ClinicalNoteView({
               {isFullView ? (
                 <>
                   <Minimize2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Exit Full View</span>
+                  <span>Exit Full View</span>
                 </>
               ) : (
                 <>
                   <Maximize2 className="h-4 w-4" />
-                  <span className="hidden sm:inline">Full View</span>
+                  <span>Full View</span>
                 </>
               )}
             </Button>
           </motion.div>
         </div>
       </motion.div>
+
+      {/* Full view button — mobile only (full-width) */}
+      <div className="mb-4 lg:hidden">
+        <Button
+          variant="outline"
+          onClick={toggleFullView}
+          className="border-border/50 hover:border-primary/30 hover:bg-primary/5 h-12 w-full gap-2 transition-all"
+          aria-label={isFullView ? "Exit full view" : "Enter full view"}
+        >
+          {isFullView ? (
+            <>
+              <Minimize2 className="h-4 w-4" />
+              <span>Exit Full View</span>
+            </>
+          ) : (
+            <>
+              <Maximize2 className="h-4 w-4" />
+              <span>View Full Note</span>
+            </>
+          )}
+        </Button>
+      </div>
 
       {/* Note Content - Two column on desktop full view, single column on mobile */}
       <div
