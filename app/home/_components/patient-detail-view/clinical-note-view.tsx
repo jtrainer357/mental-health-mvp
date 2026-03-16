@@ -285,7 +285,7 @@ export function ClinicalNoteView({
       {/* Note Content - Two column on desktop full view, single column on mobile */}
       <div
         className={cn(
-          "flex-1 lg:overflow-y-auto",
+          "flex-1 pb-20 lg:overflow-y-auto lg:pb-0",
           isFullView && "flex flex-col gap-6 px-4 lg:flex-row"
         )}
       >

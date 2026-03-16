@@ -210,10 +210,10 @@ export function PatientDetailView({
       </div>
 
       {/* Main Content Area */}
-      <div className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
+      <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
         {/* Simplified: Always show default view when viewState is "default" */}
         {viewState === "default" && (
-          <CardWrapper className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
+          <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}

@@ -30,7 +30,7 @@ export function MobileNavStack({
   className,
 }: MobileNavStackProps) {
   return (
-    <div className={`flex h-full flex-col overflow-hidden ${className ?? ""}`}>
+    <div className={`flex min-h-0 flex-1 flex-col ${className ?? ""}`}>
       <AnimatePresence mode="wait" initial={false}>
         {!showDetail ? (
           <motion.div
@@ -42,7 +42,7 @@ export function MobileNavStack({
               duration: SLIDE_DURATION,
               ease: SLIDE_EASING as [number, number, number, number],
             }}
-            className="flex min-h-0 flex-1 flex-col"
+            className="flex flex-1 flex-col"
           >
             {listView}
           </motion.div>
@@ -56,7 +56,7 @@ export function MobileNavStack({
               duration: SLIDE_DURATION,
               ease: SLIDE_EASING as [number, number, number, number],
             }}
-            className="flex min-h-0 flex-1 flex-col"
+            className="flex flex-1 flex-col"
           >
             {enableSwipeBack && onBack ? (
               <SwipeBack onBack={onBack}>{detailView}</SwipeBack>
