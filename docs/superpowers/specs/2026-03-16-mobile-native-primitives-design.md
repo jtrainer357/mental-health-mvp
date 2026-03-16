@@ -64,7 +64,7 @@ interface SwipeGestureOptions {
 }
 
 interface SwipeGestureResult {
-  ref: RefObject<HTMLElement>;
+  ref: RefObject<HTMLElement | null>;
   swiping: boolean;
   direction: "left" | "right" | "up" | "down" | null;
   distance: number; // px from start
@@ -102,18 +102,30 @@ interface MobileNavStackProps {
 - `showDetail=true`: shows `detailView` with slide-from-right enter animation
 - Uses `AnimatePresence mode="wait"` with the exact easing from patients-page.tsx: `[0.25, 0.1, 0.25, 1.0]`, duration 0.25s
 - When `enableSwipeBack=true`, wraps `detailView` with `SwipeBack` that calls `onBack`
-- Desktop: renders nothing (consumers handle their own desktop layout)
+- Desktop: returns `null`. Consumers use `useMobileDetect().isTouchDevice` to conditionally render `MobileNavStack` vs their desktop layout.
 
-**Refactor:** patients-page.tsx replaces lines 212–281 with:
+**Refactor:** patients-page.tsx replaces lines 212–281. Full conditional pattern:
 
 ```tsx
-<MobileNavStack
-  showDetail={mobileShowDetail}
-  onBack={handleBackToRoster}
-  listView={/* roster content */}
-  detailView={/* detail content */}
-/>
+const { isTouchDevice } = useMobileDetect();
+
+// Mobile/tablet: push/pop navigation
+if (isTouchDevice) {
+  return (
+    <MobileNavStack
+      showDetail={mobileShowDetail}
+      onBack={handleBackToRoster}
+      listView={/* roster content */}
+      detailView={/* detail content */}
+    />
+  );
+}
+
+// Desktop: two-column layout (existing code unchanged)
+return (/* desktop layout */);
 ```
+
+Note: `AddPatientModal` renders outside the `MobileNavStack` in both branches.
 
 ### `BottomSheet` — `design-system/components/ui/mobile/bottom-sheet.tsx`
 
@@ -141,6 +153,14 @@ interface BottomSheetProps {
 - Rounded top corners (16px)
 - Max height: 90vh
 - Background: `bg-backbone-1`
+
+**Accessibility:**
+
+- `role="dialog"`, `aria-modal="true"`, `aria-labelledby` pointing to title element
+- Escape key closes the sheet
+- Focus trapped within sheet when open (use existing `FocusTrap` from `src/components/`)
+- Focus restores to trigger element on close
+- Backdrop click and drag handle have minimum 44px touch targets
 
 ### `PullToRefresh` — `design-system/components/ui/mobile/pull-to-refresh.tsx`
 
@@ -190,6 +210,8 @@ interface CollapsibleHeaderProps {
 - Header has `bg-backbone-1` background with subtle bottom border (`border-synapse-2`)
 - Sticky positioning (`position: sticky, top: 0, z-index: 10`)
 
+**Interaction with PullToRefresh:** When both are used on the same screen, `CollapsibleHeader` handles the sticky header area while `PullToRefresh` wraps the scrollable content below. They operate on separate scroll contexts — `CollapsibleHeader` observes the main scroll container, `PullToRefresh` only activates on overscroll (scrollTop <= 0). No conflict because header expansion requires scroll direction "up" near top, while pull-to-refresh requires continued downward pull past scrollTop=0.
+
 ### `SwipeBack` — `design-system/components/ui/mobile/swipe-back.tsx`
 
 Edge swipe to go back, iOS-style.
@@ -204,7 +226,7 @@ interface SwipeBackProps {
 
 **Behavior:**
 
-- Uses `useSwipeGesture` with `edgeZone: 20`, `direction: "horizontal"`
+- Uses `useSwipeGesture` with `edgeZone: 30`, `direction: "horizontal"`
 - During swipe: children translate right following finger (1:1 up to 50%, then 0.5:1)
 - Subtle shadow on left edge during swipe (grows with progress)
 - Trigger: distance > 100px OR velocity > 0.5px/ms
