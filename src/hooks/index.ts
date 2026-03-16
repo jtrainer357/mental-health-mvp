@@ -1,4 +1,5 @@
 export { useKeyboardNav } from "./useKeyboardNav";
+export { useScrollDirection } from "./useScrollDirection";
 export { useMobileDetect } from "./useMobileDetect";
 export { useReducedMotion } from "./useReducedMotion";
 
