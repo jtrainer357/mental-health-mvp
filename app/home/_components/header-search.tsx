@@ -24,7 +24,7 @@ export function HeaderSearch() {
       {/* Mobile: Stack vertically, Desktop: Side by side */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         {/* Title - responsive sizing */}
-        <div className="flex min-w-0 flex-1 items-center gap-3">
+        <div className="flex min-w-0 flex-1 items-center gap-5">
           <Image
             src="/tebra-logo.svg"
             alt="Tebra"
@@ -43,7 +43,7 @@ export function HeaderSearch() {
           />
           <Heading
             level={4}
-            className="truncate text-right text-base leading-tight sm:text-lg md:text-xl"
+            className="translate-y-[1px] truncate text-right text-base leading-tight sm:text-lg md:text-xl"
           >
             Riverside Family Health & Wellness
           </Heading>
