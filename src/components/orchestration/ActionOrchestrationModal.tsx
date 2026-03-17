@@ -208,7 +208,7 @@ export function ActionOrchestrationModal() {
 
         {/* Footer */}
         <DialogFooter className="border-t border-stone-200 bg-stone-50 px-4 py-3 sm:px-6 sm:py-4">
-          <div className="flex w-full flex-col items-stretch justify-between gap-3 sm:flex-row sm:items-center sm:gap-0">
+          <div className="flex w-full flex-col items-stretch justify-between gap-3 lg:flex-row lg:items-center lg:gap-0">
             <div className="text-sm text-stone-500">
               {isExecuting ? (
                 <span className="flex items-center gap-2">
@@ -226,12 +226,12 @@ export function ActionOrchestrationModal() {
                 </span>
               )}
             </div>
-            <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex flex-col-reverse items-stretch gap-3 lg:flex-row lg:items-center lg:gap-3">
               {!isExecuting && !allCompleted && (
                 <Button
                   variant="outline"
                   onClick={closeModal}
-                  className="min-h-[48px] w-full border-stone-300 sm:min-h-0 sm:w-auto"
+                  className="min-h-[48px] w-full border-stone-300 lg:min-h-0 lg:w-auto"
                 >
                   Cancel
                 </Button>
@@ -240,7 +240,7 @@ export function ActionOrchestrationModal() {
                 onClick={handleExecuteAll}
                 disabled={isExecuting || checkedCount === 0 || allCompleted}
                 className={cn(
-                  "min-h-[48px] w-full bg-orange-500 text-white hover:bg-orange-600 sm:min-h-0 sm:w-auto",
+                  "min-h-[48px] w-full bg-orange-500 text-white hover:bg-orange-600 lg:min-h-0 lg:w-auto",
                   "disabled:bg-orange-300 disabled:opacity-100"
                 )}
               >
