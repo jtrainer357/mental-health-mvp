@@ -151,7 +151,7 @@ export function VisitSummaryPanel({
 
   return (
     <motion.div
-      className={cn("flex h-full flex-col", className)}
+      className={cn("flex flex-col pb-24 lg:h-full lg:pb-0", className)}
       initial="hidden"
       animate="visible"
       exit="exit"
@@ -178,10 +178,7 @@ export function VisitSummaryPanel({
       </motion.div>
 
       {/* Visit details - staggered sections */}
-      <motion.div
-        variants={containerVariants}
-        className="flex-1 space-y-6 pr-2 pb-20 lg:overflow-y-auto lg:pb-0"
-      >
+      <motion.div variants={containerVariants} className="flex-1 space-y-6 pr-2 lg:overflow-y-auto">
         {/* Session Info Card */}
         <motion.div variants={itemVariants}>
           <Card className="border-border/40 from-muted/30 to-muted/10 overflow-hidden bg-gradient-to-br p-0 shadow-sm">
