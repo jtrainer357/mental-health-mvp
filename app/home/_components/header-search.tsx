@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Sparkles, Mic, MessageSquare, Bell } from "lucide-react";
 import { Input } from "@/design-system/components/ui/input";
@@ -23,7 +24,23 @@ export function HeaderSearch() {
       {/* Mobile: Stack vertically, Desktop: Side by side */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         {/* Title - responsive sizing */}
-        <div className="flex min-w-0 flex-1 items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <Image
+            src="/tebra-logo.svg"
+            alt="Tebra"
+            width={80}
+            height={20}
+            className="hidden shrink-0 sm:block"
+            priority
+          />
+          <Image
+            src="/tebra-logo.svg"
+            alt="Tebra"
+            width={64}
+            height={16}
+            className="shrink-0 sm:hidden"
+            priority
+          />
           <Heading level={4} className="truncate text-base sm:text-lg md:text-xl">
             Riverside Family Health & Wellness
           </Heading>
