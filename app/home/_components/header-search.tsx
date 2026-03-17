@@ -28,20 +28,23 @@ export function HeaderSearch() {
           <Image
             src="/tebra-logo.svg"
             alt="Tebra"
-            width={80}
-            height={20}
+            width={96}
+            height={24}
             className="hidden shrink-0 sm:block"
             priority
           />
           <Image
             src="/tebra-logo.svg"
             alt="Tebra"
-            width={64}
-            height={16}
+            width={80}
+            height={20}
             className="shrink-0 sm:hidden"
             priority
           />
-          <Heading level={4} className="truncate text-base sm:text-lg md:text-xl">
+          <Heading
+            level={4}
+            className="truncate text-right text-base leading-tight sm:text-lg md:text-xl"
+          >
             Riverside Family Health & Wellness
           </Heading>
         </div>
