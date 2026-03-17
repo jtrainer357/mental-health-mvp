@@ -281,9 +281,9 @@ export function PatientDetailView({
               initial={false}
               animate="animate"
               exit="exit"
-              className="flex min-h-0 flex-1 flex-col overflow-hidden"
+              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
             >
-              <CardWrapper className="h-full overflow-hidden">
+              <CardWrapper className="lg:h-full lg:overflow-hidden">
                 <VisitSummaryPanel
                   activity={selectedActivity}
                   patientName={patient.name}
@@ -302,9 +302,9 @@ export function PatientDetailView({
               initial={false}
               animate="animate"
               exit="exit"
-              className="flex min-h-0 flex-1 flex-col overflow-hidden"
+              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
             >
-              <CardWrapper className="h-full overflow-hidden">
+              <CardWrapper className="lg:h-full lg:overflow-hidden">
                 <ClinicalNoteView
                   activity={selectedActivity}
                   patientName={patient.name}
@@ -354,7 +354,7 @@ export function PatientDetailView({
                 exit="exit"
                 className="fixed inset-0 z-50"
               >
-                <CardWrapper className="bg-background/95 h-full overflow-hidden rounded-none border-0 shadow-none">
+                <CardWrapper className="bg-background/95 h-full overflow-y-auto rounded-none border-0 shadow-none lg:overflow-hidden">
                   <ClinicalNoteView
                     activity={selectedActivity}
                     patientName={patient.name}
