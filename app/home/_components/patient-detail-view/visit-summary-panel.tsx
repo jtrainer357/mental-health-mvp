@@ -377,14 +377,18 @@ export function VisitSummaryPanel({
         </motion.section>
       </motion.div>
 
-      {/* Footer with View Note button - slides up elegantly */}
+      {/* Footer with View Note button - full width on mobile, right-aligned on desktop */}
       <motion.div
         variants={footerVariants}
-        className="border-border/30 mt-6 flex justify-end border-t pt-4"
+        className="border-border/30 mt-6 flex justify-center border-t pt-4 lg:justify-end"
       >
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full lg:w-auto"
+        >
           <Button
-            className="gap-2 shadow-sm transition-all hover:shadow-md"
+            className="h-12 w-full gap-2 shadow-sm transition-all hover:shadow-md lg:h-auto lg:w-auto"
             onClick={handleViewFullNote}
           >
             <FileText className="h-4 w-4" />
