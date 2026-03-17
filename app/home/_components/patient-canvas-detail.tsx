@@ -173,11 +173,17 @@ export function PatientCanvasDetail({
       </CardContent>
 
       {/* Footer */}
-      <div className="border-border/50 flex items-center justify-end gap-3 border-t px-4 py-3 sm:px-6 sm:py-4">
-        <Button variant="outline" onClick={onCancel}>
+      <div className="border-border/50 flex flex-col-reverse gap-3 border-t px-4 py-3 sm:px-6 sm:py-4 lg:flex-row lg:items-center lg:justify-end">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          className="min-h-[48px] w-full lg:min-h-0 lg:w-auto"
+        >
           Cancel
         </Button>
-        <Button onClick={handleCompleteAll}>Complete All Suggested Actions</Button>
+        <Button onClick={handleCompleteAll} className="min-h-[48px] w-full lg:min-h-0 lg:w-auto">
+          Complete All Suggested Actions
+        </Button>
       </div>
     </Card>
   );
