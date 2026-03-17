@@ -226,12 +226,12 @@ export function ActionOrchestrationModal() {
                 </span>
               )}
             </div>
-            <div className="flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:gap-3">
               {!isExecuting && !allCompleted && (
                 <Button
                   variant="outline"
                   onClick={closeModal}
-                  className="w-full border-stone-300 sm:w-auto"
+                  className="min-h-[48px] w-full border-stone-300 sm:min-h-0 sm:w-auto"
                 >
                   Cancel
                 </Button>
@@ -240,7 +240,7 @@ export function ActionOrchestrationModal() {
                 onClick={handleExecuteAll}
                 disabled={isExecuting || checkedCount === 0 || allCompleted}
                 className={cn(
-                  "w-full bg-orange-500 text-white hover:bg-orange-600 sm:w-auto",
+                  "min-h-[48px] w-full bg-orange-500 text-white hover:bg-orange-600 sm:min-h-0 sm:w-auto",
                   "disabled:bg-orange-300 disabled:opacity-100"
                 )}
               >
