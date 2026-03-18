@@ -30,7 +30,7 @@ export function HeaderSearch() {
             alt="Tebra"
             width={96}
             height={24}
-            className="hidden shrink-0 sm:block"
+            className="hidden shrink-0 sm:block lg:hidden"
             priority
           />
           <Image
