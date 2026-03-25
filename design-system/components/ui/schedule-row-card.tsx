@@ -1,13 +1,14 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { MapPin, Clock } from "lucide-react";
 import { Card } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Badge } from "@/design-system/components/ui/badge";
 import { cn } from "@/design-system/lib/utils";
 
-type ScheduleStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED";
+type ScheduleStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED" | "CANCELLED";
 
 interface ScheduleRowCardProps {
   time: string;
@@ -17,6 +18,9 @@ interface ScheduleRowCardProps {
   status: ScheduleStatus;
   room: string;
   avatarSrc?: string;
+  avatarHref?: string;
+  outstandingBalance?: number;
+  actionSlot?: React.ReactNode;
   className?: string;
 }
 
@@ -28,6 +32,9 @@ export function ScheduleRowCard({
   status,
   room,
   avatarSrc,
+  avatarHref,
+  outstandingBalance,
+  actionSlot,
   className,
 }: ScheduleRowCardProps) {
   const initials = patient
@@ -49,14 +56,32 @@ export function ScheduleRowCard({
 
         {/* Patient info */}
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-5">
-          <Avatar className="h-10 w-10 shrink-0 sm:ml-6">
-            {avatarSrc && <AvatarImage src={avatarSrc} alt={patient} />}
-            <AvatarFallback className="bg-avatar-fallback text-xs text-white">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
+          {avatarHref ? (
+            <Link href={avatarHref} onClick={(e) => e.stopPropagation()}>
+              <Avatar className="h-10 w-10 shrink-0 cursor-pointer transition-opacity hover:opacity-80 sm:ml-6">
+                {avatarSrc && <AvatarImage src={avatarSrc} alt={patient} />}
+                <AvatarFallback className="bg-avatar-fallback text-xs text-white">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <Avatar className="h-10 w-10 shrink-0 sm:ml-6">
+              {avatarSrc && <AvatarImage src={avatarSrc} alt={patient} />}
+              <AvatarFallback className="bg-avatar-fallback text-xs text-white">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          )}
           <div className="min-w-0">
-            <h4 className="truncate text-sm font-bold">{patient}</h4>
+            <h4
+              className={cn(
+                "truncate text-sm font-bold",
+                status === "CANCELLED" && "line-through opacity-60"
+              )}
+            >
+              {patient}
+            </h4>
             <p className="text-muted-foreground truncate text-xs font-bold tracking-wider uppercase">
               {type}
             </p>
@@ -72,11 +97,25 @@ export function ScheduleRowCard({
             "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
             status === "ENDED" && "bg-muted text-muted-foreground border-none",
             status === "SCHEDULED" && "text-muted-foreground border border-gray-300 bg-transparent",
+            status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
             (status === "IN PROGRESS" || status === "CHECKED IN") && "border-none"
           )}
         >
           {status}
         </Badge>
+
+        {/* Action slot (e.g. Enter Visit button when expanded) */}
+        {actionSlot}
+
+        {/* Outstanding Balance */}
+        {outstandingBalance != null && outstandingBalance > 0 && (
+          <Badge
+            variant="outline"
+            className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+          >
+            ${outstandingBalance.toFixed(0)}
+          </Badge>
+        )}
 
         {/* Room */}
         <div className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs font-bold sm:ml-12">

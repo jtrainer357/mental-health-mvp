@@ -5,15 +5,7 @@ import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { MessageRowCard } from "@/design-system/components/ui/message-row-card";
 import { OutstandingCard } from "@/design-system/components/ui/outstanding-card";
 import { Heading } from "@/design-system/components/ui/typography";
-import {
-  Building2,
-  Shield,
-  FlaskConical,
-  Pill,
-  Receipt,
-  LucideIcon,
-  DollarSign,
-} from "lucide-react";
+import { Building2, Shield, FlaskConical, Pill, Receipt, LucideIcon } from "lucide-react";
 
 interface Message {
   id: string;
@@ -160,16 +152,6 @@ export function SidebarWidgets() {
 
       {/* Outstanding Items Widget */}
       <OutstandingCard count={14} subtitle="Needs attention by 5 PM" />
-
-      {/* Try Our Billing Solution Widget */}
-      <OutstandingCard
-        title="Try Our Billing Solution"
-        count={30}
-        suffix="%"
-        subtitle="Increase collections"
-        buttonText="Learn More"
-        icon={DollarSign}
-      />
     </div>
   );
 }

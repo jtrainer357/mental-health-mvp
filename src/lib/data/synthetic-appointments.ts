@@ -532,14 +532,122 @@ function generateAppointments(): SyntheticAppointment[] {
     patient_id: "tyler-harrison-demo",
     patient_name: getPatientName("tyler-harrison-demo"),
     date: demoDate,
-    start_time: "16:30",
-    end_time: "17:30",
+    start_time: "17:00",
+    end_time: "18:00",
     duration_minutes: 60,
     status: "Scheduled",
     service_type: "Initial Evaluation",
     cpt_code: "90791",
     location: "Main Office",
     notes: "NEW PATIENT INTAKE - stress, relationship issues, anger management",
+  });
+
+  // ============================================================================
+  // WEEK 1 TESTING ADDITIONS — 3 more appointments for 8-patient test day
+  // ============================================================================
+
+  // 11. LISA WHITFIELD — Established patient, regular session
+  appointments.push({
+    id: demoAptId("lisa", 1),
+    patient_id: "lisa-whitfield-demo",
+    patient_name: getPatientName("lisa-whitfield-demo"),
+    date: demoDate,
+    start_time: "11:30",
+    end_time: "12:23",
+    duration_minutes: 53,
+    status: "Scheduled",
+    service_type: "Individual Therapy (60 min)",
+    cpt_code: "90837",
+    location: "Main Office",
+    notes: "Anxiety management follow-up, exposure homework review",
+  });
+
+  // 12. KEVIN RHODES — SAME-DAY CANCELLATION
+  appointments.push({
+    id: demoAptId("kevin", 1),
+    patient_id: "kevin-rhodes-demo",
+    patient_name: getPatientName("kevin-rhodes-demo"),
+    date: demoDate,
+    start_time: "14:30",
+    end_time: "15:23",
+    duration_minutes: 53,
+    status: "Cancelled",
+    service_type: "Individual Therapy (60 min)",
+    cpt_code: "90837",
+    location: "Main Office",
+    notes: "SAME-DAY CANCELLATION — Patient called at 7:45 AM, work conflict",
+  });
+
+  // 13. PRIYA SHARMA — Outstanding balance patient
+  appointments.push({
+    id: demoAptId("priya", 1),
+    patient_id: "priya-sharma-demo",
+    patient_name: getPatientName("priya-sharma-demo"),
+    date: demoDate,
+    start_time: "16:30",
+    end_time: "17:23",
+    duration_minutes: 53,
+    status: "Scheduled",
+    service_type: "Individual Therapy (60 min)",
+    cpt_code: "90837",
+    location: "Main Office",
+    notes: "OCD exposure therapy continuation, homework compliance check",
+  });
+
+  // LISA WHITFIELD — 4 past appointments
+  const lisaDates = ["2025-06-01", "2025-08-15", "2025-11-01", "2026-01-26"];
+  lisaDates.forEach((date, i) => {
+    appointments.push({
+      id: demoAptId("lisa", i + 2), // +2 because lisa-1 is today
+      patient_id: "lisa-whitfield-demo",
+      patient_name: getPatientName("lisa-whitfield-demo"),
+      date,
+      start_time: "11:30",
+      end_time: "12:23",
+      duration_minutes: 53,
+      status: "Completed",
+      service_type: "Individual Therapy (60 min)",
+      cpt_code: "90837",
+      location: "Main Office",
+    });
+  });
+
+  // KEVIN RHODES — 5 past appointments (1 no-show, showing pattern)
+  const kevinDates = ["2024-10-01", "2024-11-15", "2025-03-10", "2025-08-20", "2026-01-28"];
+  kevinDates.forEach((date, i) => {
+    const isNoShow = date === "2025-03-10";
+    appointments.push({
+      id: demoAptId("kevin", i + 2),
+      patient_id: "kevin-rhodes-demo",
+      patient_name: getPatientName("kevin-rhodes-demo"),
+      date,
+      start_time: "14:30",
+      end_time: "15:23",
+      duration_minutes: 53,
+      status: isNoShow ? "No-Show" : "Completed",
+      service_type: "Individual Therapy (60 min)",
+      cpt_code: "90837",
+      location: "Main Office",
+      notes: isNoShow ? "Patient did not attend — no advance notice" : undefined,
+    });
+  });
+
+  // PRIYA SHARMA — 4 past appointments
+  const priyaDates = ["2025-08-01", "2025-10-15", "2025-12-10", "2026-01-30"];
+  priyaDates.forEach((date, i) => {
+    appointments.push({
+      id: demoAptId("priya", i + 2),
+      patient_id: "priya-sharma-demo",
+      patient_name: getPatientName("priya-sharma-demo"),
+      date,
+      start_time: "16:30",
+      end_time: "17:23",
+      duration_minutes: 53,
+      status: "Completed",
+      service_type: "Individual Therapy (60 min)",
+      cpt_code: "90837",
+      location: "Main Office",
+    });
   });
 
   return appointments.sort((a, b) => {

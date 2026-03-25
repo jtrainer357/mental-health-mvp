@@ -84,9 +84,15 @@ function appointmentToEvent(apt: AppointmentWithPatient): CalendarEvent {
   const endTime = new Date(date);
   endTime.setHours(endHours!, endMinutes!, 0, 0);
 
+  // Prefix cancelled appointments for visibility
+  const isCancelled = apt.status === "Cancelled";
+  const title = isCancelled
+    ? `CANCELLED — ${apt.patient.first_name} ${apt.patient.last_name}`
+    : `${apt.patient.first_name} ${apt.patient.last_name} - ${apt.service_type}`;
+
   return {
     id: apt.id,
-    title: `${apt.patient.first_name} ${apt.patient.last_name} - ${apt.service_type}`,
+    title,
     startTime,
     endTime,
     color: getEventColor(apt.service_type, apt.status),

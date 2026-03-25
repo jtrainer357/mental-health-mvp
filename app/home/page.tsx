@@ -6,9 +6,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { LeftNav } from "./_components/left-nav";
 import { HeaderSearch } from "./_components/header-search";
 import { DynamicCanvas } from "./_components/dynamic-canvas";
-import { MessagesWidget } from "./_components/messages-widget";
+import { ScheduleAlertsWidget } from "./_components/schedule-alerts-widget";
+import { BalanceAlertsWidget } from "./_components/balance-alerts-widget";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
-import { BillingUpsellWidget } from "./_components/billing-upsell-widget";
 import { AnimatedBackground } from "@/design-system/components/ui/animated-background";
 import { PageTransition } from "@/design-system/components/ui/page-transition";
 import { WelcomeModal } from "./_components/welcome-modal";
@@ -55,9 +55,8 @@ function HomeContent() {
 
               {/* Right Sidebar Widgets - Hidden below xl, shown on xl+ */}
               <aside className="hidden w-[320px] shrink-0 flex-col gap-2 overflow-auto xl:flex xl:w-[320px] 2xl:w-[380px]">
-                <MessagesWidget />
-                {/* <OutstandingItemsWidget /> */}
-                <BillingUpsellWidget />
+                <ScheduleAlertsWidget />
+                <BalanceAlertsWidget />
               </aside>
             </div>
           </PageTransition>

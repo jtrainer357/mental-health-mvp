@@ -3,17 +3,7 @@ import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import {
-  Home,
-  Users,
-  Calendar,
-  MessageSquare,
-  CreditCard,
-  TrendingUp,
-  LogOut,
-  Settings,
-  User,
-} from "lucide-react";
+import { Home, Users, Calendar, MessageSquare, CreditCard, TrendingUp, LogOut } from "lucide-react";
 import { LeftNav as LeftNavBase, NavItem } from "@/design-system/components/ui/left-nav";
 import { cn } from "@/design-system/lib/utils";
 import type { AuthSession } from "@/src/lib/auth/types";
@@ -119,30 +109,6 @@ function UserMenu({
         <p className="truncate text-xs text-gray-500">{userEmail}</p>
       </div>
 
-      {/* Menu items */}
-      <div className="py-1">
-        <button
-          onClick={() => {
-            onClose();
-            router.push("/home/settings");
-          }}
-          className="flex min-h-[44px] w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100"
-        >
-          <Settings className="h-4 w-4" />
-          Settings
-        </button>
-        <button
-          onClick={() => {
-            onClose();
-            router.push("/home/profile");
-          }}
-          className="flex min-h-[44px] w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100"
-        >
-          <User className="h-4 w-4" />
-          Profile
-        </button>
-      </div>
-
       {/* Logout */}
       <div className="border-t py-1">
         <button
@@ -167,7 +133,9 @@ export function LeftNav({ activePage = "home" }: LeftNavProps) {
   // Get user data from session or use fallback
   const userName = session?.user?.name || "User";
   const userEmail = session?.user?.email || "";
-  const userAvatar = session?.user?.avatarUrl;
+  const userAvatar =
+    session?.user?.avatarUrl ||
+    "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face";
   const userInitials = getInitials(userName);
 
   return (

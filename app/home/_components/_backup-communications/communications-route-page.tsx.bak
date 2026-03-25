@@ -23,10 +23,12 @@ export default function CommunicationsRoute() {
           id="main-content"
           role="main"
           aria-label="Communications content"
-          className="px-4 sm:px-6"
+          className="px-4 py-4 sm:px-6 sm:py-6 md:py-8"
         >
           <PageTransition>
-            <CommunicationsPage />
+            <div className="mx-auto flex max-w-[1800px] flex-col lg:h-[calc(100vh-8.5rem)]">
+              <CommunicationsPage />
+            </div>
           </PageTransition>
         </main>
       </div>

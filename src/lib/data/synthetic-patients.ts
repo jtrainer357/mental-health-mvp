@@ -588,6 +588,100 @@ export const SYNTHETIC_PATIENTS: SyntheticPatient[] = [
     treatment_start_date: "2026-02-09",
     medications: [],
   },
+
+  // ============================================================================
+  // WEEK 1 TESTING ADDITIONS — 3 patients for provider test day
+  // ============================================================================
+
+  // 11. LISA WHITFIELD (GAD + Agoraphobia — Exposure Therapy)
+  // Has appointment on DEMO_DATE at 11:30 AM
+  {
+    id: "lisa-whitfield-demo",
+    client_id: "20011",
+    first_name: "Lisa",
+    last_name: "Whitfield",
+    date_of_birth: "1991-08-14",
+    gender: "F",
+    email: "lisa.whitfield91@gmail.com",
+    phone_mobile: "(412) 555-1211",
+    address_street: "1820 Greentree Rd",
+    address_city: "Pittsburgh",
+    address_state: "PA",
+    address_zip: "15220",
+    insurance_provider: "Highmark BCBS",
+    insurance_member_id: "HMK556677001",
+    primary_diagnosis_code: "F41.1",
+    primary_diagnosis_name: "Generalized Anxiety Disorder",
+    secondary_diagnosis_code: "F40.00",
+    date_created: "2025-05-10",
+    last_appointment: "2026-01-26",
+    status: "Active",
+    provider: "Dr. Demo",
+    avatar_url: "https://i.pravatar.cc/150?u=lisa-whitfield-demo-f",
+    risk_level: "low",
+    treatment_start_date: "2025-05-10",
+    medications: ["Buspirone 10mg BID"],
+  },
+
+  // 12. KEVIN RHODES (MDD + Substance Use History — SAME-DAY CANCELLATION patient)
+  // Has appointment on DEMO_DATE at 2:30 PM — CANCELLED
+  {
+    id: "kevin-rhodes-demo",
+    client_id: "20012",
+    first_name: "Kevin",
+    last_name: "Rhodes",
+    date_of_birth: "1983-03-22",
+    gender: "M",
+    email: "kevin.rhodes83@outlook.com",
+    phone_mobile: "(412) 555-1212",
+    address_street: "945 Banksville Rd",
+    address_city: "Pittsburgh",
+    address_state: "PA",
+    address_zip: "15216",
+    insurance_provider: "UPMC Health Plan",
+    insurance_member_id: "UMP334455002",
+    primary_diagnosis_code: "F33.1",
+    primary_diagnosis_name: "Major Depressive Disorder, Recurrent, Moderate",
+    secondary_diagnosis_code: "F10.21",
+    date_created: "2024-09-01",
+    last_appointment: "2026-01-28",
+    status: "Active",
+    provider: "Dr. Demo",
+    avatar_url: "", // No photo — shows initials
+    risk_level: "medium",
+    treatment_start_date: "2024-09-01",
+    medications: ["Bupropion 300mg XL daily", "Naltrexone 50mg daily"],
+  },
+
+  // 13. PRIYA SHARMA (OCD — Exposure Response Prevention)
+  // Has appointment on DEMO_DATE at 4:30 PM — HAS OUTSTANDING BALANCE
+  {
+    id: "priya-sharma-demo",
+    client_id: "20013",
+    first_name: "Priya",
+    last_name: "Sharma",
+    date_of_birth: "1995-11-03",
+    gender: "F",
+    email: "priya.sharma95@gmail.com",
+    phone_mobile: "(412) 555-1213",
+    address_street: "2200 Murray Ave",
+    address_city: "Squirrel Hill",
+    address_state: "PA",
+    address_zip: "15217",
+    insurance_provider: "Self-Pay",
+    insurance_member_id: "",
+    primary_diagnosis_code: "F42.2",
+    primary_diagnosis_name: "Obsessive-Compulsive Disorder",
+    secondary_diagnosis_code: "F41.1",
+    date_created: "2025-07-15",
+    last_appointment: "2026-01-30",
+    status: "Active",
+    provider: "Dr. Demo",
+    avatar_url: "https://i.pravatar.cc/150?u=priya-sharma-demo-f",
+    risk_level: "low",
+    treatment_start_date: "2025-07-15",
+    medications: ["Fluvoxamine 150mg daily"],
+  },
 ];
 
 // Generate remaining 52 patients programmatically

@@ -59,9 +59,9 @@ export const SYNTHETIC_PRIORITY_ACTIONS: SyntheticPriorityAction[] = [
     suggested_actions: [
       "Review intake paperwork",
       "Prepare PHQ-9 + GAD-7 + PCL-5 battery",
-      "Set up telehealth backup",
       "Screen for IPV risk factors",
       "Complete comprehensive diagnostic assessment",
+      "Prepare safety planning materials",
     ],
     status: "pending",
     created_at: "2026-02-09T07:00:00Z",
@@ -283,6 +283,72 @@ export const SYNTHETIC_PRIORITY_ACTIONS: SyntheticPriorityAction[] = [
     ],
     status: "pending",
     created_at: "2026-02-09T06:30:00Z",
+  },
+  // ============================================================================
+  // WEEK 1 TESTING ADDITIONS — Priority actions for 3 new patients
+  // ============================================================================
+
+  // Kevin Rhodes — Same-Day Cancellation Follow-Up
+  {
+    id: "pa-demo-kevin-001",
+    patient_id: "kevin-rhodes-demo",
+    practice_id: DEMO_PRACTICE_ID,
+    title: "Same-Day Cancellation — Reschedule Needed",
+    urgency: "high",
+    timeframe: "Today",
+    confidence_score: 90,
+    clinical_context:
+      "Kevin Rhodes cancelled today's 2:30 PM appointment at 7:45 AM citing work emergency. This is his second cancellation pattern (previous no-show March 2025). Current stressors include workplace layoffs. Given MDD + AUD history, cancellation during high-stress period warrants prompt follow-up to maintain treatment continuity.",
+    suggested_actions: [
+      "Send rescheduling options via SMS",
+      "Check in on current stress level",
+      "Review safety plan for craving episodes",
+      "Confirm AA attendance this week",
+    ],
+    status: "pending",
+    created_at: "2026-02-09T08:00:00Z",
+  },
+
+  // Priya Sharma — Outstanding Balance
+  {
+    id: "pa-demo-priya-001",
+    patient_id: "priya-sharma-demo",
+    practice_id: DEMO_PRACTICE_ID,
+    title: "Outstanding Balance — $175 (Self-Pay)",
+    urgency: "medium",
+    timeframe: "Today",
+    confidence_score: 95,
+    clinical_context:
+      "Priya Sharma has $175 outstanding across 2 invoices (Dec 10: $75, Jan 30: $100). Self-pay patient — no insurance to collect from. Patient has been making partial payments consistently. Today's 4:30 PM session is a good time to discuss payment plan options without disrupting therapeutic rapport.",
+    suggested_actions: [
+      "Discuss payment plan at end of session",
+      "Offer sliding scale consideration",
+      "Document financial hardship if applicable",
+      "Send payment link after session",
+    ],
+    status: "pending",
+    created_at: "2026-02-09T07:00:00Z",
+  },
+
+  // Lisa Whitfield — Exposure Therapy Progress
+  {
+    id: "pa-demo-lisa-001",
+    patient_id: "lisa-whitfield-demo",
+    practice_id: DEMO_PRACTICE_ID,
+    title: "Exposure Hierarchy Advancement Ready",
+    urgency: "low",
+    timeframe: "Today",
+    confidence_score: 80,
+    clinical_context:
+      "Lisa Whitfield has shown consistent progress on exposure hierarchy over 9 months. GAD-7 improved from 14 to 8. Last session discussed concert attendance success. Today may be appropriate to discuss high-level exposures (travel, airports) and transition planning.",
+    suggested_actions: [
+      "Review exposure homework completion",
+      "Assess readiness for high-level hierarchy items",
+      "Discuss maintenance session frequency",
+      "Update treatment plan goals",
+    ],
+    status: "pending",
+    created_at: "2026-02-09T07:00:00Z",
   },
 ];
 

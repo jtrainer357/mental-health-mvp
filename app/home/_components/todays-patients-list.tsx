@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { ScheduleRowCard } from "@/design-system/components/ui/schedule-row-card";
+import { Card } from "@/design-system/components/ui/card";
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { Loader2 } from "lucide-react";
 import { cn } from "@/design-system/lib/utils";
@@ -10,15 +11,28 @@ import { isDatabasePopulated } from "@/src/lib/queries/practice";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
 import type { OrchestrationContext } from "@/src/lib/orchestration/types";
 import { createLogger } from "@/src/lib/logger";
+import { getExternalIdFromUUID } from "@/src/lib/data/synthetic-adapter";
+import { SYNTHETIC_INVOICES } from "@/src/lib/data/synthetic-billing";
+import { VisitPrepPanel } from "./visit-prep-panel";
 
 const log = createLogger("TodaysPatientsList");
 
-type AppointmentStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED";
+// Get outstanding balance for a patient from synthetic billing data
+function getPatientOutstandingBalance(patientUUID: string): number {
+  const externalId = getExternalIdFromUUID(patientUUID);
+  if (!externalId) return 0;
+  return SYNTHETIC_INVOICES.filter(
+    (inv) => inv.patient_id === externalId && inv.balance > 0
+  ).reduce((sum, inv) => sum + inv.balance, 0);
+}
+
+type AppointmentStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED" | "CANCELLED";
 
 // Map database status to component status
 function mapStatus(status: string, startTime: string): AppointmentStatus {
   if (status === "Completed") return "ENDED";
-  if (status === "No-Show" || status === "Cancelled") return "ENDED";
+  if (status === "Cancelled") return "CANCELLED";
+  if (status === "No-Show") return "ENDED";
 
   // Check if appointment is in progress based on time
   const now = new Date();
@@ -43,6 +57,36 @@ function formatTime(time: string): string {
   return `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`;
 }
 
+// Generate suggested actions based on service type
+function generateDefaultActions(serviceType: string): OrchestrationContext["suggestedActions"] {
+  const st = (serviceType || "").toLowerCase();
+
+  if (st.includes("intake") || st.includes("new patient")) {
+    return [
+      { id: "1", label: "Review intake paperwork and history", type: "document", checked: false },
+      { id: "2", label: "Prepare PHQ-9 and GAD-7 assessments", type: "task", checked: false },
+      { id: "3", label: "Complete diagnostic assessment", type: "task", checked: false },
+      { id: "4", label: "Discuss treatment goals and plan", type: "task", checked: false },
+    ];
+  }
+
+  if (st.includes("follow") || st.includes("check")) {
+    return [
+      { id: "1", label: "Review progress since last session", type: "task", checked: false },
+      { id: "2", label: "Administer outcome measures", type: "task", checked: false },
+      { id: "3", label: "Update treatment plan if needed", type: "document", checked: false },
+      { id: "4", label: "Schedule next appointment", type: "task", checked: false },
+    ];
+  }
+
+  return [
+    { id: "1", label: "Review patient chart and recent notes", type: "document", checked: false },
+    { id: "2", label: "Check outcome measure trends", type: "task", checked: false },
+    { id: "3", label: "Review and update treatment plan", type: "document", checked: false },
+    { id: "4", label: "Document session notes", type: "document", checked: false },
+  ];
+}
+
 // Convert appointment to OrchestrationContext for the detail view
 function appointmentToContext(apt: AppointmentWithPatient): OrchestrationContext {
   const patient = apt.patient;
@@ -64,7 +108,7 @@ function appointmentToContext(apt: AppointmentWithPatient): OrchestrationContext
       urgency: "medium",
     },
     clinicalData: {},
-    suggestedActions: [],
+    suggestedActions: generateDefaultActions(apt.service_type),
   };
 }
 
@@ -77,6 +121,7 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
   const [appointments, setAppointments] = React.useState<AppointmentWithPatient[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [dbReady, setDbReady] = React.useState<boolean | null>(null);
+  const [expandedId, setExpandedId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     async function loadAppointments() {
@@ -103,6 +148,14 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
 
     loadAppointments();
   }, []);
+
+  const handleRowClick = (aptId: string) => {
+    setExpandedId((prev) => (prev === aptId ? null : aptId));
+  };
+
+  const handleEnterVisit = (apt: AppointmentWithPatient) => {
+    onSelectPatient?.(appointmentToContext(apt));
+  };
 
   // Loading state
   if (loading) {
@@ -150,30 +203,38 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
       </Heading>
 
       <div className="-mx-2 min-h-0 flex-1 space-y-2 overflow-y-auto px-2 pb-2">
-        {appointments.map((apt) => (
-          <div
-            key={apt.id}
-            onClick={() => onSelectPatient?.(appointmentToContext(apt))}
-            className="block cursor-pointer"
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                onSelectPatient?.(appointmentToContext(apt));
-              }
-            }}
-          >
-            <ScheduleRowCard
-              time={formatTime(apt.start_time)}
-              patient={`${apt.patient.first_name} ${apt.patient.last_name}`}
-              type={apt.service_type.toUpperCase()}
-              provider="Dr. Demo"
-              status={mapStatus(apt.status, apt.start_time)}
-              room={apt.location || "Main Office"}
-              avatarSrc={apt.patient.avatar_url || undefined}
-            />
-          </div>
-        ))}
+        {appointments.map((apt) => {
+          const isExpanded = expandedId === apt.id;
+          return (
+            <Card
+              key={apt.id}
+              opacity="transparent"
+              onClick={() => handleRowClick(apt.id)}
+              className={cn(
+                "cursor-pointer overflow-hidden transition-all",
+                isExpanded ? "bg-white/70 shadow-md" : "hover:bg-white/70 hover:shadow-md"
+              )}
+            >
+              <ScheduleRowCard
+                time={formatTime(apt.start_time)}
+                patient={`${apt.patient.first_name} ${apt.patient.last_name}`}
+                type={apt.service_type.toUpperCase()}
+                provider="Dr. Demo"
+                status={mapStatus(apt.status, apt.start_time)}
+                room={apt.location || "Main Office"}
+                avatarSrc={apt.patient.avatar_url || undefined}
+                avatarHref={`/home/patients?patient=${apt.patient.id}`}
+                outstandingBalance={getPatientOutstandingBalance(apt.patient.id)}
+                className="border-0 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
+              />
+              <VisitPrepPanel
+                appointment={apt}
+                isExpanded={isExpanded}
+                onEnterVisit={() => handleEnterVisit(apt)}
+              />
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

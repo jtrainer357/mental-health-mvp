@@ -422,6 +422,74 @@ const DEMO_MESSAGES: Message[] = [
     timestamp: "2026-02-08T10:00:00Z",
     read: true,
   },
+  // ============================================================================
+  // WEEK 1 TESTING ADDITIONS — Messages for 3 new patients
+  // ============================================================================
+
+  // KEVIN RHODES — cancellation messages
+  {
+    id: "msg-demo-kevin-001",
+    patient_id: "kevin-rhodes-demo",
+    direction: "inbound",
+    channel: "sms",
+    content:
+      "Hi Dr Demo, I'm really sorry but I have to cancel today. Work emergency — they called an all-hands meeting. Can we reschedule for next week?",
+    timestamp: "2026-02-09T07:45:00Z",
+    read: true,
+  },
+  {
+    id: "msg-demo-kevin-002",
+    patient_id: "kevin-rhodes-demo",
+    direction: "outbound",
+    channel: "sms",
+    content:
+      "Hi Kevin, I understand. Let's get you rescheduled soon. I have availability Wednesday at 2:30 or Thursday at 3:00. Which works better?",
+    timestamp: "2026-02-09T08:15:00Z",
+    read: true,
+  },
+
+  // LISA WHITFIELD — appointment confirmation
+  {
+    id: "msg-demo-lisa-001",
+    patient_id: "lisa-whitfield-demo",
+    direction: "outbound",
+    channel: "sms",
+    content: "Hi Lisa, just a reminder about your appointment tomorrow at 11:30 AM. See you then!",
+    timestamp: "2026-02-08T14:00:00Z",
+    read: true,
+  },
+  {
+    id: "msg-demo-lisa-002",
+    patient_id: "lisa-whitfield-demo",
+    direction: "inbound",
+    channel: "sms",
+    content:
+      "Thanks! I'll be there. I actually went to a concert this weekend and did great! Can't wait to tell you about it.",
+    timestamp: "2026-02-08T15:30:00Z",
+    read: true,
+  },
+
+  // PRIYA SHARMA — session follow-up
+  {
+    id: "msg-demo-priya-001",
+    patient_id: "priya-sharma-demo",
+    direction: "outbound",
+    channel: "email",
+    content:
+      "Subject: Session follow-up\n\nHi Priya,\n\nGreat progress this week on the ERP homework. Remember to continue the daily exposure exercises we discussed. Your next appointment is Monday Feb 9 at 4:30 PM.\n\nAlso, I wanted to follow up on the billing discussion — please let me know if you'd like to set up a payment plan for the outstanding balance.\n\nBest,\nDr. Demo",
+    timestamp: "2026-02-01T16:00:00Z",
+    read: true,
+  },
+  {
+    id: "msg-demo-priya-002",
+    patient_id: "priya-sharma-demo",
+    direction: "inbound",
+    channel: "email",
+    content:
+      "Subject: Re: Session follow-up\n\nHi Dr. Demo,\n\nThank you! The exposures are going well. I touched the handrail at the gym twice this week without washing immediately after.\n\nRegarding the billing — yes, I'd like to discuss a payment plan. Can we talk about it at my next appointment?\n\nThanks,\nPriya",
+    timestamp: "2026-02-02T10:00:00Z",
+    read: true,
+  },
 ];
 
 // Combine generated and demo messages

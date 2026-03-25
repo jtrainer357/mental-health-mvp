@@ -969,6 +969,207 @@ export const SYNTHETIC_SESSION_NOTES: SyntheticSessionNote[] = [
     signed_by: "Dr. Sarah Demo",
     status: "signed",
   },
+  // ============================================================================
+  // LISA WHITFIELD — 3 NOTES (GAD + Agoraphobia, Exposure Therapy)
+  // GAD-7: 14 -> 11 -> 8
+  // ============================================================================
+  {
+    id: "note-lisa-whitfield-1",
+    patient_id: "lisa-whitfield-demo",
+    appointment_id: "apt-demo-lisa-002",
+    date_of_service: "2025-06-01",
+    note_type: "initial_evaluation",
+    subjective: `Patient presents for initial evaluation. "I can't go to the grocery store anymore without feeling like I'm going to pass out. I haven't been to a restaurant in months." Reports 8+ months of escalating avoidance behaviors following a panic attack at a crowded mall. Avoids crowded spaces, driving on highways, and social gatherings. Reports persistent worry about having another panic attack. Sleep disrupted by anticipatory anxiety. Currently working remotely which enables avoidance. Reports feeling "trapped in my apartment."`,
+    objective: `Appearance: Well-groomed, casually dressed. Affect: Anxious, fidgeting with phone. Mood: "Anxious and frustrated with myself." Speech: Rapid rate, normal volume. Thought process: Goal-directed but preoccupied with safety concerns. No SI/HI. GAD-7: Score 14 (moderate anxiety). PHQ-9: Score 7 (mild depression).`,
+    assessment: `F41.1 Generalized Anxiety Disorder with F40.00 Agoraphobia. Patient presents with classic avoidance pattern following index panic episode. Anxiety has generalized beyond initial trigger. Agoraphobic avoidance is significantly impacting daily functioning and quality of life. Good insight — patient recognizes avoidance is maintaining the problem. Excellent candidate for exposure-based CBT.`,
+    plan: `- Start Buspirone 5mg BID, titrate to 10mg BID over 2 weeks
+- Begin psychoeducation on anxiety cycle and role of avoidance
+- Construct fear hierarchy for graded exposure
+- Assign daily anxiety log homework
+- Discuss interoceptive exposure for panic sensitivity
+- Return in 2 weeks
+- GAD-7 at each visit`,
+    cpt_code: "90791",
+    duration_minutes: 60,
+    signed_at: "2025-06-01T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-lisa-whitfield-2",
+    patient_id: "lisa-whitfield-demo",
+    appointment_id: "apt-demo-lisa-003",
+    date_of_service: "2025-08-15",
+    note_type: "progress_note",
+    subjective: `"I went to the coffee shop down the street last week. I was only there for 10 minutes but I did it." Patient reports completing 3 of 5 assigned exposure tasks from fear hierarchy. Drove on a local highway for one exit. Reports Buspirone helpful for background anxiety. Still avoiding large crowds but recognizes progress.`,
+    objective: `Appearance: Improved — more relaxed posture than intake. Affect: Anxious but brighter. Mood: "Better, cautiously." GAD-7: Score 11 (moderate, improved from 14). PHQ-9: Score 5.`,
+    assessment: `GAD with Agoraphobia — Good treatment response. Patient engaging with exposure hierarchy. Avoidance pattern beginning to break. Buspirone at therapeutic dose with benefit.`,
+    plan: `- Continue Buspirone 10mg BID
+- Advance to mid-level exposure tasks: grocery store during off-peak, restaurant with friend
+- Introduce response prevention for safety behaviors (checking exits, sitting near door)
+- Continue anxiety log
+- Follow-up in 10 weeks`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2025-08-15T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-lisa-whitfield-3",
+    patient_id: "lisa-whitfield-demo",
+    appointment_id: "apt-demo-lisa-004",
+    date_of_service: "2025-11-01",
+    note_type: "progress_note",
+    subjective: `"I went to a friend's birthday dinner last weekend — 12 people at a restaurant. I was nervous but I stayed the whole time." Patient reports significant progress on exposure hierarchy. Completed grocery shopping independently 3x/week. Driving on highway regularly. Reports residual anxiety in novel crowded situations but able to manage with coping skills.`,
+    objective: `Appearance: Confident, good eye contact. Affect: Full range, appropriate. Mood: "Actually pretty good." GAD-7: Score 8 (mild, improved from 11). PHQ-9: Score 3.`,
+    assessment: `GAD with Agoraphobia — Excellent response to combined CBT/exposure and Buspirone. Avoidance behaviors significantly reduced. Patient approaching higher-level hierarchy items independently. Consider transitioning to maintenance phase.`,
+    plan: `- Continue Buspirone 10mg BID
+- Target remaining avoidance: concerts, sporting events, travel
+- Begin relapse prevention planning
+- Discuss reducing session frequency to monthly
+- Follow-up in 8 weeks`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2025-11-01T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+
+  // ============================================================================
+  // KEVIN RHODES — 3 NOTES (MDD + AUD History)
+  // PHQ-9: 16 -> 12 -> 10
+  // ============================================================================
+  {
+    id: "note-kevin-rhodes-1",
+    patient_id: "kevin-rhodes-demo",
+    appointment_id: "apt-demo-kevin-002",
+    date_of_service: "2024-10-01",
+    note_type: "initial_evaluation",
+    subjective: `Patient presents for initial evaluation, referred by PCP after elevated PHQ-9 at annual physical. "I've been sober for 6 months but I feel worse than when I was drinking." Reports persistent low mood, anhedonia, poor concentration at work, and social isolation since achieving sobriety. History of Alcohol Use Disorder — last drink 6 months ago, attends AA 3x/week. Reports marriage strain: "My wife says I traded drinking for sleeping." Sleeps 10-11 hours/night but never feels rested.`,
+    objective: `Appearance: Dressed appropriately, flat facial expression. Affect: Blunted. Mood: "Empty." Speech: Slow, low volume. Thought process: Goal-directed, impoverished content. No SI — "I wouldn't do that to my kids." PHQ-9: Score 16 (moderately severe depression). GAD-7: Score 6 (mild anxiety).`,
+    assessment: `F33.1 Major Depressive Disorder, recurrent, moderate with F10.21 Alcohol Use Disorder, in early remission. Depression likely unmasked by sobriety — alcohol was self-medicating underlying mood disorder. Hypersomnia and anhedonia prominent. No active safety concern. AA engagement is protective factor. Naltrexone from addiction medicine supports sobriety.`,
+    plan: `- Start Bupropion 150mg XL daily (activating, helps anhedonia, weight-neutral)
+- Continue Naltrexone 50mg per addiction medicine
+- Behavioral activation: schedule 2 pleasurable activities/week
+- Discuss grief of "sober identity" vs. drinking identity
+- Coordinate with AA sponsor
+- Return in 2 weeks for medication check
+- PHQ-9 at each visit`,
+    cpt_code: "90791",
+    duration_minutes: 60,
+    signed_at: "2024-10-01T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-kevin-rhodes-2",
+    patient_id: "kevin-rhodes-demo",
+    appointment_id: "apt-demo-kevin-003",
+    date_of_service: "2024-11-15",
+    note_type: "progress_note",
+    subjective: `"The Bupropion is helping some. I actually went to my son's basketball game last week and enjoyed it." Patient reports improved energy and some return of interest in activities. Sleep improved to 8-9 hours. Still struggling with concentration at work. Attended AA 2x/week (down from 3). Reports wife noticed he's "more present."`,
+    objective: `Appearance: Better grooming, more engaged. Affect: Reactive, occasional smiles. Mood: "Getting there." PHQ-9: Score 12 (moderate, improved from 16). GAD-7: Score 5.`,
+    assessment: `MDD, recurrent, moderate — Partial response to Bupropion at 6 weeks. Anhedonia improving. AA engagement remains protective. Relationship showing early improvement.`,
+    plan: `- Increase Bupropion to 300mg XL daily
+- Continue behavioral activation
+- Begin cognitive work on self-criticism patterns
+- Discuss marital therapy referral if wife is interested
+- Return in 6 weeks`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2024-11-15T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-kevin-rhodes-3",
+    patient_id: "kevin-rhodes-demo",
+    appointment_id: "apt-demo-kevin-006",
+    date_of_service: "2026-01-28",
+    note_type: "progress_note",
+    subjective: `"Work has been brutal — new boss, layoffs happening. I keep thinking about drinking but I haven't." Reports occupational stress as trigger for depressive symptoms. Sleep disrupted again (9+ hours, hard to wake). Attending AA 3x/week again (increase from 2). Reports awareness that stress is a relapse risk.`,
+    objective: `Appearance: Appropriate but fatigued. Affect: Constricted. Mood: "Stressed and tired." PHQ-9: Score 10 (moderate). GAD-7: Score 8 (mild, increased from 5).`,
+    assessment: `MDD with AUD history — Work stress triggering partial relapse of depressive symptoms. Patient showing good insight and protective behaviors (increased AA, no substance use). Medication may need adjustment if symptoms persist.`,
+    plan: `- Continue Bupropion 300mg XL and Naltrexone 50mg
+- Stress management techniques for work
+- Review cognitive distortions around job security
+- Discuss safety plan for craving episodes
+- Next session Feb 9 — PATIENT CANCELLED SAME-DAY (work conflict)
+- Reschedule within 1 week`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2026-01-28T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+
+  // ============================================================================
+  // PRIYA SHARMA — 3 NOTES (OCD — ERP Treatment)
+  // Y-BOCS equivalent proxy through GAD-7: 15 -> 12 -> 9
+  // ============================================================================
+  {
+    id: "note-priya-sharma-1",
+    patient_id: "priya-sharma-demo",
+    appointment_id: "apt-demo-priya-002",
+    date_of_service: "2025-08-01",
+    note_type: "initial_evaluation",
+    subjective: `Patient presents for initial evaluation. "I wash my hands until they crack and bleed. I know it doesn't make sense but I can't stop." Reports 2+ years of contamination-focused OCD with escalating rituals. Hand-washing 30+ times/day, avoids touching doorknobs/handrails/public surfaces. Reports checking behavior (locks, stove, car) taking 45+ minutes before leaving home. Insight is good — knows behaviors are excessive. Previously tried Zoloft 50mg (discontinued due to GI side effects). Self-pay — insurance doesn't cover her preferred provider.`,
+    objective: `Appearance: Hands visibly dry and cracked. Affect: Anxious, embarrassed when discussing symptoms. Mood: "Frustrated and exhausted." Speech: Normal. Thought process: Goal-directed, intrusive thoughts about contamination. No SI/HI. GAD-7: Score 15 (severe anxiety). PHQ-9: Score 8 (mild depression, secondary to OCD).`,
+    assessment: `F42.2 Obsessive-Compulsive Disorder, moderate-severe. Contamination obsessions with washing compulsions predominate. Checking rituals secondary. Good insight (ego-dystonic). Previous SSRI trial inadequate (low dose, GI intolerance). Fluvoxamine often better tolerated for OCD. Strong candidate for ERP.`,
+    plan: `- Start Fluvoxamine 50mg at bedtime, titrate to 150mg over 4 weeks (take with food for GI)
+- Begin psychoeducation on OCD cycle: obsession → anxiety → compulsion → temporary relief → reinforcement
+- Construct contamination hierarchy for ERP
+- Assign exposure homework: touch 3 "moderately contaminated" surfaces daily, delay washing 5 minutes
+- OCD symptom diary
+- Return in 2 weeks
+- GAD-7 and PHQ-9 at each visit`,
+    cpt_code: "90791",
+    duration_minutes: 60,
+    signed_at: "2025-08-01T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-priya-sharma-2",
+    patient_id: "priya-sharma-demo",
+    appointment_id: "apt-demo-priya-003",
+    date_of_service: "2025-10-15",
+    note_type: "progress_note",
+    subjective: `"I touched the railing at the library and sat with it for 20 minutes without washing. It was terrible but I did it." Patient reports engaging with ERP homework consistently. Hand-washing reduced to ~15x/day (from 30+). Checking behavior reduced to 15 minutes before leaving home (from 45). Fluvoxamine 150mg tolerated well. Reports hands healing — using moisturizer as planned.`,
+    objective: `Appearance: Hands less irritated than intake. Affect: Proud when discussing exposures. Mood: "Hard but better." GAD-7: Score 12 (moderate, improved from 15). PHQ-9: Score 5.`,
+    assessment: `OCD — Good response to combined ERP and Fluvoxamine. Compulsive behavior frequency reduced ~50%. Patient demonstrating willingness to tolerate distress during exposures. Habituation occurring as expected.`,
+    plan: `- Continue Fluvoxamine 150mg
+- Advance ERP hierarchy: public restroom doorknob, eating without hand-washing first
+- Begin response prevention for checking (leave home with 1 check only)
+- Continue symptom diary
+- Follow-up in 8 weeks`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2025-10-15T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
+  {
+    id: "note-priya-sharma-3",
+    patient_id: "priya-sharma-demo",
+    appointment_id: "apt-demo-priya-004",
+    date_of_service: "2025-12-10",
+    note_type: "progress_note",
+    subjective: `"I went to a concert last month — thousands of people, shared bathrooms, didn't wash my hands until I got home. Old me would have never gone." Reports hand-washing reduced to ~8x/day (near-normal range). Checking behavior reduced to quick single-pass (2-3 minutes). Reports intrusive thoughts still present but less distressing — "I notice them but they don't control me anymore."`,
+    objective: `Appearance: Hands healthy, good grooming. Affect: Bright, confident. Mood: "Really good." GAD-7: Score 9 (mild, improved from 12). PHQ-9: Score 3.`,
+    assessment: `OCD — Excellent treatment response. Compulsive behaviors approaching normal range. Cognitive flexibility improved. Patient internalizing ERP principles — applying independently to novel situations. Consider maintenance phase.`,
+    plan: `- Continue Fluvoxamine 150mg (minimum 12 months total for OCD per guidelines)
+- Target remaining avoidance: hospital visits, sick family contact
+- Begin relapse prevention: identify early warning signs, create coping card
+- Discuss billing: patient has accumulated $175 outstanding balance (self-pay). Discuss payment plan.
+- Follow-up in 8 weeks`,
+    cpt_code: "90837",
+    duration_minutes: 53,
+    signed_at: "2025-12-10T18:00:00Z",
+    signed_by: "Dr. Sarah Demo",
+    status: "signed",
+  },
 ];
 
 export default SYNTHETIC_SESSION_NOTES;

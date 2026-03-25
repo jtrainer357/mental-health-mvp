@@ -16,7 +16,7 @@ import { isDatabasePopulated } from "@/src/lib/queries/practice";
 import { formatDemoDate } from "@/src/lib/utils/demo-date";
 import type { PriorityActionWithPatient } from "@/src/lib/supabase/types";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
-import type { OrchestrationContext } from "@/src/lib/orchestration/types";
+import type { OrchestrationContext, SuggestedAction } from "@/src/lib/orchestration/types";
 import type { SubstrateActionWithPatient } from "@/src/lib/substrate/service";
 import { useCompletedPatients } from "@/src/components/orchestration";
 import { createLogger } from "@/src/lib/logger";
@@ -291,9 +291,76 @@ async function runSubstrateScan(): Promise<{
   }
 }
 
+// Generate suggested actions for an appointment based on service type and patient context
+function generateAppointmentActions(
+  apt: AppointmentWithPatient,
+  matchingActions: UnifiedAction[]
+): SuggestedAction[] {
+  // If we have matching priority actions for this patient, use those suggested actions
+  if (matchingActions.length > 0) {
+    const allSuggestions: SuggestedAction[] = [];
+    let idCounter = 1;
+    for (const action of matchingActions) {
+      for (const suggestion of action.suggested_actions) {
+        allSuggestions.push({
+          id: String(idCounter++),
+          label: suggestion.label,
+          type: mapActionType(suggestion.type),
+          checked: false,
+        });
+      }
+    }
+    // Deduplicate by label and return up to 5
+    const seen = new Set<string>();
+    return allSuggestions
+      .filter((a) => {
+        const key = a.label.toLowerCase();
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .slice(0, 5);
+  }
+
+  // Otherwise generate smart defaults based on the appointment/service type
+  const serviceType = (apt.service_type || "").toLowerCase();
+
+  if (serviceType.includes("intake") || serviceType.includes("new patient")) {
+    return [
+      { id: "1", label: "Review intake paperwork and history", type: "document", checked: false },
+      { id: "2", label: "Prepare PHQ-9 and GAD-7 assessments", type: "task", checked: false },
+      { id: "3", label: "Complete diagnostic assessment", type: "task", checked: false },
+      { id: "4", label: "Discuss treatment goals and plan", type: "task", checked: false },
+    ];
+  }
+
+  if (serviceType.includes("follow") || serviceType.includes("check")) {
+    return [
+      { id: "1", label: "Review progress since last session", type: "task", checked: false },
+      { id: "2", label: "Administer outcome measures", type: "task", checked: false },
+      { id: "3", label: "Update treatment plan if needed", type: "document", checked: false },
+      { id: "4", label: "Schedule next appointment", type: "task", checked: false },
+    ];
+  }
+
+  // Default actions for any session type
+  return [
+    { id: "1", label: "Review patient chart and recent notes", type: "document", checked: false },
+    { id: "2", label: "Check outcome measure trends", type: "task", checked: false },
+    { id: "3", label: "Review and update treatment plan", type: "document", checked: false },
+    { id: "4", label: "Document session notes", type: "document", checked: false },
+  ];
+}
+
 // Convert appointment to OrchestrationContext for the detail view
-function appointmentToContext(apt: AppointmentWithPatient): OrchestrationContext {
+function appointmentToContext(
+  apt: AppointmentWithPatient,
+  allActions: UnifiedAction[] = []
+): OrchestrationContext {
   const patient = apt.patient;
+  // Find any priority actions that belong to this patient
+  const matchingActions = allActions.filter((a) => a.patient.id === patient.id);
+
   return {
     patient: {
       id: patient.id,
@@ -312,7 +379,7 @@ function appointmentToContext(apt: AppointmentWithPatient): OrchestrationContext
       urgency: "medium",
     },
     clinicalData: {},
-    suggestedActions: [],
+    suggestedActions: generateAppointmentActions(apt, matchingActions),
   };
 }
 
@@ -323,6 +390,7 @@ export function PriorityActionsSection({
 }: PriorityActionsSectionProps) {
   const router = useRouter();
   const [actions, setActions] = React.useState<UnifiedAction[]>([]);
+  const [allActions, setAllActions] = React.useState<UnifiedAction[]>([]);
   const [todayAppts, setTodayAppts] = React.useState<AppointmentWithPatient[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [scanning, setScanning] = React.useState(false);
@@ -395,7 +463,8 @@ export function PriorityActionsSection({
         return aOrder - bOrder;
       });
 
-      setActions(merged.slice(0, 5)); // Show top 5
+      setAllActions(merged);
+      setActions(merged.slice(2, 4)); // Show middle 2 (removed top 2 and last)
       setTodayAppts(apptsData);
     } catch (err) {
       log.error("Failed to load priority actions", err);
@@ -455,7 +524,7 @@ export function PriorityActionsSection({
       });
 
       if (matchingAppt) {
-        onSelectPatient?.(appointmentToContext(matchingAppt));
+        onSelectPatient?.(appointmentToContext(matchingAppt, allActions));
       }
     }
 
@@ -466,7 +535,7 @@ export function PriorityActionsSection({
         handleVoiceOpenPatient as EventListener
       );
     };
-  }, [actions, todayAppts, onSelectPatient]);
+  }, [actions, allActions, todayAppts, onSelectPatient]);
 
   // Format demo date (Feb 6, 2026)
   const formattedDate = formatDemoDate("long");
@@ -694,13 +763,13 @@ export function PriorityActionsSection({
         {/* Top coral "arriving" card - if there's an arriving patient */}
         {arrivingPatient && (
           <div
-            onClick={() => onSelectPatient?.(appointmentToContext(arrivingPatient))}
-            className="mb-10 block cursor-pointer"
+            onClick={() => onSelectPatient?.(appointmentToContext(arrivingPatient, allActions))}
+            className="mb-2 block cursor-pointer"
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
-                onSelectPatient?.(appointmentToContext(arrivingPatient));
+                onSelectPatient?.(appointmentToContext(arrivingPatient, allActions));
               }
             }}
           >
@@ -709,6 +778,7 @@ export function PriorityActionsSection({
               subtitle={`${arrivingPatient.start_time} appointment • ${arrivingPatient.service_type}`}
               avatarInitials={`${arrivingPatient.patient.first_name[0]}${arrivingPatient.patient.last_name[0]}`}
               avatarSrc={arrivingPatient.patient.avatar_url || undefined}
+              avatarHref={`/home/patients?patient=${arrivingPatient.patient.id}`}
               secondaryButtonText="View Suggested Actions"
               onSecondaryButtonClick={() => {}}
               buttonText="Begin Check-in"
@@ -745,6 +815,7 @@ export function PriorityActionsSection({
                 <AIActionCard
                   patientName={patientName}
                   avatarSrc={action.patient.avatar_url || undefined}
+                  avatarHref={`/home/patients?patient=${action.patient.id}`}
                   mainAction={action.title}
                   statusIndicators={statusIndicator}
                   readyStatus={`Confidence: ${action.confidence}%`}

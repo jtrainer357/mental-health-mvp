@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Check } from "lucide-react";
 import { Card, CardContent } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
@@ -12,6 +13,7 @@ type ActionBadgeVariant = "default" | "success" | "warning" | "urgent";
 interface AIActionCardProps {
   patientName: string;
   avatarSrc?: string;
+  avatarHref?: string;
   mainAction: string;
   statusIndicators: string;
   readyStatus: string;
@@ -25,6 +27,7 @@ interface AIActionCardProps {
 export function AIActionCard({
   patientName,
   avatarSrc,
+  avatarHref,
   mainAction,
   statusIndicators,
   readyStatus,
@@ -50,7 +53,7 @@ export function AIActionCard({
     <Card
       opacity="solid"
       className={cn(
-        "cursor-pointer border-0 shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0 active:shadow-md",
+        "border-0 shadow-md transition-all duration-200",
         completed && "border-teal/50 bg-teal/5 border-2",
         className
       )}
@@ -61,17 +64,33 @@ export function AIActionCard({
           {/* Avatar column - fixed width with gap */}
           <div className="flex items-center gap-3 sm:table-cell sm:w-[100px] sm:align-middle">
             <div className="relative">
-              <Avatar
-                className={cn(
-                  "h-16 w-16 border-4 border-white sm:h-20 sm:w-20",
-                  completed && "border-teal/30"
-                )}
-              >
-                {avatarSrc && <AvatarImage src={avatarSrc} alt={patientName} />}
-                <AvatarFallback className="bg-avatar-fallback text-base font-semibold text-white sm:text-lg">
-                  {initials}
-                </AvatarFallback>
-              </Avatar>
+              {avatarHref ? (
+                <Link href={avatarHref} onClick={(e) => e.stopPropagation()}>
+                  <Avatar
+                    className={cn(
+                      "h-16 w-16 cursor-pointer border-4 border-white transition-opacity hover:opacity-80 sm:h-20 sm:w-20",
+                      completed && "border-teal/30"
+                    )}
+                  >
+                    {avatarSrc && <AvatarImage src={avatarSrc} alt={patientName} />}
+                    <AvatarFallback className="bg-avatar-fallback text-base font-semibold text-white sm:text-lg">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Link>
+              ) : (
+                <Avatar
+                  className={cn(
+                    "h-16 w-16 border-4 border-white sm:h-20 sm:w-20",
+                    completed && "border-teal/30"
+                  )}
+                >
+                  {avatarSrc && <AvatarImage src={avatarSrc} alt={patientName} />}
+                  <AvatarFallback className="bg-avatar-fallback text-base font-semibold text-white sm:text-lg">
+                    {initials}
+                  </AvatarFallback>
+                </Avatar>
+              )}
             </div>
           </div>
 
