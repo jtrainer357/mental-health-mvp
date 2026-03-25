@@ -8,6 +8,7 @@ import { HeaderSearch } from "./_components/header-search";
 import { DynamicCanvas } from "./_components/dynamic-canvas";
 import { ScheduleAlertsWidget } from "./_components/schedule-alerts-widget";
 import { BalanceAlertsWidget } from "./_components/balance-alerts-widget";
+import { FeedbackWidget } from "./_components/feedback-widget";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { AnimatedBackground } from "@/design-system/components/ui/animated-background";
 import { PageTransition } from "@/design-system/components/ui/page-transition";
@@ -57,6 +58,7 @@ function HomeContent() {
               <aside className="hidden w-[320px] shrink-0 flex-col gap-2 overflow-auto xl:flex xl:w-[320px] 2xl:w-[380px]">
                 <ScheduleAlertsWidget />
                 <BalanceAlertsWidget />
+                <FeedbackWidget />
               </aside>
             </div>
           </PageTransition>
