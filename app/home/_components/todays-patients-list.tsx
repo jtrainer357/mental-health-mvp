@@ -11,8 +11,8 @@ import { isDatabasePopulated } from "@/src/lib/queries/practice";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
 import type { OrchestrationContext } from "@/src/lib/orchestration/types";
 import { createLogger } from "@/src/lib/logger";
-import { getExternalIdFromUUID } from "@/src/lib/data/synthetic-adapter";
-import { SYNTHETIC_INVOICES } from "@/src/lib/data/synthetic-billing";
+import { getExternalIdFromUUID } from "@/src/lib/data/adapter";
+import { INVOICES as SYNTHETIC_INVOICES } from "@/src/lib/data/billing";
 import { VisitPrepPanel } from "./visit-prep-panel";
 
 const log = createLogger("TodaysPatientsList");
@@ -153,8 +153,8 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
     setExpandedId((prev) => (prev === aptId ? null : aptId));
   };
 
-  const handleEnterVisit = (apt: AppointmentWithPatient) => {
-    onSelectPatient?.(appointmentToContext(apt));
+  const handleEnterVisit = (_apt: AppointmentWithPatient) => {
+    // No-op: Enter Visit buttons disabled for now
   };
 
   // Loading state
@@ -212,6 +212,7 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
               onClick={() => handleRowClick(apt.id)}
               className={cn(
                 "cursor-pointer overflow-hidden transition-all",
+                "border-border/60",
                 isExpanded ? "bg-white/70 shadow-md" : "hover:bg-white/70 hover:shadow-md"
               )}
             >

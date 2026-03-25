@@ -7,13 +7,13 @@ import { createClient } from "@/src/lib/supabase/client";
 import { createLogger } from "@/src/lib/logger";
 import type { PriorityActionWithPatient, PriorityAction, Patient } from "@/src/lib/supabase/types";
 import { DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
-import { SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/synthetic-priority-actions";
-import { SYNTHETIC_PATIENTS } from "@/src/lib/data/synthetic-patients";
-import { getExternalIdFromUUID } from "@/src/lib/data/synthetic-adapter";
+import { PRIORITY_ACTIONS as SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/priority-actions";
+import { PATIENTS as SYNTHETIC_PATIENTS } from "@/src/lib/data/patients";
+import { getExternalIdFromUUID } from "@/src/lib/data/adapter";
 
-// Build patient lookup map for synthetic data
+// Build patient lookup map for seed data
 const syntheticPatientMap = new Map(
-  SYNTHETIC_PATIENTS.filter((p) => p.id.endsWith("-demo")).map((p) => [
+  SYNTHETIC_PATIENTS.map((p) => [
     p.id,
     {
       id: p.id,

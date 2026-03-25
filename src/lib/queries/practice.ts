@@ -7,7 +7,7 @@ import { createClient } from "@/src/lib/supabase/client";
 import { createLogger } from "@/src/lib/logger";
 import type { Practice } from "@/src/lib/supabase/types";
 import { getDemoToday, DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
-import { getDemoTodayAppointments, getDemoPatients } from "@/src/lib/data/synthetic-adapter";
+import { getDemoTodayAppointments, getDemoPatients } from "@/src/lib/data/adapter";
 
 const log = createLogger("queries/practice");
 

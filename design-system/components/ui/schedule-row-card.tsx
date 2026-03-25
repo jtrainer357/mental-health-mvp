@@ -88,39 +88,43 @@ export function ScheduleRowCard({
           </div>
         </div>
 
-        {/* Status */}
-        <Badge
-          variant={
-            status === "IN PROGRESS" ? "default" : status === "CHECKED IN" ? "secondary" : "outline"
-          }
-          className={cn(
-            "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
-            status === "ENDED" && "bg-muted text-muted-foreground border-none",
-            status === "SCHEDULED" && "text-muted-foreground border border-gray-300 bg-transparent",
-            status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
-            (status === "IN PROGRESS" || status === "CHECKED IN") && "border-none"
-          )}
-        >
-          {status}
-        </Badge>
-
-        {/* Action slot (e.g. Enter Visit button when expanded) */}
-        {actionSlot}
-
-        {/* Outstanding Balance */}
-        {outstandingBalance != null && outstandingBalance > 0 && (
+        {/* Right section — fixed width so status pill always starts at the same x */}
+        <div className="flex w-[300px] shrink-0 items-center gap-2">
           <Badge
-            variant="outline"
-            className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+            variant={
+              status === "IN PROGRESS"
+                ? "default"
+                : status === "CHECKED IN"
+                  ? "secondary"
+                  : "outline"
+            }
+            className={cn(
+              "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
+              status === "ENDED" && "bg-muted text-muted-foreground border-none",
+              status === "SCHEDULED" &&
+                "text-muted-foreground border border-gray-300 bg-transparent",
+              status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
+              (status === "IN PROGRESS" || status === "CHECKED IN") && "border-none"
+            )}
           >
-            ${outstandingBalance.toFixed(0)}
+            {status}
           </Badge>
-        )}
 
-        {/* Room */}
-        <div className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs font-bold sm:ml-12">
-          <MapPin className="h-3.5 w-3.5" />
-          {room}
+          {outstandingBalance != null && outstandingBalance > 0 && (
+            <Badge
+              variant="outline"
+              className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+            >
+              ${outstandingBalance.toFixed(0)}
+            </Badge>
+          )}
+
+          {actionSlot}
+
+          <div className="text-muted-foreground ml-auto flex items-center gap-1 text-xs font-bold">
+            <MapPin className="h-3.5 w-3.5" />
+            {room}
+          </div>
         </div>
       </div>
     </Card>

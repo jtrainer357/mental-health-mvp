@@ -22,11 +22,11 @@ import {
   type PatientAnalysisInput,
   type PrioritizedAction,
 } from "@/src/lib/ai/claude-substrate";
-import { SYNTHETIC_PATIENTS } from "@/src/lib/data/synthetic-patients";
-import { SYNTHETIC_APPOINTMENTS } from "@/src/lib/data/synthetic-appointments";
-import { SYNTHETIC_OUTCOME_MEASURES } from "@/src/lib/data/synthetic-outcome-measures";
-import { SYNTHETIC_MESSAGES } from "@/src/lib/data/synthetic-messages";
-import { SYNTHETIC_INVOICES } from "@/src/lib/data/synthetic-billing";
+import { PATIENTS as SYNTHETIC_PATIENTS } from "@/src/lib/data/patients";
+import { APPOINTMENTS as SYNTHETIC_APPOINTMENTS } from "@/src/lib/data/appointments";
+import { OUTCOME_MEASURES as SYNTHETIC_OUTCOME_MEASURES } from "@/src/lib/data/outcome-measures";
+import { MESSAGES as SYNTHETIC_MESSAGES } from "@/src/lib/data/messages";
+import { INVOICES as SYNTHETIC_INVOICES } from "@/src/lib/data/billing";
 import { createServiceClient } from "@/src/lib/supabase/server";
 import type {
   Json,
@@ -125,8 +125,8 @@ export async function POST(
       address_city: p.address_city,
       address_state: p.address_state,
       address_zip: p.address_zip,
-      insurance_provider: p.insurance_provider,
-      insurance_member_id: p.insurance_member_id,
+      insurance_provider: null,
+      insurance_member_id: null,
       primary_diagnosis_code: p.primary_diagnosis_code,
       primary_diagnosis_name: p.primary_diagnosis_name,
       secondary_diagnosis_code: p.secondary_diagnosis_code,
@@ -332,7 +332,7 @@ export async function POST(
           primary_diagnosis_code: patient.primary_diagnosis_code,
           primary_diagnosis_name: patient.primary_diagnosis_name,
           medications: patient.medications,
-          insurance_provider: patient.insurance_provider,
+          insurance_provider: "Self-pay",
         },
         outcomeMeasures: patientMeasures.map((m) => ({
           measure_type: m.measure_type,

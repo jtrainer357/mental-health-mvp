@@ -7,17 +7,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
 import { createLogger } from "@/src/lib/logger";
-import {
-  SYNTHETIC_PRIORITY_ACTIONS,
-  type SyntheticPriorityAction,
-} from "@/src/lib/data/synthetic-priority-actions";
-import { SYNTHETIC_PATIENTS } from "@/src/lib/data/synthetic-patients";
+import { PRIORITY_ACTIONS as SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/priority-actions";
+import type { SeedPriorityAction as SyntheticPriorityAction } from "@/src/lib/data/types";
+import { PATIENTS as SYNTHETIC_PATIENTS } from "@/src/lib/data/patients";
 
 const log = createLogger("api/substrate/actions");
 
 // Build patient lookup map
 const patientMap = new Map(
-  SYNTHETIC_PATIENTS.filter((p) => p.id.endsWith("-demo")).map((p) => [
+  SYNTHETIC_PATIENTS.map((p) => [
     p.id,
     {
       id: p.id,

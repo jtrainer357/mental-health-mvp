@@ -27,7 +27,7 @@ import {
   getDemoPatientInvoices,
   isDemoPatientUUID,
   getExternalIdFromUUID,
-} from "@/src/lib/data/synthetic-adapter";
+} from "@/src/lib/data/adapter";
 
 const log = createLogger("queries/patients");
 

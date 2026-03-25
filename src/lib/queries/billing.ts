@@ -9,7 +9,7 @@
 import { createClient } from "@/src/lib/supabase/client";
 import { createLogger } from "@/src/lib/logger";
 import { DEMO_PRACTICE_ID, getDemoToday, getDemoDaysAgo } from "@/src/lib/utils/demo-date";
-import { SYNTHETIC_INVOICES } from "@/src/lib/data/synthetic-billing";
+import { INVOICES as SYNTHETIC_INVOICES } from "@/src/lib/data/billing";
 
 const log = createLogger("queries/billing");
 

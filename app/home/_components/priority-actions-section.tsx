@@ -781,7 +781,7 @@ export function PriorityActionsSection({
               avatarHref={`/home/patients?patient=${arrivingPatient.patient.id}`}
               secondaryButtonText="View Suggested Actions"
               onSecondaryButtonClick={() => {}}
-              buttonText="Begin Check-in"
+              buttonText="Start Session"
               onButtonClick={() => {}}
             />
           </div>

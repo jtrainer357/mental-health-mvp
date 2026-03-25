@@ -1,11 +1,12 @@
 "use client";
 
 import * as React from "react";
-import { Card } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
-import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Heading } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
+import { PATIENTS } from "@/src/lib/data/patients";
+import { APPOINTMENTS } from "@/src/lib/data/appointments";
+import { today, daysFromNow } from "@/src/lib/data/helpers";
 
 interface ScheduleAlert {
   id: string;
@@ -20,43 +21,85 @@ interface ScheduleAlert {
   statusColor: "destructive" | "warning" | "success";
 }
 
-const alerts: ScheduleAlert[] = [
-  {
-    id: "sa-1",
-    name: "Kevin Rhodes",
-    initials: "KR",
-    time: "2:30 PM",
-    detail: "Individual Therap...",
-    timeAgo: "9 MIN AGO",
-    unread: true,
-    status: "Cancelled today",
-    statusColor: "destructive",
-  },
-  {
-    id: "sa-2",
-    name: "Sarah Johnson",
-    initials: "SJ",
-    avatarSrc: "https://i.pravatar.cc/150?u=p001-sarah-f",
-    time: "Tue 11:00 AM",
-    detail: "needs new ti...",
-    timeAgo: "12 MIN AGO",
-    unread: true,
-    status: "Reschedule requested",
-    statusColor: "warning",
-  },
-  {
-    id: "sa-3",
-    name: "Rachel Torres",
-    initials: "RT",
-    avatarSrc: "https://i.pravatar.cc/150?u=rachel-torres-demo-1001",
-    time: "9:00 AM",
-    detail: "Individual Therap...",
-    timeAgo: "JUST NOW",
-    unread: false,
-    status: "Patient arrived",
-    statusColor: "success",
-  },
-];
+function formatTime(startTime: string): string {
+  const startH = parseInt(startTime.split(":")[0]!);
+  const startM = startTime.split(":")[1];
+  const ampm = startH >= 12 ? "PM" : "AM";
+  const displayH = startH > 12 ? startH - 12 : startH === 0 ? 12 : startH;
+  return `${displayH}:${startM} ${ampm}`;
+}
+
+function formatDateLabel(date: string): string {
+  const d = new Date(date + "T12:00:00");
+  return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+function buildScheduleAlerts(): ScheduleAlert[] {
+  const todayStr = today();
+  const nextWeekEnd = daysFromNow(7);
+  const alerts: ScheduleAlert[] = [];
+
+  // 1. Upcoming cancellations (today through next 7 days) — most urgent
+  const upcomingCancelled = APPOINTMENTS.filter(
+    (a) => a.status === "Cancelled" && a.date >= todayStr && a.date <= nextWeekEnd
+  ).sort((a, b) => a.date.localeCompare(b.date) || a.start_time.localeCompare(b.start_time));
+
+  for (const apt of upcomingCancelled) {
+    const patient = PATIENTS.find((p) => p.id === apt.patient_id);
+    if (!patient) continue;
+    const isToday = apt.date === todayStr;
+    const dateLabel = isToday ? "" : `${formatDateLabel(apt.date)} `;
+    const statusText = apt.notes?.includes("Reschedule")
+      ? "Reschedule requested"
+      : isToday
+        ? "Cancelled today"
+        : "Cancelled";
+    const statusColor = apt.notes?.includes("Reschedule")
+      ? ("warning" as const)
+      : ("destructive" as const);
+
+    alerts.push({
+      id: `sa-cancel-${apt.id}`,
+      name: `${patient.first_name} ${patient.last_name}`,
+      initials: `${patient.first_name[0]}${patient.last_name[0]}`,
+      avatarSrc: patient.avatar_url || undefined,
+      time: `${dateLabel}${formatTime(apt.start_time)}`,
+      detail: apt.service_type,
+      timeAgo: isToday ? "9 MIN AGO" : "12 MIN AGO",
+      unread: true,
+      status: statusText,
+      statusColor,
+    });
+  }
+
+  // 2. First scheduled appointment for today (patient arrived)
+  const todayScheduled = APPOINTMENTS.filter(
+    (a) => a.date === todayStr && a.status === "Scheduled"
+  ).sort((a, b) => a.start_time.localeCompare(b.start_time));
+
+  if (todayScheduled[0]) {
+    const apt = todayScheduled[0];
+    const patient = PATIENTS.find((p) => p.id === apt.patient_id);
+    if (patient) {
+      alerts.push({
+        id: `sa-arrived-${apt.id}`,
+        name: `${patient.first_name} ${patient.last_name}`,
+        initials: `${patient.first_name[0]}${patient.last_name[0]}`,
+        avatarSrc: patient.avatar_url || undefined,
+        time: formatTime(apt.start_time),
+        detail: apt.service_type,
+        timeAgo: "JUST NOW",
+        unread: false,
+        status: "Patient arrived",
+        statusColor: "success",
+      });
+    }
+  }
+
+  return alerts.slice(0, 5);
+}
+
+const alerts = buildScheduleAlerts();
 
 const statusStyles: Record<string, string> = {
   destructive: "text-destructive",
@@ -65,22 +108,20 @@ const statusStyles: Record<string, string> = {
 };
 
 export function ScheduleAlertsWidget() {
-  const unreadCount = alerts.filter((a) => a.unread).length;
+  if (alerts.length === 0) return null;
 
   return (
-    <CardWrapper className="flex flex-col">
+    <section className="border-border/40 flex flex-col rounded-xl border bg-white/60 p-4 shadow-sm backdrop-blur-lg sm:p-6">
       <div className="flex items-center justify-between pb-4">
-        <div className="flex items-center gap-2">
-          <Heading level={4} className="text-lg">
-            Schedule Alerts
-          </Heading>
-        </div>
+        <Heading level={4} className="text-lg">
+          Schedule Alerts
+        </Heading>
       </div>
       <div className="-mx-2 space-y-2 px-2">
         {alerts.map((alert) => (
-          <Card
+          <div
             key={alert.id}
-            className="!bg-teal/[0.06] hover:!bg-teal/[0.10] cursor-pointer p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
+            className="!bg-teal/[0.06] hover:!bg-teal/[0.10] border-border/60 cursor-pointer rounded-lg border p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
             <div className="flex items-start gap-3">
               <Avatar className="h-10 w-10">
@@ -100,16 +141,18 @@ export function ScheduleAlertsWidget() {
                   </div>
                 </div>
                 <p className="text-muted-foreground truncate text-sm font-medium">
-                  {alert.time} · {alert.detail}
+                  {alert.time}
+                  {alert.time && " · "}
+                  {alert.detail}
                 </p>
                 <p className={cn("mt-1 text-xs font-semibold", statusStyles[alert.statusColor])}>
                   {alert.status}
                 </p>
               </div>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
-    </CardWrapper>
+    </section>
   );
 }

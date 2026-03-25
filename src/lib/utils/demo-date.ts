@@ -1,11 +1,13 @@
 /**
  * Demo Date Utility
- * Returns Feb 9, 2026 as the "current" date for demo purposes
+ * All dates are now relative to today so the prototype always looks fresh.
  */
 
-// Demo date: Monday, February 9, 2026
-export const DEMO_DATE = "2026-02-09";
-export const DEMO_DATE_OBJECT = new Date("2026-02-09T12:00:00");
+import { today, todayDate, daysFromNow } from "@/src/lib/data/helpers";
+
+// "Today" — always the real current date
+export const DEMO_DATE = today();
+export const DEMO_DATE_OBJECT = todayDate();
 
 // Demo practice ID (used across all queries)
 export const DEMO_PRACTICE_ID = "550e8400-e29b-41d4-a716-446655440000";
@@ -14,44 +16,43 @@ export const DEMO_PRACTICE_ID = "550e8400-e29b-41d4-a716-446655440000";
  * Get the demo "today" date string in YYYY-MM-DD format
  */
 export function getDemoToday(): string {
-  return DEMO_DATE;
+  return today();
 }
 
 /**
  * Get the demo "today" as a Date object
  */
 export function getDemoTodayDate(): Date {
-  return new Date(DEMO_DATE_OBJECT);
+  return todayDate();
 }
 
 /**
  * Get a date N days from demo date in YYYY-MM-DD format
  */
 export function getDemoDaysFromNow(days: number): string {
-  const date = getDemoTodayDate();
-  date.setDate(date.getDate() + days);
-  return date.toISOString().split("T")[0]!;
+  return daysFromNow(days);
 }
 
 /**
  * Get a date N days before demo date in YYYY-MM-DD format
  */
 export function getDemoDaysAgo(days: number): string {
-  return getDemoDaysFromNow(-days);
+  return daysFromNow(-days);
 }
 
 /**
- * Format a date for display (e.g., "Monday, Feb 9")
+ * Format a date for display (e.g., "Monday, Mar 25")
  */
 export function formatDemoDate(format: "long" | "short" = "long"): string {
+  const d = todayDate();
   if (format === "long") {
-    return DEMO_DATE_OBJECT.toLocaleDateString("en-US", {
+    return d.toLocaleDateString("en-US", {
       weekday: "long",
       month: "short",
       day: "numeric",
     });
   }
-  return DEMO_DATE_OBJECT.toLocaleDateString("en-US", {
+  return d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
   });

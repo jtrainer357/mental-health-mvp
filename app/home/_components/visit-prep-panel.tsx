@@ -8,9 +8,10 @@ import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
 import { Pill, TrendingDown, TrendingUp, Minus, AlertTriangle } from "lucide-react";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
-import { SYNTHETIC_PATIENTS } from "@/src/lib/data/synthetic-patients";
-import { SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/synthetic-priority-actions";
-import { getExternalIdFromUUID } from "@/src/lib/data/synthetic-adapter";
+import { PATIENTS as SYNTHETIC_PATIENTS } from "@/src/lib/data/patients";
+import { PRIORITY_ACTIONS as SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/priority-actions";
+import { APPOINTMENTS } from "@/src/lib/data/appointments";
+import { getExternalIdFromUUID } from "@/src/lib/data/adapter";
 
 // ── Prep data ───────────────────────────────────────────────────────────
 
@@ -148,7 +149,10 @@ function buildPrepData(apt: AppointmentWithPatient): PrepData {
   const scoreDays = 30 + (hash % 30);
 
   // Dates
-  const lastAppt = fullPatient?.last_appointment || "2026-01-28";
+  const lastAppt =
+    APPOINTMENTS.filter((a) => a.patient_id === externalId && a.status === "Completed").sort(
+      (a, b) => b.date.localeCompare(a.date)
+    )[0]?.date || "2026-01-28";
   const lastSeenStr = new Date(lastAppt).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",

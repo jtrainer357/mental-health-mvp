@@ -7,7 +7,7 @@ import { createClient } from "@/src/lib/supabase/client";
 import { createLogger } from "@/src/lib/logger";
 import type { Communication as CommunicationRow, Patient } from "@/src/lib/supabase/types";
 import { DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
-import { getDemoCommunicationThreads } from "@/src/lib/data/synthetic-adapter";
+import { getDemoCommunicationThreads } from "@/src/lib/data/adapter";
 
 const log = createLogger("queries/communications");
 

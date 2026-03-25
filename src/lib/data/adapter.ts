@@ -1,20 +1,22 @@
 /**
- * Synthetic Data Adapter
- * Converts TypeScript synthetic data to Supabase database types
- * Allows UI to use demo data without running SQL migrations
+ * Data Adapter — Converts seed data to Supabase database types
+ * This is the bridge between the unified seed data and the query layer.
  */
 
-import { SYNTHETIC_PATIENTS, type SyntheticPatient } from "./synthetic-patients";
-import { SYNTHETIC_APPOINTMENTS, type SyntheticAppointment } from "./synthetic-appointments";
-import {
-  SYNTHETIC_OUTCOME_MEASURES,
-  type OutcomeMeasure as SyntheticOutcomeMeasure,
-} from "./synthetic-outcome-measures";
-import { SYNTHETIC_MESSAGES, type Message as SyntheticMessage } from "./synthetic-messages";
-import { SYNTHETIC_INVOICES, type Invoice as SyntheticInvoice } from "./synthetic-billing";
-import SYNTHETIC_PRIORITY_ACTIONS, {
-  type SyntheticPriorityAction,
-} from "./synthetic-priority-actions";
+import { PATIENTS } from "./patients";
+import { APPOINTMENTS } from "./appointments";
+import { OUTCOME_MEASURES } from "./outcome-measures";
+import { MESSAGES } from "./messages";
+import { INVOICES } from "./billing";
+import { PRIORITY_ACTIONS } from "./priority-actions";
+import { today, toISO } from "./helpers";
+import type {
+  SeedPatient,
+  SeedAppointment,
+  SeedInvoice,
+  SeedMessage,
+  SeedOutcomeMeasure,
+} from "./types";
 import type {
   Patient,
   Appointment,
@@ -25,30 +27,29 @@ import type {
 } from "@/src/lib/supabase/types";
 import { DEMO_PRACTICE_ID } from "@/src/lib/utils/demo-date";
 
-// Generate deterministic UUID from string (simple hash-based approach)
-function generateDemoUUID(seed: string): string {
-  // Create a deterministic UUID-like string from the seed
-  // Format: 8-4-4-4-12 hex chars
-  const hash = seed.split("").reduce((acc, char, i) => {
-    return acc + char.charCodeAt(0) * (i + 1);
-  }, 0);
+// ============================================================================
+// UUID GENERATION (deterministic from seed string)
+// ============================================================================
 
+function generateDemoUUID(seed: string): string {
+  const hash = seed.split("").reduce((acc, char, i) => acc + char.charCodeAt(0) * (i + 1), 0);
   const hex = (num: number, len: number) =>
     Math.abs(num).toString(16).padStart(len, "0").slice(0, len);
 
   return [
     hex(hash, 8),
     hex(hash * 2, 4),
-    "4" + hex(hash * 3, 3), // Version 4
-    hex((hash % 4) + 8, 1) + hex(hash * 4, 3), // Variant
+    "4" + hex(hash * 3, 3),
+    hex((hash % 4) + 8, 1) + hex(hash * 4, 3),
     hex(hash * 5, 12),
   ].join("-");
 }
 
-/**
- * Convert synthetic patient to database Patient type
- */
-export function syntheticPatientToDb(patient: SyntheticPatient): Patient {
+// ============================================================================
+// CONVERTERS
+// ============================================================================
+
+export function seedPatientToDb(patient: SeedPatient): Patient {
   return {
     id: generateDemoUUID(patient.id),
     practice_id: DEMO_PRACTICE_ID,
@@ -65,29 +66,23 @@ export function syntheticPatientToDb(patient: SyntheticPatient): Patient {
     address_city: patient.address_city,
     address_state: patient.address_state,
     address_zip: patient.address_zip,
-    insurance_provider: patient.insurance_provider,
-    insurance_member_id: patient.insurance_member_id,
+    insurance_provider: null,
+    insurance_member_id: null,
     primary_diagnosis_code: patient.primary_diagnosis_code,
     primary_diagnosis_name: patient.primary_diagnosis_name,
     secondary_diagnosis_code: patient.secondary_diagnosis_code || null,
     risk_level: patient.risk_level,
-    medications: patient.medications || null,
+    medications: patient.medications.length > 0 ? patient.medications : null,
     treatment_start_date: patient.treatment_start_date,
     provider: patient.provider,
-    status: patient.status,
-    avatar_url: patient.avatar_url,
+    status: patient.status as "Active" | "Inactive" | "Discharged",
+    avatar_url: patient.avatar_url || null,
     created_at: patient.date_created + "T00:00:00Z",
     updated_at: new Date().toISOString(),
   };
 }
 
-/**
- * Convert synthetic appointment to database Appointment type
- */
-export function syntheticAppointmentToDb(
-  apt: SyntheticAppointment,
-  patientUUID: string
-): Appointment {
+export function seedAppointmentToDb(apt: SeedAppointment, patientUUID: string): Appointment {
   return {
     id: generateDemoUUID(apt.id),
     practice_id: DEMO_PRACTICE_ID,
@@ -107,11 +102,8 @@ export function syntheticAppointmentToDb(
   };
 }
 
-/**
- * Convert synthetic outcome measure to database OutcomeMeasure type
- */
-export function syntheticOutcomeMeasureToDb(
-  measure: SyntheticOutcomeMeasure,
+export function seedOutcomeMeasureToDb(
+  measure: SeedOutcomeMeasure,
   patientUUID: string
 ): OutcomeMeasure {
   return {
@@ -128,10 +120,7 @@ export function syntheticOutcomeMeasureToDb(
   };
 }
 
-/**
- * Convert synthetic message to database Message type
- */
-export function syntheticMessageToDb(msg: SyntheticMessage, patientUUID: string): Message {
+export function seedMessageToDb(msg: SeedMessage, patientUUID: string): Message {
   return {
     id: generateDemoUUID(msg.id),
     practice_id: DEMO_PRACTICE_ID,
@@ -146,11 +135,8 @@ export function syntheticMessageToDb(msg: SyntheticMessage, patientUUID: string)
   };
 }
 
-/**
- * Convert synthetic invoice to database Invoice type
- */
-export function syntheticInvoiceToDb(
-  inv: SyntheticInvoice,
+export function seedInvoiceToDb(
+  inv: SeedInvoice,
   patientUUID: string,
   appointmentUUID: string | null
 ): Invoice {
@@ -163,7 +149,7 @@ export function syntheticInvoiceToDb(
     date_of_service: inv.date_of_service,
     cpt_code: inv.cpt_code,
     charge_amount: inv.charge_amount,
-    insurance_paid: inv.insurance_paid,
+    insurance_paid: 0,
     patient_responsibility: inv.patient_responsibility,
     patient_paid: inv.patient_paid,
     balance: inv.balance,
@@ -173,68 +159,61 @@ export function syntheticInvoiceToDb(
   };
 }
 
-// Cache for converted patients (keyed by external_id)
+// ============================================================================
+// PATIENT CACHE & LOOKUPS
+// ============================================================================
+
 const patientCache = new Map<string, Patient>();
 
-/**
- * Get all demo patients converted to database format
- */
 export function getDemoPatients(): Patient[] {
-  // Filter to only get the 10 comprehensive demo patients
-  const demoPatients = SYNTHETIC_PATIENTS.filter((p) => p.id.endsWith("-demo"));
-
-  return demoPatients.map((p) => {
+  return PATIENTS.map((p) => {
     if (!patientCache.has(p.id)) {
-      patientCache.set(p.id, syntheticPatientToDb(p));
+      patientCache.set(p.id, seedPatientToDb(p));
     }
     return patientCache.get(p.id)!;
   });
 }
 
-/**
- * Get patient UUID from external ID
- */
 export function getPatientUUID(externalId: string): string {
   const cached = patientCache.get(externalId);
   if (cached) return cached.id;
   return generateDemoUUID(externalId);
 }
 
-/**
- * Get demo patient by external ID
- */
 export function getDemoPatientByExternalId(externalId: string): Patient | null {
-  const patient = SYNTHETIC_PATIENTS.find((p) => p.id === externalId);
+  const patient = PATIENTS.find((p) => p.id === externalId);
   if (!patient) return null;
-
   if (!patientCache.has(externalId)) {
-    patientCache.set(externalId, syntheticPatientToDb(patient));
+    patientCache.set(externalId, seedPatientToDb(patient));
   }
   return patientCache.get(externalId)!;
 }
 
-/**
- * Get demo patient by UUID
- */
 export function getDemoPatientByUUID(uuid: string): Patient | null {
-  // Check cache first
   for (const [, patient] of patientCache) {
     if (patient.id === uuid) return patient;
   }
-
-  // Generate and check all demo patients
   const demoPatients = getDemoPatients();
   return demoPatients.find((p) => p.id === uuid) || null;
 }
 
-/**
- * Get appointments for a demo patient
- */
+export function isDemoPatientUUID(uuid: string): boolean {
+  return getDemoPatientByUUID(uuid) !== null;
+}
+
+export function getExternalIdFromUUID(uuid: string): string | null {
+  const patient = getDemoPatientByUUID(uuid);
+  return patient?.external_id || null;
+}
+
+// ============================================================================
+// APPOINTMENT LOOKUPS
+// ============================================================================
+
 export function getDemoPatientAppointments(patientExternalId: string): Appointment[] {
   const patientUUID = getPatientUUID(patientExternalId);
-
-  return SYNTHETIC_APPOINTMENTS.filter((apt) => apt.patient_id === patientExternalId)
-    .map((apt) => syntheticAppointmentToDb(apt, patientUUID))
+  return APPOINTMENTS.filter((apt) => apt.patient_id === patientExternalId)
+    .map((apt) => seedAppointmentToDb(apt, patientUUID))
     .sort((a, b) => {
       const dateCompare = b.date.localeCompare(a.date);
       if (dateCompare !== 0) return dateCompare;
@@ -242,70 +221,6 @@ export function getDemoPatientAppointments(patientExternalId: string): Appointme
     });
 }
 
-/**
- * Get outcome measures for a demo patient
- */
-export function getDemoPatientOutcomeMeasures(patientExternalId: string): OutcomeMeasure[] {
-  const patientUUID = getPatientUUID(patientExternalId);
-
-  return SYNTHETIC_OUTCOME_MEASURES.filter((m) => m.patient_id === patientExternalId)
-    .map((m) => syntheticOutcomeMeasureToDb(m, patientUUID))
-    .sort((a, b) => b.measurement_date.localeCompare(a.measurement_date));
-}
-
-/**
- * Get messages for a demo patient
- */
-export function getDemoPatientMessages(patientExternalId: string): Message[] {
-  const patientUUID = getPatientUUID(patientExternalId);
-
-  return SYNTHETIC_MESSAGES.filter((m) => m.patient_id === patientExternalId)
-    .map((m) => syntheticMessageToDb(m, patientUUID))
-    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-}
-
-/**
- * Get invoices for a demo patient
- */
-export function getDemoPatientInvoices(patientExternalId: string): Invoice[] {
-  const patientUUID = getPatientUUID(patientExternalId);
-
-  return SYNTHETIC_INVOICES.filter((inv) => inv.patient_id === patientExternalId)
-    .map((inv) => {
-      // Find appointment UUID if available
-      const apt = SYNTHETIC_APPOINTMENTS.find((a) => a.id === inv.appointment_id);
-      const aptUUID = apt ? generateDemoUUID(apt.id) : null;
-      return syntheticInvoiceToDb(inv, patientUUID, aptUUID);
-    })
-    .sort((a, b) => b.date_of_service.localeCompare(a.date_of_service));
-}
-
-/**
- * Get priority actions for a demo patient
- */
-export function getDemoPatientPriorityActions(patientExternalId: string) {
-  return SYNTHETIC_PRIORITY_ACTIONS.filter((a) => a.patient_id === patientExternalId);
-}
-
-/**
- * Check if a patient ID is a demo patient UUID
- */
-export function isDemoPatientUUID(uuid: string): boolean {
-  return getDemoPatientByUUID(uuid) !== null;
-}
-
-/**
- * Get external ID from UUID (for demo patients)
- */
-export function getExternalIdFromUUID(uuid: string): string | null {
-  const patient = getDemoPatientByUUID(uuid);
-  return patient?.external_id || null;
-}
-
-/**
- * Get today's demo appointments with patient details (for dashboard)
- * Returns appointments for DEMO_DATE with full patient info attached
- */
 export function getDemoTodayAppointments(): Array<
   Appointment & {
     patient: Pick<
@@ -314,20 +229,15 @@ export function getDemoTodayAppointments(): Array<
     >;
   }
 > {
-  const { DEMO_DATE } = require("@/src/lib/utils/demo-date");
-
-  // Get all demo appointments for today
-  const todayAppointments = SYNTHETIC_APPOINTMENTS.filter(
-    (apt) => apt.date === DEMO_DATE && apt.patient_id.endsWith("-demo")
-  );
+  const todayStr = today();
+  const todayAppointments = APPOINTMENTS.filter((apt) => apt.date === todayStr);
 
   return todayAppointments
     .map((apt) => {
       const patientUUID = getPatientUUID(apt.patient_id);
       const patient = getDemoPatientByExternalId(apt.patient_id);
-
       return {
-        ...syntheticAppointmentToDb(apt, patientUUID),
+        ...seedAppointmentToDb(apt, patientUUID),
         patient: {
           id: patient?.id || patientUUID,
           first_name: patient?.first_name || apt.patient_name.split(" ")[0] || "",
@@ -341,10 +251,6 @@ export function getDemoTodayAppointments(): Array<
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 }
 
-/**
- * Get upcoming demo appointments with patient details (for schedule/calendar)
- * Returns appointments from DEMO_DATE to specified days ahead
- */
 export function getDemoUpcomingAppointments(days: number = 28): Array<
   Appointment & {
     patient: Pick<
@@ -353,21 +259,21 @@ export function getDemoUpcomingAppointments(days: number = 28): Array<
     >;
   }
 > {
-  const { DEMO_DATE, getDemoDaysFromNow } = require("@/src/lib/utils/demo-date");
-  const endDate = getDemoDaysFromNow(days);
+  const todayStr = today();
+  const endDate = new Date();
+  endDate.setDate(endDate.getDate() + days);
+  const endStr = endDate.toISOString().split("T")[0]!;
 
-  // Get all demo appointments in date range
-  const upcomingAppointments = SYNTHETIC_APPOINTMENTS.filter(
-    (apt) => apt.patient_id.endsWith("-demo") && apt.date >= DEMO_DATE && apt.date <= endDate
+  const upcomingAppointments = APPOINTMENTS.filter(
+    (apt) => apt.date >= todayStr && apt.date <= endStr
   );
 
   return upcomingAppointments
     .map((apt) => {
       const patientUUID = getPatientUUID(apt.patient_id);
       const patient = getDemoPatientByExternalId(apt.patient_id);
-
       return {
-        ...syntheticAppointmentToDb(apt, patientUUID),
+        ...seedAppointmentToDb(apt, patientUUID),
         patient: {
           id: patient?.id || patientUUID,
           first_name: patient?.first_name || apt.patient_name.split(" ")[0] || "",
@@ -385,14 +291,44 @@ export function getDemoUpcomingAppointments(days: number = 28): Array<
     });
 }
 
-/**
- * Convert synthetic message to database Communication type
- * (Different from Message - Communication is used for unified inbox)
- */
-export function syntheticMessageToCommunication(
-  msg: SyntheticMessage,
-  patientUUID: string
-): Communication {
+// ============================================================================
+// OTHER DATA LOOKUPS
+// ============================================================================
+
+export function getDemoPatientOutcomeMeasures(patientExternalId: string): OutcomeMeasure[] {
+  const patientUUID = getPatientUUID(patientExternalId);
+  return OUTCOME_MEASURES.filter((m) => m.patient_id === patientExternalId)
+    .map((m) => seedOutcomeMeasureToDb(m, patientUUID))
+    .sort((a, b) => b.measurement_date.localeCompare(a.measurement_date));
+}
+
+export function getDemoPatientMessages(patientExternalId: string): Message[] {
+  const patientUUID = getPatientUUID(patientExternalId);
+  return MESSAGES.filter((m) => m.patient_id === patientExternalId)
+    .map((m) => seedMessageToDb(m, patientUUID))
+    .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+}
+
+export function getDemoPatientInvoices(patientExternalId: string): Invoice[] {
+  const patientUUID = getPatientUUID(patientExternalId);
+  return INVOICES.filter((inv) => inv.patient_id === patientExternalId)
+    .map((inv) => {
+      const apt = APPOINTMENTS.find((a) => a.id === inv.appointment_id);
+      const aptUUID = apt ? generateDemoUUID(apt.id) : null;
+      return seedInvoiceToDb(inv, patientUUID, aptUUID);
+    })
+    .sort((a, b) => b.date_of_service.localeCompare(a.date_of_service));
+}
+
+export function getDemoPatientPriorityActions(patientExternalId: string) {
+  return PRIORITY_ACTIONS.filter((a) => a.patient_id === patientExternalId);
+}
+
+// ============================================================================
+// COMMUNICATIONS (unified inbox format)
+// ============================================================================
+
+export function seedMessageToCommunication(msg: SeedMessage, patientUUID: string): Communication {
   const patient = getDemoPatientByExternalId(msg.patient_id);
   const isOutbound = msg.direction === "outbound";
 
@@ -402,14 +338,18 @@ export function syntheticMessageToCommunication(
     patient_id: patientUUID,
     channel: msg.channel,
     direction: msg.direction,
-    sender: isOutbound ? "Dr. Demo" : patient ? `${patient.first_name} ${patient.last_name}` : null,
+    sender: isOutbound
+      ? "Dr. Sarah Chen"
+      : patient
+        ? `${patient.first_name} ${patient.last_name}`
+        : null,
     recipient: isOutbound
       ? patient
         ? `${patient.first_name} ${patient.last_name}`
         : null
-      : "Dr. Demo",
-    sender_email: isOutbound ? "dr.demo@practice.com" : patient?.email || null,
-    recipient_email: isOutbound ? patient?.email || null : "dr.demo@practice.com",
+      : "Dr. Sarah Chen",
+    sender_email: isOutbound ? "dr.chen@practice.com" : patient?.email || null,
+    recipient_email: isOutbound ? patient?.email || null : "dr.chen@practice.com",
     sender_phone: isOutbound ? "555-0100" : patient?.phone_mobile || null,
     recipient_phone: isOutbound ? patient?.phone_mobile || null : "555-0100",
     message_body: msg.content,
@@ -419,20 +359,12 @@ export function syntheticMessageToCommunication(
   };
 }
 
-/**
- * Get demo communication threads grouped by patient (for inbox)
- * Returns threads with patient info, messages, unread count
- */
 export function getDemoCommunicationThreads(): Array<{
   patient: Pick<Patient, "id" | "first_name" | "last_name" | "avatar_url">;
   messages: Communication[];
   unreadCount: number;
   lastMessage: Communication | null;
 }> {
-  // Filter to only demo patient messages
-  const demoMessages = SYNTHETIC_MESSAGES.filter((m) => m.patient_id.endsWith("-demo"));
-
-  // Group by patient
   const patientMap = new Map<
     string,
     {
@@ -442,7 +374,7 @@ export function getDemoCommunicationThreads(): Array<{
     }
   >();
 
-  demoMessages.forEach((msg) => {
+  MESSAGES.forEach((msg) => {
     const patientId = msg.patient_id;
 
     if (!patientMap.has(patientId)) {
@@ -462,13 +394,12 @@ export function getDemoCommunicationThreads(): Array<{
     }
 
     const thread = patientMap.get(patientId)!;
-    thread.messages.push(syntheticMessageToCommunication(msg, getPatientUUID(patientId)));
+    thread.messages.push(seedMessageToCommunication(msg, getPatientUUID(patientId)));
     if (!msg.read && msg.direction === "inbound") {
       thread.unreadCount++;
     }
   });
 
-  // Convert to array and add lastMessage
   return Array.from(patientMap.values())
     .map((thread) => ({
       ...thread,

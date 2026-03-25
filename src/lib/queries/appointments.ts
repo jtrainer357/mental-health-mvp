@@ -12,10 +12,7 @@ import {
   getDemoDaysAgo,
   DEMO_PRACTICE_ID,
 } from "@/src/lib/utils/demo-date";
-import {
-  getDemoTodayAppointments,
-  getDemoUpcomingAppointments,
-} from "@/src/lib/data/synthetic-adapter";
+import { getDemoTodayAppointments, getDemoUpcomingAppointments } from "@/src/lib/data/adapter";
 
 const log = createLogger("queries/appointments");
 
