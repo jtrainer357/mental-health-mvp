@@ -3,7 +3,6 @@
 import * as React from "react";
 import { Card } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
-import { Button } from "@/design-system/components/ui/button";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Heading } from "@/design-system/components/ui/typography";
 
@@ -65,21 +64,13 @@ export function BalanceAlertsWidget() {
           <Heading level={4} className="text-lg">
             Balance Alerts
           </Heading>
-          {unreadCount > 0 && (
-            <span className="bg-primary text-primary-foreground flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold">
-              {unreadCount}
-            </span>
-          )}
         </div>
-        <Button variant="outline" size="sm" className="h-7 rounded-full px-4 text-xs font-bold">
-          View all
-        </Button>
       </div>
       <div className="-mx-2 space-y-2 px-2">
         {alerts.map((alert) => (
           <Card
             key={alert.id}
-            className="hover:bg-card-hover/70 cursor-pointer p-3 transition-all hover:border-white hover:shadow-md"
+            className="!bg-teal/[0.06] hover:!bg-teal/[0.10] cursor-pointer p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
             <div className="flex items-start gap-3">
               <Avatar className="h-10 w-10">
