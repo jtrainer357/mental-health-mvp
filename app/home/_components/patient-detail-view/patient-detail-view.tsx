@@ -230,14 +230,8 @@ export function PatientDetailView({
                   <TabsTrigger value="medical-records" className={tabTriggerStyles}>
                     Medical Records
                   </TabsTrigger>
-                  <TabsTrigger value="messages" className={tabTriggerStyles}>
-                    Messages
-                  </TabsTrigger>
                   <TabsTrigger value="billing" className={tabTriggerStyles}>
                     Billing
-                  </TabsTrigger>
-                  <TabsTrigger value="reviews" className={tabTriggerStyles}>
-                    Reviews
                   </TabsTrigger>
                 </TabsList>
 
@@ -260,19 +254,8 @@ export function PatientDetailView({
                   <MedicalRecordsTab patient={patient} />
                 </TabsContent>
 
-                <TabsContent
-                  value="messages"
-                  className="-mx-4 mt-0 -mb-4 flex-1 overflow-hidden sm:-mx-6 sm:-mb-6"
-                >
-                  <MessagesTab patient={patient} />
-                </TabsContent>
-
                 <TabsContent value="billing" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
                   <BillingTab patient={patient} />
-                </TabsContent>
-
-                <TabsContent value="reviews" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                  <ReviewsTab patient={patient} />
                 </TabsContent>
               </Tabs>
             </CardWrapper>
@@ -333,7 +316,7 @@ export function PatientDetailView({
                 exit="exit"
                 className="fixed inset-0 z-50"
               >
-                <CardWrapper className="bg-background/95 h-full overflow-y-auto rounded-none border-0 shadow-none lg:overflow-hidden">
+                <CardWrapper className="bg-background/95 h-full overflow-y-auto rounded-none border-0 shadow-none">
                   <ClinicalNoteView
                     activity={selectedActivity}
                     patientName={patient.name}

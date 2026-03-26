@@ -124,7 +124,6 @@ function getDAPContent(activity?: SelectedActivity): NoteSection[] {
         label: "ASSESSMENT",
         prefix: "A",
         status: activity.noteStatus === "signed" ? "accepted" : "human-edited",
-        tags: activity.noteStatus === "signed" ? [] : ["Factual correction", "Style preference"],
         content: activity.assessment || "Assessment pending.",
       },
       {
@@ -132,7 +131,6 @@ function getDAPContent(activity?: SelectedActivity): NoteSection[] {
         label: "PLAN",
         prefix: "P",
         status: "machine-generated",
-        tags: ["Extraction Target"],
         content: activity.plan || "Plan pending.",
       },
     ];
@@ -153,7 +151,6 @@ function getDAPContent(activity?: SelectedActivity): NoteSection[] {
       label: "ASSESSMENT",
       prefix: "A",
       status: "human-edited",
-      tags: ["Factual correction", "Style preference", "Added detail"],
       content:
         "GAD symptoms improving. PHQ-9 decreased from 12 \u2192 8 (Mild). Medication stable on Fluoxetine 40mg. Patient also reports better sleep quality since starting RAIN practice. Increasing engagement with CBT techniques noted.",
     },
@@ -162,7 +159,6 @@ function getDAPContent(activity?: SelectedActivity): NoteSection[] {
       label: "PLAN",
       prefix: "P",
       status: "machine-generated",
-      tags: ["Extraction Target"],
       content: [
         "Continue weekly individual therapy",
         "Maintain Fluoxetine 40mg",
@@ -228,7 +224,7 @@ function StatusBadge({ status }: { status: SectionStatus }) {
   return (
     <Badge
       variant="outline"
-      className={cn("rounded-lg px-2.5 py-0.5 text-[10px] font-semibold tracking-wide", c.cls)}
+      className={cn("rounded-lg px-2.5 py-0.5 text-sm font-semibold tracking-wide", c.cls)}
     >
       {c.label}
     </Badge>
@@ -241,7 +237,7 @@ function SectionActionBar() {
       <Button
         variant="ghost"
         size="sm"
-        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-sm font-medium"
       >
         <Check className="h-3.5 w-3.5" />
         Accept
@@ -249,7 +245,7 @@ function SectionActionBar() {
       <Button
         variant="ghost"
         size="sm"
-        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-sm font-medium"
       >
         <Pencil className="h-3.5 w-3.5" />
         Edit
@@ -257,7 +253,7 @@ function SectionActionBar() {
       <Button
         variant="ghost"
         size="sm"
-        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+        className="text-foreground/50 hover:text-foreground hover:bg-muted/60 h-8 gap-1.5 rounded-lg px-3 text-sm font-medium"
       >
         <RotateCcw className="h-3.5 w-3.5" />
         Rewrite
@@ -300,7 +296,7 @@ function OutcomeTrendRow({
         </Text>
         <div
           className={cn(
-            "flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-bold",
+            "flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-sm font-bold",
             change < 0
               ? "bg-success/10 text-success"
               : change > 0
@@ -408,7 +404,7 @@ export function ClinicalNoteView({
           <div className="bg-muted/40 mt-3 rounded-lg px-3 py-2">
             <Text
               size="xs"
-              className="text-muted-foreground mb-1 text-[10px] font-bold tracking-wider uppercase"
+              className="text-muted-foreground mb-1 text-sm font-bold tracking-wider uppercase"
             >
               Problem List
             </Text>
@@ -444,7 +440,7 @@ export function ClinicalNoteView({
               {patient.medications.map((med) => (
                 <motion.span
                   key={med}
-                  className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-[11px] font-medium"
+                  className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-sm font-medium"
                   whileHover={{ scale: 1.03 }}
                 >
                   {med}
@@ -455,14 +451,14 @@ export function ClinicalNoteView({
           <div className="mt-3">
             <Text
               size="xs"
-              className="text-muted-foreground mb-1.5 text-[10px] font-bold tracking-wider uppercase"
+              className="text-muted-foreground mb-1.5 text-sm font-bold tracking-wider uppercase"
             >
               Risk Level
             </Text>
             <Badge
               variant="outline"
               className={cn(
-                "rounded-md px-2 py-0.5 text-[10px] font-semibold",
+                "rounded-md px-2 py-0.5 text-sm font-semibold",
                 patient.riskLevel === "high"
                   ? "border-destructive/30 bg-destructive/10 text-destructive"
                   : patient.riskLevel === "medium"
@@ -556,7 +552,7 @@ export function ClinicalNoteView({
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-[10px] font-medium"
+                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-sm font-medium"
                   >
                     In Progress
                   </Badge>
@@ -570,7 +566,7 @@ export function ClinicalNoteView({
                   </div>
                   <Badge
                     variant="outline"
-                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-[10px] font-medium"
+                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-sm font-medium"
                   >
                     In Progress
                   </Badge>
@@ -635,11 +631,8 @@ export function ClinicalNoteView({
       initial="hidden"
       animate="visible"
     >
-      {/* Header */}
-      <motion.div
-        variants={headerVariants}
-        className="border-border/30 mb-6 flex items-center justify-between border-b pb-4"
-      >
+      {/* Header — sticky with blur */}
+      <motion.div variants={headerVariants} className="mb-4 flex items-center justify-between py-3">
         <div className="flex items-center gap-4">
           <motion.button
             onClick={goBack}
@@ -680,18 +673,6 @@ export function ClinicalNoteView({
         </div>
         <div className="flex items-center gap-3">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
-          >
-            <Badge
-              variant="secondary"
-              className="bg-warning/15 text-warning rounded-lg px-3 py-1 text-xs font-semibold"
-            >
-              Ready for Review
-            </Badge>
-          </motion.div>
-          <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="hidden lg:block"
@@ -700,7 +681,7 @@ export function ClinicalNoteView({
               variant="outline"
               size="sm"
               onClick={toggleFullView}
-              className="border-border/50 hover:border-primary/30 hover:bg-primary/5 gap-2 transition-all"
+              className="gap-2 transition-all"
             >
               {isFullView ? (
                 <>
@@ -751,7 +732,12 @@ export function ClinicalNoteView({
 
         {/* Center: Session Note */}
         <div className="min-w-0 flex-1">
-          <CardWrapper className={cn("space-y-5", !isFullView && "px-0")}>
+          <CardWrapper
+            className={cn(
+              "space-y-5",
+              !isFullView && "border-0 bg-transparent px-0 shadow-none backdrop-blur-none"
+            )}
+          >
             <motion.div
               variants={containerVariants}
               initial="hidden"
@@ -780,17 +766,16 @@ export function ClinicalNoteView({
                           <Badge
                             key={tag}
                             variant="outline"
-                            className="border-primary/20 bg-primary/5 text-primary rounded-md px-2 py-0 text-[10px] font-medium"
+                            className="border-primary/20 bg-primary/5 text-primary rounded-md px-2 py-0 text-sm font-medium"
                           >
                             {tag}
                           </Badge>
                         ))}
                     </div>
-                    <StatusBadge status={section.status} />
                   </div>
 
                   {/* Section content card */}
-                  <Card className="border-border/40 bg-card/80 p-5 shadow-sm">
+                  <Card className="border-border/70 bg-card p-5 shadow-sm">
                     {section.key === "plan" ? (
                       <ol className="space-y-2.5">
                         {section.content.split("\n").map((item, i) => (
@@ -805,7 +790,7 @@ export function ClinicalNoteView({
                               ease: smoothEase,
                             }}
                           >
-                            <span className="bg-primary/10 text-primary mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold">
+                            <span className="bg-primary/10 text-primary mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-bold">
                               {i + 1}
                             </span>
                             <Text size="sm" className="text-foreground/80 pt-0.5 leading-relaxed">
@@ -826,7 +811,7 @@ export function ClinicalNoteView({
                         {section.tags.map((tag) => (
                           <motion.span
                             key={tag}
-                            className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-[11px] font-medium"
+                            className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-sm font-medium"
                             whileHover={{ scale: 1.03 }}
                           >
                             {tag}
@@ -840,29 +825,14 @@ export function ClinicalNoteView({
                 </motion.section>
               ))}
 
-              {/* ── Provider Approval — CPT + Extracted Actions side by side ── */}
-              <motion.div variants={sectionVariants}>
-                <div className="flex items-center gap-3 py-1">
-                  <div className="border-border/30 flex-1 border-t" />
-                  <div className="bg-muted/50 border-border/30 flex items-center gap-2 rounded-full border px-4 py-1.5">
-                    <Shield className="text-warning h-3.5 w-3.5" />
-                    <Text
-                      size="xs"
-                      className="text-muted-foreground font-semibold tracking-wider uppercase"
-                    >
-                      Provider Approval Required
-                    </Text>
-                  </div>
-                  <div className="border-border/30 flex-1 border-t" />
-                </div>
-              </motion.div>
+              {/* ── CPT + Extracted Actions side by side ── */}
 
               <motion.div
                 variants={sectionVariants}
                 className="grid grid-cols-1 gap-2 lg:grid-cols-2"
               >
                 {/* CPT Approval */}
-                <Card className="border-border/40 bg-card flex flex-col overflow-hidden p-0 shadow-sm">
+                <Card className="border-border/70 bg-teal/5 flex flex-col overflow-hidden p-0 shadow-sm">
                   <div className="border-border/30 border-b px-5 py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -873,12 +843,6 @@ export function ClinicalNoteView({
                           CPT Code
                         </Text>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="border-warning/20 bg-warning/10 text-warning rounded-lg px-2 py-0.5 text-[10px] font-semibold"
-                      >
-                        Approval Required
-                      </Badge>
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col p-5">
@@ -895,7 +859,7 @@ export function ClinicalNoteView({
                       <div className="bg-muted/50 rounded-lg px-3 py-2 text-right">
                         <Text
                           size="xs"
-                          className="text-muted-foreground text-[10px] font-bold tracking-wider uppercase"
+                          className="text-muted-foreground text-sm font-bold tracking-wider uppercase"
                         >
                           Duration
                         </Text>
@@ -908,7 +872,7 @@ export function ClinicalNoteView({
                     <Card className="bg-card/60 border-border/30 mt-4 flex-1 p-3.5">
                       <Text
                         size="xs"
-                        className="text-muted-foreground mb-2 text-[10px] font-bold tracking-wider uppercase"
+                        className="text-muted-foreground mb-2 text-sm font-bold tracking-wider uppercase"
                       >
                         Compliance Evidence
                       </Text>
@@ -949,7 +913,7 @@ export function ClinicalNoteView({
                 </Card>
 
                 {/* Extracted Actions */}
-                <Card className="border-border/40 bg-card flex flex-col overflow-hidden p-0 shadow-sm">
+                <Card className="border-border/70 bg-teal/5 flex flex-col overflow-hidden p-0 shadow-sm">
                   <div className="border-border/30 border-b px-5 py-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -960,12 +924,6 @@ export function ClinicalNoteView({
                           Post-Session Actions
                         </Text>
                       </div>
-                      <Badge
-                        variant="outline"
-                        className="border-teal/20 bg-teal/10 text-teal rounded-lg px-2 py-0.5 text-[10px] font-semibold"
-                      >
-                        Substrate-Generated
-                      </Badge>
                     </div>
                   </div>
                   <div className="flex flex-1 flex-col px-5 pb-5">
@@ -1022,54 +980,30 @@ export function ClinicalNoteView({
                   </div>
                 </Card>
               </motion.div>
-
-              {/* ── Sign & Approve Footer ─────────────────────────── */}
-              <motion.div variants={sectionVariants} className="pt-2 pb-8">
-                <Button variant="default" size="xl" className="w-full text-base font-bold">
-                  Sign & Approve Note
-                </Button>
-                <div className="mt-4 flex items-center justify-center gap-8">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground text-xs font-semibold"
-                  >
-                    Save Draft
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-destructive/60 hover:text-destructive text-xs font-semibold"
-                  >
-                    Discard AI Note
-                  </Button>
-                </div>
-              </motion.div>
             </motion.div>
           </CardWrapper>
         </div>
       </div>
 
-      {/* ESC hint */}
-      <AnimatePresence>
-        {isFullView && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-4 left-1/2 -translate-x-1/2"
-          >
-            <div className="bg-foreground/90 text-card flex items-center gap-2 rounded-full px-4 py-2 shadow-lg">
-              <kbd className="bg-foreground/70 text-card rounded px-2 py-0.5 font-mono text-xs">
-                ESC
-              </kbd>
-              <Text size="sm" className="text-card/80">
-                to exit full view
-              </Text>
-            </div>
-          </motion.div>
+      {/* ── Footer — outside scroll container, always visible at bottom ── */}
+      <div
+        className={cn(
+          "flex shrink-0 items-center justify-between px-6 py-4",
+          isFullView && "lg:pl-[calc(440px+2.5rem)]"
         )}
-      </AnimatePresence>
+      >
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm">
+            Save Draft
+          </Button>
+          <Button variant="outline" size="sm">
+            Discard AI Note
+          </Button>
+        </div>
+        <Button variant="default" size="lg" className="text-base font-bold">
+          Sign & Approve Note
+        </Button>
+      </div>
     </motion.div>
   );
 }
