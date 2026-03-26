@@ -693,7 +693,7 @@ export function ClinicalNoteView({
             <Heading level={4} className="text-lg font-semibold sm:text-xl">
               {patientName} &middot; Session #{sessionNum}
             </Heading>
-            <Text size="sm" muted className="mt-0.5">
+            <Text size="sm" muted className="mt-0.5 flex flex-wrap">
               {activity.date} &middot; {activity.appointmentType || "Individual Therapy"} &middot;{" "}
               {activity.duration || "50 min"} &middot; {activity.cptCode || "90837"} &middot;{" "}
               {activity.signedBy || patient?.provider || "Dr. Sarah Chen"}
@@ -1069,19 +1069,19 @@ export function ClinicalNoteView({
       {activity.id !== "new-session" && (
         <div
           className={cn(
-            "flex shrink-0 items-center justify-between px-6 py-4",
+            "flex shrink-0 flex-col items-stretch gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6",
             isFullView && "lg:pl-[calc(440px+2.5rem)]"
           )}
         >
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               Save Draft
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" className="w-full sm:w-auto">
               Discard AI Note
             </Button>
           </div>
-          <Button variant="default" size="lg" className="text-base font-bold">
+          <Button variant="default" size="lg" className="w-full text-base font-bold sm:w-auto">
             Sign & Approve Note
           </Button>
         </div>
