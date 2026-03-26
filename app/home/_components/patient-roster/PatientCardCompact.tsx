@@ -26,11 +26,11 @@ export function PatientCardCompact({
       case "ACTIVE":
         return { variant: "active" as const, dotClass: "bg-success" };
       case "NEW":
-        return { variant: "new" as const, dotClass: "bg-blue-500" };
+        return { variant: "new" as const, dotClass: "bg-primary" };
       case "INACTIVE":
-        return { variant: "inactive" as const, dotClass: "bg-gray-400" };
+        return { variant: "inactive" as const, dotClass: "bg-muted-foreground" };
       default:
-        return { variant: "secondary" as const, dotClass: "bg-gray-400" };
+        return { variant: "secondary" as const, dotClass: "bg-muted-foreground" };
     }
   }, [patient.status]);
 
@@ -108,11 +108,11 @@ export function PatientCardCompactHorizontal({
       case "ACTIVE":
         return { dotClass: "bg-success" };
       case "NEW":
-        return { dotClass: "bg-blue-500" };
+        return { dotClass: "bg-primary" };
       case "INACTIVE":
-        return { dotClass: "bg-gray-400" };
+        return { dotClass: "bg-muted-foreground" };
       default:
-        return { dotClass: "bg-gray-400" };
+        return { dotClass: "bg-muted-foreground" };
     }
   }, [patient.status]);
 

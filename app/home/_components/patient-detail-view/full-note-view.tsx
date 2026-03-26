@@ -111,9 +111,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           <Badge
             variant="secondary"
             className={
-              noteStatus === "signed"
-                ? "bg-green-100 text-green-700"
-                : "bg-amber-100 text-amber-700"
+              noteStatus === "signed" ? "bg-success/15 text-success" : "bg-warning/15 text-warning"
             }
           >
             {noteStatus === "signed" ? "Signed & Locked" : "Draft"}
@@ -164,15 +162,15 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
         {/* Clinical Measures */}
         {(scores.phq9 || scores.gad7 || scores.pcl5) && (
           <div>
-            <Text size="sm" className="mb-2 font-semibold text-stone-500">
+            <Text size="sm" className="text-muted-foreground mb-2 font-semibold">
               CLINICAL MEASURES
             </Text>
             <Card className="p-4">
               <div className="flex flex-wrap gap-4">
                 {scores.phq9 && (
                   <div className="flex items-center gap-2">
-                    <div className="flex h-7 items-center justify-center rounded-full bg-blue-100 px-2.5">
-                      <Text size="xs" className="font-medium text-blue-700">
+                    <div className="bg-primary/10 flex h-7 items-center justify-center rounded-full px-2.5">
+                      <Text size="xs" className="text-primary font-medium">
                         PHQ-9
                       </Text>
                     </div>
@@ -206,7 +204,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
 
         {/* Subjective */}
         <div>
-          <Text size="sm" className="mb-2 font-semibold text-stone-500">
+          <Text size="sm" className="text-muted-foreground mb-2 font-semibold">
             SUBJECTIVE
           </Text>
           <Card className="p-4">
@@ -218,7 +216,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
 
         {/* Objective */}
         <div>
-          <Text size="sm" className="mb-2 font-semibold text-stone-500">
+          <Text size="sm" className="text-muted-foreground mb-2 font-semibold">
             OBJECTIVE
           </Text>
           <Card className="p-4">
@@ -230,7 +228,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
 
         {/* Assessment */}
         <div>
-          <Text size="sm" className="mb-2 font-semibold text-stone-500">
+          <Text size="sm" className="text-muted-foreground mb-2 font-semibold">
             ASSESSMENT
           </Text>
           <Card className="p-4">
@@ -242,7 +240,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
 
         {/* Plan */}
         <div>
-          <Text size="sm" className="mb-2 font-semibold text-stone-500">
+          <Text size="sm" className="text-muted-foreground mb-2 font-semibold">
             PLAN
           </Text>
           <Card className="p-4">
@@ -271,7 +269,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
               </Text>
             </div>
             {noteStatus === "signed" && (
-              <Badge className="bg-green-100 text-green-700">Verified</Badge>
+              <Badge className="bg-success/15 text-success">Verified</Badge>
             )}
           </div>
         </Card>

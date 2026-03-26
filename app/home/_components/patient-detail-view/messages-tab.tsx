@@ -48,10 +48,12 @@ function VoiceMessageBubble({ duration, isOutbound }: { duration: string; isOutb
         aria-label="Play voice message"
         className={cn(
           "flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors",
-          isOutbound ? "bg-white/20 hover:bg-white/30" : "bg-gray-100 hover:bg-gray-200"
+          isOutbound ? "bg-white/20 hover:bg-white/30" : "bg-muted hover:bg-muted"
         )}
       >
-        <Play className={cn("ml-0.5 h-5 w-5", isOutbound ? "text-white" : "text-gray-600")} />
+        <Play
+          className={cn("ml-0.5 h-5 w-5", isOutbound ? "text-white" : "text-muted-foreground")}
+        />
       </button>
       <div className="flex items-center gap-2">
         {/* Waveform visualization */}
@@ -59,7 +61,7 @@ function VoiceMessageBubble({ duration, isOutbound }: { duration: string; isOutb
           {Array.from({ length: 24 }).map((_, i) => (
             <div
               key={i}
-              className={cn("w-[2px] rounded-full", isOutbound ? "bg-white/60" : "bg-gray-300")}
+              className={cn("w-[2px] rounded-full", isOutbound ? "bg-white/60" : "bg-border")}
               style={{
                 height: `${Math.max(4, Math.sin(i * 0.5) * 12 + Math.random() * 8 + 8)}px`,
               }}
@@ -67,11 +69,14 @@ function VoiceMessageBubble({ duration, isOutbound }: { duration: string; isOutb
           ))}
         </div>
         <span
-          className={cn("text-sm tabular-nums", isOutbound ? "text-white/80" : "text-gray-500")}
+          className={cn(
+            "text-sm tabular-nums",
+            isOutbound ? "text-white/80" : "text-muted-foreground"
+          )}
         >
           {duration}
         </span>
-        <Smile className={cn("h-5 w-5", isOutbound ? "text-white/60" : "text-gray-400")} />
+        <Smile className={cn("h-5 w-5", isOutbound ? "text-white/60" : "text-muted-foreground")} />
       </div>
     </div>
   );
@@ -111,7 +116,7 @@ export function MessagesTab({ patient }: MessagesTabProps) {
 
   // Channel tabs component (used in both empty and filled states)
   const ChannelTabs = () => (
-    <div className="border-border/50 border-t bg-white px-3 pt-3 sm:px-5">
+    <div className="border-border/50 bg-card border-t px-3 pt-3 sm:px-5">
       <div className="-mx-3 flex items-center gap-3 overflow-x-auto px-3 sm:mx-0 sm:gap-4 sm:overflow-visible sm:px-0">
         {messageChannels.map((channel) => (
           <button
@@ -135,7 +140,7 @@ export function MessagesTab({ patient }: MessagesTabProps) {
 
   // Message input component (used in both empty and filled states)
   const MessageInput = () => (
-    <div className="border-border/50 rounded-b-xl border-t bg-white p-2 sm:p-3">
+    <div className="border-border/50 bg-card rounded-b-xl border-t p-2 sm:p-3">
       <div className="flex items-center gap-2 sm:gap-3">
         <div className="border-border bg-background focus-within:ring-ring flex h-10 flex-1 items-center rounded-full border pr-1 pl-3 focus-within:ring-2 sm:pr-2 sm:pl-4">
           <input
@@ -271,7 +276,7 @@ export function MessagesTab({ patient }: MessagesTabProps) {
                             "rounded-2xl px-4 py-3",
                             isOutbound
                               ? "bg-primary text-primary-foreground rounded-br-md"
-                              : "border-border/50 rounded-bl-md border bg-white shadow-sm"
+                              : "border-border/50 bg-card rounded-bl-md border shadow-sm"
                           )}
                         >
                           <VoiceMessageBubble
@@ -287,7 +292,7 @@ export function MessagesTab({ patient }: MessagesTabProps) {
                           "rounded-2xl px-4 py-3",
                           isOutbound
                             ? "bg-primary text-primary-foreground rounded-br-md"
-                            : "border-border/50 rounded-bl-md border bg-white shadow-sm"
+                            : "border-border/50 bg-card rounded-bl-md border shadow-sm"
                         )}
                       >
                         <p className="text-sm leading-relaxed whitespace-pre-wrap">

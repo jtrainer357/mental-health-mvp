@@ -26,8 +26,8 @@ export function EmptyPatients({ activeFilter, onFilterChange }: EmptyPatientsPro
             />
           </div>
           <CardWrapper className="flex flex-1 flex-col items-center justify-center">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-              <Users className="h-7 w-7 text-gray-400" />
+            <div className="bg-muted mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+              <Users className="text-muted-foreground h-7 w-7" />
             </div>
             <Text size="sm" className="mb-1 font-semibold">
               No Patients Found
