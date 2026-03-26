@@ -7,10 +7,8 @@ import { ActivityRow } from "@/design-system/components/ui/activity-row";
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { PriorityActionCard } from "@/design-system/components/ui/priority-action-card";
 import { useSelectedIds } from "@/src/lib/stores/patient-view-store";
+import { smoothEase } from "@/design-system/lib/animation-constants";
 import type { PatientDetail } from "./types";
-
-// Elegant easing (typed as tuple for framer-motion)
-const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
 // Container variants for staggered children
 const containerVariants = {

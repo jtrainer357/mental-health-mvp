@@ -6,6 +6,7 @@ import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/design-system/components/ui/tabs";
 import { Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
+import { smoothEase, expoOut, subtleOvershoot } from "@/design-system/lib/animation-constants";
 import {
   useViewState,
   usePatientViewNavigation,
@@ -27,9 +28,6 @@ import { ClinicalNoteView } from "./clinical-note-view";
 
 const tabTriggerStyles =
   "rounded-none border-b-2 border-transparent bg-transparent shadow-none px-2.5 py-2 text-sm font-medium text-foreground-strong whitespace-nowrap hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-3 sm:text-base lg:px-4 lg:text-xl lg:font-light";
-
-// Smooth easing curve for entrance/exit (typed as tuple for framer-motion)
-const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
 // Animation variants for view transitions
 const _viewVariants = {
@@ -67,10 +65,6 @@ const backdropVariants = {
     transition: { duration: 0.3, ease: smoothEase },
   },
 };
-
-// Custom expo-out curve for full view
-const expoOut: [number, number, number, number] = [0.16, 1, 0.3, 1];
-const subtleOvershoot: [number, number, number, number] = [0.34, 1.56, 0.64, 1];
 
 // Full view container animation - elegant scale and fade
 const fullViewVariants = {

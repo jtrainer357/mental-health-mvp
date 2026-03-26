@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
+import { smoothEase } from "@/design-system/lib/animation-constants";
 
 // Elegant spring for interactions
 const springConfig = {
@@ -11,9 +12,6 @@ const springConfig = {
   stiffness: 400,
   damping: 25,
 };
-
-// Smooth easing (typed as tuple for framer-motion)
-const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
 interface ActivityRowProps {
   title: string;

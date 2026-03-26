@@ -19,6 +19,7 @@ import { Button } from "@/design-system/components/ui/button";
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { Card } from "@/design-system/components/ui/card";
 import { cn } from "@/design-system/lib/utils";
+import { smoothEase } from "@/design-system/lib/animation-constants";
 import type { PatientDetail } from "../types";
 
 interface FullDemographicsProps {
@@ -26,9 +27,6 @@ interface FullDemographicsProps {
   className?: string;
   onBackToRoster?: () => void;
 }
-
-// Elegant easing (typed as tuple for framer-motion)
-const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
 /**
  * Animation variants for content fade

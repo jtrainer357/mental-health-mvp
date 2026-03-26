@@ -32,13 +32,11 @@ import {
   SelectValue,
 } from "@/design-system/components/ui/select";
 import { cn } from "@/design-system/lib/utils";
+import { smoothEase, expoOut as expoOutEase } from "@/design-system/lib/animation-constants";
 import { usePatientViewNavigation, useViewState } from "@/src/lib/stores/patient-view-store";
 import type { PatientDetail } from "./types";
 
 // ─── Animation ───────────────────────────────────────────────────────────────
-
-const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
-const expoOutEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 const containerVariants = {
   hidden: { opacity: 0 },
