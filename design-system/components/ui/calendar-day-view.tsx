@@ -127,7 +127,7 @@ export function CalendarDayView({
               <span
                 className={cn(
                   "text-sm",
-                  slot.isNoon ? "font-semibold text-red-500" : "text-muted-foreground"
+                  slot.isNoon ? "text-destructive font-semibold" : "text-muted-foreground"
                 )}
               >
                 {slot.label}

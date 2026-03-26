@@ -135,7 +135,7 @@ export function CalendarEventCard({
       )}
     >
       {hasNotification && (
-        <span className="absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="bg-primary absolute top-1.5 right-1.5 h-1.5 w-1.5 rounded-full" />
       )}
       <p className={cn("truncate text-xs leading-tight font-semibold", styles.text)}>{title}</p>
       <p className={cn("mt-0.5 text-[10px] font-medium opacity-60", styles.text)}>{time}</p>

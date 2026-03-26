@@ -107,8 +107,7 @@ export function ScheduleRowCard({
             className={cn(
               "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
               status === "ENDED" && "bg-muted text-muted-foreground border-none",
-              status === "SCHEDULED" &&
-                "text-muted-foreground border border-gray-300 bg-transparent",
+              status === "SCHEDULED" && "text-muted-foreground border-border border bg-transparent",
               status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
               status === "ARRIVING" &&
                 "bg-event-green-bg/60 text-event-green-text border-event-green-border/30",

@@ -68,7 +68,7 @@ export function ConversationCard({
             <div className="flex min-w-0 items-center gap-2">
               <h5 className="truncate text-sm font-bold">{name}</h5>
               {channel && (
-                <span className="flex shrink-0 items-center gap-1 rounded-full bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-600">
+                <span className="bg-muted text-muted-foreground flex shrink-0 items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium">
                   {channel === "sms" ? (
                     <MessageSquare className="h-3 w-3" />
                   ) : (

@@ -80,7 +80,7 @@ export function CalendarWeekView({
     >
       <div className="flex min-h-0 flex-1 flex-col overflow-x-auto md:min-w-0">
         {/* Header with day names */}
-        <div className="border-border/40 sticky top-0 z-20 grid grid-cols-[56px_repeat(7,1fr)] rounded-t-xl border-b bg-white/80 backdrop-blur-sm">
+        <div className="border-border/40 bg-card/80 sticky top-0 z-20 grid grid-cols-[56px_repeat(7,1fr)] rounded-t-xl border-b backdrop-blur-sm">
           <div className="py-3" /> {/* Time column spacer */}
           {weekDays.map((day, idx) => {
             const today = isToday(day);
@@ -109,7 +109,7 @@ export function CalendarWeekView({
         </div>
 
         {/* Time grid */}
-        <div className="relative grid grid-cols-[56px_repeat(7,1fr)] bg-white/40">
+        <div className="bg-card/40 relative grid grid-cols-[56px_repeat(7,1fr)]">
           {/* Time labels column */}
           <div className="relative">
             {hours.map((hour) => (
@@ -176,11 +176,15 @@ export function CalendarWeekView({
                             animate={
                               event.justMoved
                                 ? {
-                                    borderColor: ["transparent", "rgb(16 185 129)", "transparent"],
+                                    borderColor: [
+                                      "transparent",
+                                      "oklch(var(--primary))",
+                                      "transparent",
+                                    ],
                                     boxShadow: [
-                                      "0 0 0 0 rgba(16, 185, 129, 0)",
-                                      "0 0 0 4px rgba(16, 185, 129, 0.3)",
-                                      "0 0 0 0 rgba(16, 185, 129, 0)",
+                                      "0 0 0 0 oklch(var(--primary) / 0)",
+                                      "0 0 0 4px oklch(var(--primary) / 0.3)",
+                                      "0 0 0 0 oklch(var(--primary) / 0)",
                                     ],
                                   }
                                 : {}
