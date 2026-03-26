@@ -61,30 +61,19 @@ export function LeftNav({
           className
         )}
       >
-        {/* Logo */}
-        {isHomePage ? (
-          <div className="mb-6 px-4">
-            <Image
-              src={logo.src}
-              alt={logo.alt || "Logo"}
-              width={logo.width || 96}
-              height={logo.height || 23}
-            />
-          </div>
-        ) : (
-          <Link
-            href="/home"
-            prefetch={true}
-            className="mb-6 cursor-pointer px-4 transition-opacity hover:opacity-80"
-          >
-            <Image
-              src={logo.src}
-              alt={logo.alt || "Logo"}
-              width={logo.width || 96}
-              height={logo.height || 23}
-            />
-          </Link>
-        )}
+        {/* Logo — always links to home */}
+        <Link
+          href="/home"
+          prefetch={true}
+          className="mb-6 cursor-pointer px-4 transition-opacity hover:opacity-80"
+        >
+          <Image
+            src={logo.src}
+            alt={logo.alt || "Logo"}
+            width={logo.width || 96}
+            height={logo.height || 23}
+          />
+        </Link>
 
         {/* Main Nav Icons */}
         <nav className="-mt-20 flex flex-1 flex-col items-center justify-center gap-10">

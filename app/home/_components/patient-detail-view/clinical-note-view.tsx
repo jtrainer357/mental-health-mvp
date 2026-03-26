@@ -1050,31 +1050,27 @@ export function ClinicalNoteView({
         </div>
       </div>
 
-      {/* ── Footer — outside scroll container, always visible at bottom ── */}
-      <div
-        className={cn(
-          "flex shrink-0 items-center justify-between px-6 py-4",
-          isFullView && "lg:pl-[calc(440px+2.5rem)]"
-        )}
-      >
-        {activity.id === "new-session" ? (
-          <div />
-        ) : (
-          <>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm">
-                Save Draft
-              </Button>
-              <Button variant="outline" size="sm">
-                Discard AI Note
-              </Button>
-            </div>
-            <Button variant="default" size="lg" className="text-base font-bold">
-              Sign & Approve Note
+      {/* ── Footer — outside scroll container, always visible at bottom (hidden for new sessions) ── */}
+      {activity.id !== "new-session" && (
+        <div
+          className={cn(
+            "flex shrink-0 items-center justify-between px-6 py-4",
+            isFullView && "lg:pl-[calc(440px+2.5rem)]"
+          )}
+        >
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="sm">
+              Save Draft
             </Button>
-          </>
-        )}
-      </div>
+            <Button variant="outline" size="sm">
+              Discard AI Note
+            </Button>
+          </div>
+          <Button variant="default" size="lg" className="text-base font-bold">
+            Sign & Approve Note
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 }

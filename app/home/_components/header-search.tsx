@@ -25,22 +25,24 @@ export function HeaderSearch() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         {/* Title - responsive sizing */}
         <div className="flex min-w-0 flex-1 items-center gap-5">
-          <Image
-            src="/tebra-logo.svg"
-            alt="Tebra"
-            width={96}
-            height={24}
-            className="hidden shrink-0 sm:block lg:hidden"
-            priority
-          />
-          <Image
-            src="/tebra-logo.svg"
-            alt="Tebra"
-            width={80}
-            height={20}
-            className="shrink-0 sm:hidden"
-            priority
-          />
+          <Link href="/home" className="shrink-0 transition-opacity hover:opacity-80">
+            <Image
+              src="/tebra-logo.svg"
+              alt="Tebra"
+              width={96}
+              height={24}
+              className="hidden sm:block lg:hidden"
+              priority
+            />
+            <Image
+              src="/tebra-logo.svg"
+              alt="Tebra"
+              width={80}
+              height={20}
+              className="sm:hidden"
+              priority
+            />
+          </Link>
           <Heading
             level={4}
             className="ml-auto translate-y-[3px] truncate text-right text-base leading-tight sm:text-lg md:text-xl lg:ml-0 lg:text-left"

@@ -62,6 +62,7 @@ function buildBalanceAlerts(): BalanceAlert[] {
 
   // Also add patients with balances NOT on today's schedule
   for (const patient of PATIENTS) {
+    if (patient.id === "derek-washington") continue;
     if (alerts.some((a) => a.id === `ba-${patient.id}`)) continue;
     const patientInvoices = INVOICES.filter(
       (inv) => inv.patient_id === patient.id && inv.balance > 0
