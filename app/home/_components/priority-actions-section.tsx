@@ -105,7 +105,11 @@ export function TodaysActionsHeader({ appointmentCount, isLoading }: TodaysActio
           </Text>
         </div>
       </div>
-      <Button variant="outline" className="w-full shrink-0 sm:ml-auto sm:w-auto">
+      <Button
+        variant="outline"
+        className="w-full shrink-0 cursor-not-allowed opacity-50 sm:ml-auto sm:w-auto"
+        aria-disabled="true"
+      >
         Complete All Actions
       </Button>
     </div>
@@ -753,7 +757,11 @@ export function PriorityActionsSection({
               )}
               {scanning ? "Analyzing..." : "Run AI Analysis"}
             </Button>
-            <Button variant="outline" className="shrink-0">
+            <Button
+              variant="outline"
+              className="shrink-0 cursor-not-allowed opacity-50"
+              aria-disabled="true"
+            >
               Complete All Actions
             </Button>
           </div>
@@ -775,8 +783,10 @@ export function PriorityActionsSection({
             className="mb-2 block cursor-pointer"
             role="button"
             tabIndex={0}
+            aria-label={`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name} is arriving — view actions`}
             onKeyDown={(e) => {
               if (e.key === "Enter" || e.key === " ") {
+                if (e.key === " ") e.preventDefault();
                 onSelectPatient?.(appointmentToContext(arrivingPatient, allActions));
               }
             }}
@@ -818,8 +828,10 @@ export function PriorityActionsSection({
                 className="block cursor-pointer"
                 role="button"
                 tabIndex={0}
+                aria-label={`${action.patient.first_name} ${action.patient.last_name} — ${action.title}`}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
+                    if (e.key === " ") e.preventDefault();
                     onSelectPatient?.(unifiedActionToContext(action));
                   }
                 }}

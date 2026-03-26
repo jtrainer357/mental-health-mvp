@@ -718,6 +718,7 @@ export function ClinicalNoteView({
                 size="icon"
                 onClick={toggleFullView}
                 className="h-9 w-9 rounded-full transition-all"
+                aria-label="Exit full view"
               >
                 <Minimize2 className="h-4 w-4" />
               </Button>
@@ -727,6 +728,7 @@ export function ClinicalNoteView({
                 size="sm"
                 onClick={toggleFullView}
                 className="gap-2 transition-all"
+                aria-label="Enter full view"
               >
                 <Maximize2 className="h-4 w-4" />
                 <span>Full View</span>
@@ -780,7 +782,11 @@ export function ClinicalNoteView({
             >
               {/* ── DAP Sections ─────────────────────────────────── */}
               {sections.map((section) => (
-                <motion.section key={section.key} variants={sectionVariants}>
+                <motion.section
+                  key={section.key}
+                  variants={sectionVariants}
+                  aria-label={section.label}
+                >
                   {/* Section header row */}
                   <div className="mb-2.5 flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
@@ -808,7 +814,7 @@ export function ClinicalNoteView({
                     </div>
                     {section.key === "data" && (
                       <Select value={noteType} onValueChange={setNoteType}>
-                        <SelectTrigger className="h-8 w-[160px] text-xs">
+                        <SelectTrigger className="h-8 w-[160px] text-xs" aria-label="Note format">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -1017,6 +1023,9 @@ export function ClinicalNoteView({
                           >
                             <motion.button
                               onClick={() => toggleAction(action.id)}
+                              role="checkbox"
+                              aria-checked={action.checked}
+                              aria-label={action.title}
                               className={cn(
                                 "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
                                 action.checked

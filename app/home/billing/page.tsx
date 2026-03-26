@@ -122,7 +122,16 @@ function CircularProgress({
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      <svg className="rotate-[-90deg]" width={size} height={size}>
+      <svg
+        className="rotate-[-90deg]"
+        width={size}
+        height={size}
+        role="progressbar"
+        aria-valuenow={percentage}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Collections Rate"
+      >
         {/* Background circle */}
         <circle
           cx={size / 2}
@@ -158,7 +167,7 @@ function CircularProgress({
 function BarChart({ data }: { data: number[] }) {
   const max = Math.max(...data);
   return (
-    <div className="flex h-32 items-end gap-3">
+    <div className="flex h-32 items-end gap-3" role="img" aria-label="Monthly revenue trend">
       {data.map((value, i) => (
         <div
           key={i}

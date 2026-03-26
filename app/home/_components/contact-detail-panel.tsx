@@ -118,13 +118,17 @@ export function ContactDetailPanel({
             </button>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground shrink-0 border-b-2 border-transparent py-3 text-sm"
+              disabled
+              aria-disabled="true"
+              className="text-muted-foreground shrink-0 cursor-not-allowed border-b-2 border-transparent py-3 text-sm opacity-50"
             >
               Viewed pages
             </button>
             <button
               type="button"
-              className="text-muted-foreground hover:text-foreground shrink-0 border-b-2 border-transparent py-3 text-sm"
+              disabled
+              aria-disabled="true"
+              className="text-muted-foreground shrink-0 cursor-not-allowed border-b-2 border-transparent py-3 text-sm opacity-50"
             >
               Notes
             </button>
