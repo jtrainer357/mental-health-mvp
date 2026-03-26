@@ -13,45 +13,19 @@ import {
   useSelectedIds,
   usePatientViewReset,
 } from "@/src/lib/stores/patient-view-store";
-import type { PatientDetail, PatientDetailViewProps } from "./types";
+import type { PatientDetailViewProps, SelectedActivity } from "./types";
 
 // Import sub-components
 import { AdaptivePatientHeader } from "./adaptive-patient-header";
 import { OverviewTab } from "./overview-tab";
 import { AppointmentsTab } from "./appointments-tab";
 import { MedicalRecordsTab } from "./medical-records-tab";
-import { MessagesTab } from "./messages-tab";
 import { BillingTab } from "./billing-tab";
-import { ReviewsTab } from "./reviews-tab";
 import { VisitSummaryPanel } from "./visit-summary-panel";
 import { ClinicalNoteView } from "./clinical-note-view";
 
 const tabTriggerStyles =
   "rounded-none border-b-2 border-transparent bg-transparent shadow-none px-2.5 py-2 text-sm font-medium text-foreground-strong whitespace-nowrap hover:text-primary data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none sm:px-3 sm:text-base lg:px-4 lg:text-xl lg:font-light";
-
-// Animation variants for view transitions
-const _viewVariants = {
-  initial: (direction: number) => ({
-    opacity: 0,
-    x: direction > 0 ? 40 : -40,
-  }),
-  animate: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.35,
-      ease: smoothEase,
-    },
-  },
-  exit: (direction: number) => ({
-    opacity: 0,
-    x: direction < 0 ? 40 : -40,
-    transition: {
-      duration: 0.25,
-      ease: smoothEase,
-    },
-  }),
-};
 
 // Full view backdrop animation
 const backdropVariants = {
@@ -94,8 +68,19 @@ const fullViewVariants = {
   },
 };
 
-// Type for selected activity with full details
-type SelectedActivity = PatientDetail["recentActivity"][number];
+// Reusable animation wrapper for tab content
+function AnimatedTabContent({ children, tabKey }: { children: React.ReactNode; tabKey: string }) {
+  return (
+    <motion.div
+      key={tabKey}
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: smoothEase }}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
 export function PatientDetailView({
   patient,
@@ -124,25 +109,6 @@ export function PatientDetailView({
 
   // State for controlled tab
   const [activeTab, setActiveTab] = React.useState(initialTab);
-
-  // Track direction for animations
-  const [_direction, setDirection] = React.useState(0);
-  const previousViewState = React.useRef(viewState);
-  const isFirstRender = React.useRef(true);
-
-  // Update direction based on view state changes
-  React.useEffect(() => {
-    // Skip direction update on first render
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
-    const states = ["default", "summary", "note", "fullView"];
-    const prevIndex = states.indexOf(previousViewState.current);
-    const currentIndex = states.indexOf(viewState);
-    setDirection(currentIndex > prevIndex ? 1 : -1);
-    previousViewState.current = viewState;
-  }, [viewState]);
 
   // Reset view state when patient changes or on initial mount
   React.useEffect(() => {
@@ -189,9 +155,10 @@ export function PatientDetailView({
   React.useEffect(() => {
     if (startSession && patient && blankSessionActivity && !hasStartedSession.current) {
       hasStartedSession.current = true;
-      // Add blank activity to patient data and navigate to note
+      // Add blank activity to patient data immutably and navigate to note
       if (!patient.recentActivity.find((a) => a.id === "new-session")) {
-        patient.recentActivity.unshift(blankSessionActivity);
+        const activityWithBlank = [blankSessionActivity, ...patient.recentActivity];
+        patient.recentActivity = activityWithBlank;
       }
       transitionTo("fullView", "new-session");
     }
@@ -286,18 +253,13 @@ export function PatientDetailView({
                     className="mt-0 flex-1"
                     forceMount={activeTab === "overview" ? true : undefined}
                   >
-                    <motion.div
-                      key={`tab-overview-${patient.id}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
-                    >
+                    <AnimatedTabContent tabKey={`tab-overview-${patient.id}`}>
                       <OverviewTab
                         key={patient.id}
                         patient={patient}
                         onActivitySelect={handleActivitySelect}
                       />
-                    </motion.div>
+                    </AnimatedTabContent>
                   </TabsContent>
 
                   <TabsContent
@@ -305,14 +267,9 @@ export function PatientDetailView({
                     className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "appointments" ? true : undefined}
                   >
-                    <motion.div
-                      key={`tab-appointments-${patient.id}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
-                    >
+                    <AnimatedTabContent tabKey={`tab-appointments-${patient.id}`}>
                       <AppointmentsTab patient={patient} />
-                    </motion.div>
+                    </AnimatedTabContent>
                   </TabsContent>
 
                   <TabsContent
@@ -320,14 +277,9 @@ export function PatientDetailView({
                     className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "medical-records" ? true : undefined}
                   >
-                    <motion.div
-                      key={`tab-medical-${patient.id}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
-                    >
+                    <AnimatedTabContent tabKey={`tab-medical-${patient.id}`}>
                       <MedicalRecordsTab patient={patient} />
-                    </motion.div>
+                    </AnimatedTabContent>
                   </TabsContent>
 
                   <TabsContent
@@ -335,14 +287,9 @@ export function PatientDetailView({
                     className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "billing" ? true : undefined}
                   >
-                    <motion.div
-                      key={`tab-billing-${patient.id}`}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
-                    >
+                    <AnimatedTabContent tabKey={`tab-billing-${patient.id}`}>
                       <BillingTab patient={patient} />
-                    </motion.div>
+                    </AnimatedTabContent>
                   </TabsContent>
                 </Tabs>
               </CardWrapper>
