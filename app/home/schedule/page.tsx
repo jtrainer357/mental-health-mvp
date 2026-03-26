@@ -317,8 +317,8 @@ export default function SchedulePage() {
                 {/* Error State */}
                 {error && !loading && (
                   <div className="flex flex-1 flex-col items-center justify-center py-12">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-                      <AlertTriangle className="h-7 w-7 text-red-600" />
+                    <div className="bg-destructive/10 mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+                      <AlertTriangle className="text-destructive h-7 w-7" />
                     </div>
                     <Heading level={4} className="mb-2 text-lg font-semibold">
                       Unable to Load Schedule
@@ -336,8 +336,8 @@ export default function SchedulePage() {
                 {/* Empty State */}
                 {!loading && !error && events.length === 0 && (
                   <div className="flex flex-1 flex-col items-center justify-center py-12">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100">
-                      <CalendarX className="h-7 w-7 text-gray-400" />
+                    <div className="bg-muted mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+                      <CalendarX className="text-muted-foreground h-7 w-7" />
                     </div>
                     <Heading level={4} className="mb-2 text-lg font-semibold">
                       No Appointments Found

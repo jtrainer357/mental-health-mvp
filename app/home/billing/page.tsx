@@ -118,11 +118,7 @@ function CircularProgress({
   const offset = circumference - (percentage / 100) * circumference;
 
   const strokeColor =
-    color === "teal"
-      ? "stroke-teal-dark"
-      : color === "coral"
-        ? "stroke-primary"
-        : "stroke-gray-300";
+    color === "teal" ? "stroke-teal-dark" : color === "coral" ? "stroke-primary" : "stroke-border";
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
@@ -135,7 +131,7 @@ function CircularProgress({
           fill="none"
           stroke="currentColor"
           strokeWidth={strokeWidth}
-          className="text-gray-200"
+          className="text-muted-foreground/30"
         />
         {/* Progress circle */}
         <circle
@@ -219,7 +215,7 @@ export default function BillingPage() {
       <LeftNav activePage="billing" />
 
       {/* Main Content Wrapper */}
-      <div className="md:pl-20">
+      <div className="md:pl-24">
         <HeaderSearch />
 
         <main
@@ -287,8 +283,8 @@ export default function BillingPage() {
               {error && !loading && (
                 <CardWrapper className="mb-8 p-8">
                   <div className="flex flex-col items-center justify-center py-6 text-center">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-100">
-                      <AlertTriangle className="h-7 w-7 text-red-600" />
+                    <div className="bg-destructive/10 mb-4 flex h-14 w-14 items-center justify-center rounded-full">
+                      <AlertTriangle className="text-destructive h-7 w-7" />
                     </div>
                     <Heading level={4} className="mb-2 text-lg font-semibold">
                       Unable to Load Billing Data
@@ -458,8 +454,8 @@ export default function BillingPage() {
                   <div className="space-y-3">
                     <CardWrapper className="border-border flex flex-col gap-3 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-50">
-                          <AlertTriangle className="h-5 w-5 text-red-500" />
+                        <div className="bg-destructive/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+                          <AlertTriangle className="text-destructive h-5 w-5" />
                         </div>
                         <div className="min-w-0">
                           <Text className="font-medium">Denial Spikes</Text>
@@ -475,8 +471,8 @@ export default function BillingPage() {
 
                     <CardWrapper className="border-border flex flex-col gap-3 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-50">
-                          <Clock className="h-5 w-5 text-yellow-600" />
+                        <div className="bg-warning/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full">
+                          <Clock className="text-warning h-5 w-5" />
                         </div>
                         <div className="min-w-0">
                           <Text className="font-medium">Aging A/R</Text>
