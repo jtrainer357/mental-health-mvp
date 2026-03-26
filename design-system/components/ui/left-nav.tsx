@@ -57,7 +57,7 @@ export function LeftNav({
         role="navigation"
         aria-label="Main navigation"
         className={cn(
-          "pointer-events-auto fixed top-0 left-0 z-40 hidden h-screen w-20 flex-col items-center pt-6 pb-4 md:flex",
+          "pointer-events-auto fixed top-0 left-0 z-40 hidden h-screen w-24 flex-col items-center pt-[30px] pb-4 md:flex",
           className
         )}
       >
@@ -65,13 +65,13 @@ export function LeftNav({
         <Link
           href="/home"
           prefetch={true}
-          className="mb-6 cursor-pointer px-2 transition-opacity hover:opacity-80"
+          className="mb-4 cursor-pointer pr-3 pl-4 transition-opacity hover:opacity-80"
         >
           <Image
             src={logo.src}
             alt={logo.alt || "Logo"}
-            width={logo.width || 64}
-            height={logo.height || 15}
+            width={logo.width || 90}
+            height={logo.height || 22}
           />
         </Link>
 

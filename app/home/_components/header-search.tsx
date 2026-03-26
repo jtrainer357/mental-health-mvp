@@ -45,7 +45,7 @@ export function HeaderSearch() {
           </Link>
           <Heading
             level={4}
-            className="ml-auto translate-y-[3px] truncate text-right text-base leading-tight sm:text-lg md:text-xl lg:ml-0 lg:text-left"
+            className="ml-auto truncate text-right text-base leading-tight sm:text-lg md:text-xl lg:ml-0 lg:text-left"
           >
             Riverside Family Health & Wellness
           </Heading>
