@@ -24,7 +24,7 @@ export default function ScheduleLoading() {
         </header>
 
         <main className="px-4 py-4 sm:px-6 sm:py-6 md:py-8">
-          <div className="mx-auto flex max-w-[1600px] flex-col lg:h-[calc(100vh-8.5rem)]">
+          <div className="mx-auto flex max-w-[1600px] flex-col">
             {/* Filter tabs and button */}
             <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex gap-2">

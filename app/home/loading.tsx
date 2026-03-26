@@ -24,7 +24,7 @@ export default function HomeLoading() {
         </header>
 
         <main className="px-4 py-4 sm:px-6 sm:py-6 md:py-8">
-          <div className="mx-auto flex max-w-[1600px] flex-col gap-4 xl:h-[calc(100vh-8.5rem)] xl:flex-row xl:gap-2">
+          <div className="mx-auto flex max-w-[1600px] flex-col gap-4 xl:flex-row xl:gap-2">
             {/* Main Content Area */}
             <div className="flex min-h-[500px] flex-1 flex-col rounded-xl border border-gray-200/50 bg-white/90 p-4 sm:p-6 xl:min-h-0">
               {/* Priority Actions Header */}

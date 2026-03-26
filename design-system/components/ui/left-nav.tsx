@@ -76,16 +76,16 @@ export function LeftNav({
         </Link>
 
         {/* Main Nav Icons */}
-        <nav className="-mt-20 flex flex-1 flex-col items-center justify-center gap-10">
+        <nav className="flex min-h-0 flex-1 flex-col items-center justify-center gap-[clamp(0.5rem,2.5vh,2rem)]">
           {items.map((item, index) => {
             const buttonContent = (
               <>
-                <item.icon className="h-6 w-6" />
+                <item.icon className="h-5 w-5" />
                 <span className="sr-only">{item.label}</span>
               </>
             );
             const buttonClassName = cn(
-              "h-12 w-12 rounded-full border-[0.5px] border-selected-border text-teal-dark transition-all hover:bg-white/50",
+              "h-10 w-10 rounded-full border-[0.5px] border-selected-border text-teal-dark transition-all hover:bg-white/50",
               item.active &&
                 "border-0 bg-teal-dark text-white shadow-xl hover:bg-teal-dark hover:text-white"
             );
@@ -115,15 +115,15 @@ export function LeftNav({
         </nav>
 
         {/* Bottom Icons */}
-        <div className="mt-auto mb-[60px] flex flex-col items-center gap-6">
+        <div className="mt-auto mb-[60px] flex flex-col items-center gap-5">
           {showNotifications && (
             <Button
               variant="ghost"
               size="icon"
               onClick={onNotificationsClick}
-              className="border-selected-border text-teal-dark relative h-12 w-12 rounded-full border-[0.5px] hover:bg-white/50"
+              className="border-selected-border text-teal-dark relative h-10 w-10 rounded-full border-[0.5px] hover:bg-white/50"
             >
-              <Bell className="h-6 w-6" />
+              <Bell className="h-5 w-5" />
               {notificationCount && notificationCount > 0 && (
                 <span className="bg-destructive text-destructive-foreground absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs">
                   {notificationCount > 9 ? "9+" : notificationCount}
@@ -134,7 +134,7 @@ export function LeftNav({
           )}
           {user && (
             <Avatar
-              className="border-selected-border h-12 w-12 cursor-pointer rounded-full border-[0.5px] transition-all hover:bg-white/50"
+              className="border-selected-border h-10 w-10 cursor-pointer rounded-full border-[0.5px] transition-all hover:bg-white/50"
               onClick={user.onClick}
               onKeyDown={(e) => {
                 if ((e.key === "Enter" || e.key === " ") && user.onClick) {

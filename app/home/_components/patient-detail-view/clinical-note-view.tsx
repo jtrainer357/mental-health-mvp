@@ -24,6 +24,13 @@ import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Button } from "@/design-system/components/ui/button";
 import { Heading, Text } from "@/design-system/components/ui/typography";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/design-system/components/ui/select";
 import { cn } from "@/design-system/lib/utils";
 import { usePatientViewNavigation, useViewState } from "@/src/lib/stores/patient-view-store";
 import type { PatientDetail } from "./types";
@@ -383,6 +390,7 @@ export function ClinicalNoteView({
   const sections = getDAPContent(activity);
   const [actions, setActions] = React.useState(getExtractedActions);
   const [cptApproved, setCptApproved] = React.useState(false);
+  const [noteType, setNoteType] = React.useState("dap");
 
   const otherVisits =
     patient?.recentActivity?.filter((a) => a.id !== activity.id).slice(0, 3) || [];
@@ -805,6 +813,20 @@ export function ClinicalNoteView({
                           </Badge>
                         ))}
                     </div>
+                    {section.key === "data" && (
+                      <Select value={noteType} onValueChange={setNoteType}>
+                        <SelectTrigger className="h-8 w-[160px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="dap">DAP Note</SelectItem>
+                          <SelectItem value="soap">SOAP Note</SelectItem>
+                          <SelectItem value="birp">BIRP Note</SelectItem>
+                          <SelectItem value="girp">GIRP Note</SelectItem>
+                          <SelectItem value="progress">Progress Note</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
 
                   {/* Section content card */}

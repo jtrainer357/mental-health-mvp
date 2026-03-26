@@ -24,7 +24,7 @@ export default function PatientsLoading() {
         </header>
 
         <main className="px-4 py-4 sm:px-6 sm:py-6 md:py-8">
-          <div className="mx-auto max-w-[1600px] lg:h-[calc(100vh-8.5rem)]">
+          <div className="mx-auto max-w-[1600px]">
             <div className="flex h-full flex-col gap-4 lg:flex-row">
               {/* Patient List Sidebar */}
               <div className="w-full rounded-xl border border-gray-200/50 bg-white/90 p-4 lg:w-80">

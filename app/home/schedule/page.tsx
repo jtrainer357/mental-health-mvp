@@ -266,7 +266,7 @@ export default function SchedulePage() {
           className="px-4 py-4 sm:px-6 sm:py-6 md:py-8"
         >
           <PageTransition>
-            <div className="mx-auto flex max-w-[1600px] flex-col overflow-hidden lg:h-[calc(100vh-8.5rem)]">
+            <div className="mx-auto flex max-w-[1600px] flex-col">
               {/* Desktop: Filter tabs and Add Appointment button */}
               <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <FilterTabs
@@ -282,7 +282,7 @@ export default function SchedulePage() {
               </div>
 
               {/* Calendar Card */}
-              <CardWrapper className="flex flex-1 flex-col overflow-hidden p-4 sm:p-6">
+              <CardWrapper className="flex flex-1 flex-col p-4 sm:p-6">
                 {/* Loading State with Skeleton */}
                 {loading && (
                   <div className="flex h-full flex-col">

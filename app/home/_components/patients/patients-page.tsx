@@ -259,12 +259,12 @@ export function PatientsPage({
   // Desktop: two-column layout with animated widths
   return (
     <>
-      <div className="flex h-full flex-col">
+      <div className="flex flex-col">
         {/* Main Content - Flex layout with animated widths */}
-        <div className="flex min-h-0 flex-1 gap-2">
-          {/* Patient List Column - Animated width */}
+        <div className="flex gap-2">
+          {/* Patient List Column - Animated width, sticky scroll */}
           <motion.div
-            className="flex min-h-0 flex-col overflow-hidden"
+            className="sticky top-0 flex max-h-screen flex-col self-start overflow-hidden"
             animate={{
               width: layout.rosterVisible ? layout.rosterWidth : 0,
               opacity: layout.rosterVisible ? 1 : 0,
@@ -295,8 +295,8 @@ export function PatientsPage({
             />
           </motion.div>
 
-          {/* Patient Detail Column - Takes remaining space */}
-          <div className="flex min-h-0 flex-1 flex-col">
+          {/* Patient Detail Column - Takes remaining space, dictates page height */}
+          <div className="flex flex-1 flex-col">
             {/* Add Patient Button - hidden when compact */}
             {!isRosterCompact && (
               <div className="mb-4 flex min-h-[52px] items-end justify-end">

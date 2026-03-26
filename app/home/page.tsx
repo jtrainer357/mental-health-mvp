@@ -48,14 +48,14 @@ function HomeContent() {
           className="px-4 py-4 sm:px-6 sm:py-6 md:py-8"
         >
           <PageTransition>
-            <div className="mx-auto flex max-w-[1600px] flex-col gap-4 overflow-hidden xl:h-[calc(100vh-8.5rem)] xl:flex-row xl:gap-2">
+            <div className="mx-auto flex max-w-[1600px] flex-col gap-4 xl:flex-row xl:gap-2">
               {/* Main Content Area - Unified Card with Dynamic Canvas */}
-              <CardWrapper className="flex min-h-[500px] flex-1 flex-col overflow-visible xl:min-h-0">
+              <CardWrapper className="flex min-h-[500px] flex-1 flex-col overflow-visible">
                 <DynamicCanvas className="flex min-h-0 flex-1 flex-col" />
               </CardWrapper>
 
               {/* Right Sidebar Widgets - Hidden below xl, shown on xl+ */}
-              <aside className="hidden w-[320px] shrink-0 flex-col gap-2 overflow-auto xl:flex xl:w-[320px] 2xl:w-[380px]">
+              <aside className="hidden w-[320px] shrink-0 flex-col gap-2 xl:flex xl:w-[320px] 2xl:w-[380px]">
                 <ScheduleAlertsWidget />
                 <BalanceAlertsWidget />
                 <FeedbackWidget />

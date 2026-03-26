@@ -212,21 +212,21 @@ export default function BillingPage() {
   }, [loadBilling]);
 
   return (
-    <div className="flex h-screen flex-col pb-24 lg:pb-0">
+    <div className="min-h-screen pb-24 lg:pb-0">
       <AnimatedBackground />
 
       {/* Left Nav */}
       <LeftNav activePage="billing" />
 
       {/* Main Content Wrapper */}
-      <div className="flex min-h-0 flex-1 flex-col lg:pl-36">
+      <div className="lg:pl-36">
         <HeaderSearch />
 
         <main
           id="main-content"
           role="main"
           aria-label="Billing content"
-          className="flex-1 overflow-y-auto px-4 py-4 sm:px-6 sm:py-6 md:py-8"
+          className="px-4 py-4 sm:px-6 sm:py-6 md:py-8"
         >
           <PageTransition>
             <div className="mx-auto max-w-[1600px] pb-10">
