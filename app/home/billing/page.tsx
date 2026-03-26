@@ -12,7 +12,6 @@ import {
   Lock,
   TrendingUp,
   AlertTriangle,
-  RefreshCw,
   Sparkles,
   FileCheck,
   Receipt,
@@ -22,6 +21,7 @@ import {
 import { MetricCardSkeleton } from "@/design-system/components/ui/skeleton";
 import { getBillingSummary, type BillingSummary } from "@/src/lib/queries/billing";
 import { createLogger } from "@/src/lib/logger";
+import { ErrorState } from "../_components/shared/error-state";
 
 const log = createLogger("BillingPage");
 
@@ -267,21 +267,7 @@ export default function BillingPage() {
       {/* Error State */}
       {error && !loading && (
         <CardWrapper className="mb-8 p-8">
-          <div className="flex flex-col items-center justify-center py-6 text-center">
-            <div className="bg-destructive/10 mb-4 flex h-14 w-14 items-center justify-center rounded-full">
-              <AlertTriangle className="text-destructive h-7 w-7" />
-            </div>
-            <Heading level={4} className="mb-2 text-lg font-semibold">
-              Unable to Load Billing Data
-            </Heading>
-            <Text muted className="mb-4 max-w-sm">
-              {error}
-            </Text>
-            <Button onClick={loadBilling} variant="outline" className="gap-2">
-              <RefreshCw className="h-4 w-4" />
-              Try Again
-            </Button>
-          </div>
+          <ErrorState title="Unable to Load Billing Data" message={error} onRetry={loadBilling} />
         </CardWrapper>
       )}
 

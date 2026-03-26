@@ -11,9 +11,11 @@ import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
 import { PageShell } from "../_components/shared/page-shell";
-import { Plus, Calendar, AlertTriangle, RefreshCw, CalendarX } from "lucide-react";
+import { Plus, Calendar, CalendarX } from "lucide-react";
 import { Skeleton } from "@/design-system/components/ui/skeleton";
 import { Heading } from "@/design-system/components/ui/typography";
+import { ErrorState } from "../_components/shared/error-state";
+import { EmptyState } from "../_components/shared/empty-state";
 
 // Dynamic imports for heavy calendar components - code splitting for better performance
 const CalendarWeekView = dynamic(
@@ -296,42 +298,22 @@ export default function SchedulePage() {
 
         {/* Error State */}
         {error && !loading && (
-          <div className="flex flex-1 flex-col items-center justify-center py-12">
-            <div className="bg-destructive/10 mb-4 flex h-14 w-14 items-center justify-center rounded-full">
-              <AlertTriangle className="text-destructive h-7 w-7" />
-            </div>
-            <Heading level={4} className="mb-2 text-lg font-semibold">
-              Unable to Load Schedule
-            </Heading>
-            <Text muted className="mb-4 max-w-sm text-center">
-              {error}
-            </Text>
-            <Button onClick={loadAppointments} variant="outline" className="gap-2">
-              <RefreshCw className="h-4 w-4" />
-              Try Again
-            </Button>
-          </div>
+          <ErrorState title="Unable to Load Schedule" message={error} onRetry={loadAppointments} />
         )}
 
         {/* Empty State */}
         {!loading && !error && events.length === 0 && (
-          <div className="flex flex-1 flex-col items-center justify-center py-12">
-            <div className="bg-muted mb-4 flex h-14 w-14 items-center justify-center rounded-full">
-              <CalendarX className="text-muted-foreground h-7 w-7" />
-            </div>
-            <Heading level={4} className="mb-2 text-lg font-semibold">
-              No Appointments Found
-            </Heading>
-            <Text muted className="mb-4 max-w-sm text-center">
-              {activeFilter !== "all"
+          <EmptyState
+            icon={CalendarX}
+            title="No Appointments Found"
+            message={
+              activeFilter !== "all"
                 ? `No ${activeFilter} appointments in this time range.`
-                : "No appointments scheduled for this week."}
-            </Text>
-            <Button className="gap-2">
-              <Plus className="h-4 w-4" />
-              Schedule Appointment
-            </Button>
-          </div>
+                : "No appointments scheduled for this week."
+            }
+            actionLabel="Schedule Appointment"
+            onAction={() => {}}
+          />
         )}
 
         {/* Content - Only show when loaded and has data */}
