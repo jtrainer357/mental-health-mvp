@@ -29,6 +29,7 @@ export function PatientsPage({
   initialPatientId,
   initialPatientName,
   initialTab,
+  startSession,
 }: PatientsPageProps) {
   const [loading, setLoading] = React.useState(true);
   const [dbReady, setDbReady] = React.useState<boolean | null>(null);
@@ -239,6 +240,7 @@ export function PatientsPage({
                 patient={patientDetails}
                 className="min-h-0 flex-1"
                 initialTab={initialTab}
+                startSession={startSession}
                 onBackToRoster={handleBackToRoster}
               />
             )
@@ -314,6 +316,7 @@ export function PatientsPage({
                 patient={patientDetails}
                 className="min-h-0 flex-1"
                 initialTab={initialTab}
+                startSession={startSession}
               />
             )}
           </div>

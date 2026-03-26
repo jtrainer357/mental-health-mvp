@@ -747,7 +747,7 @@ export const PATIENTS: SeedPatient[] = [
     medications: [],
     provider: "Dr. Sarah Chen",
     status: "Active",
-    avatar_url: "",
+    avatar_url: "/avatars/nb-01.jpg",
     date_created: daysFromNow(-63),
     preferred_day: 5,
     preferred_time: "11:00",

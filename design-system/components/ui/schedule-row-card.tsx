@@ -8,7 +8,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/
 import { Badge } from "@/design-system/components/ui/badge";
 import { cn } from "@/design-system/lib/utils";
 
-type ScheduleStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED" | "CANCELLED";
+type ScheduleStatus =
+  | "ENDED"
+  | "IN PROGRESS"
+  | "CHECKED IN"
+  | "SCHEDULED"
+  | "CANCELLED"
+  | "ARRIVING";
 
 interface ScheduleRowCardProps {
   time: string;
@@ -94,7 +100,7 @@ export function ScheduleRowCard({
             variant={
               status === "IN PROGRESS"
                 ? "default"
-                : status === "CHECKED IN"
+                : status === "CHECKED IN" || status === "ARRIVING"
                   ? "secondary"
                   : "outline"
             }
@@ -104,6 +110,8 @@ export function ScheduleRowCard({
               status === "SCHEDULED" &&
                 "text-muted-foreground border border-gray-300 bg-transparent",
               status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
+              status === "ARRIVING" &&
+                "bg-event-green-bg/60 text-event-green-text border-event-green-border/30",
               (status === "IN PROGRESS" || status === "CHECKED IN") && "border-none"
             )}
           >

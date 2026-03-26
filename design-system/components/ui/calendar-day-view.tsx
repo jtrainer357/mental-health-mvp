@@ -34,6 +34,10 @@ const colorBorderStyles: Record<EventColor, string> = {
   orange: "border-l-primary/80",
   // muted is an alias for neutral - for subtle, less prominent events
   muted: "border-l-event-neutral-border",
+  teal: "border-l-event-teal-border",
+  rose: "border-l-event-rose-border",
+  sage: "border-l-event-sage-border",
+  lavender: "border-l-event-lavender-border",
 };
 
 const colorBgStyles: Record<EventColor, string> = {
@@ -47,6 +51,10 @@ const colorBgStyles: Record<EventColor, string> = {
   orange: "bg-primary/15",
   // muted is an alias for neutral - for subtle, less prominent events
   muted: "bg-event-neutral-bg/80",
+  teal: "bg-event-teal-bg/60",
+  rose: "bg-event-rose-bg/60",
+  sage: "bg-event-sage-bg/60",
+  lavender: "bg-event-lavender-bg/60",
 };
 
 interface TimeSlot {

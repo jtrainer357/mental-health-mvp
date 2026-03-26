@@ -213,6 +213,66 @@ for (const p of PATIENTS) {
   }
 })();
 
+// ── EXTRA APPOINTMENTS — Today (Thursday) and Tomorrow (Friday) ──────────────
+
+// Emma Kowalski — extra session today (Thursday) at 12:00
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "emma-kowalski")!;
+  allAppointments.push(
+    apt(p.id, 30, thisWeekDay(4), "12:00", p.session_duration, p.cpt_code, "Scheduled")
+  );
+})();
+
+// Priya Sharma — extra session today (Thursday) at 16:00
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "priya-sharma")!;
+  allAppointments.push(
+    apt(p.id, 30, thisWeekDay(4), "16:00", p.session_duration, p.cpt_code, "Scheduled")
+  );
+})();
+
+// Aaliyah Brooks — extra session tomorrow (Friday) at 13:00
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "aaliyah-brooks")!;
+  allAppointments.push(
+    apt(p.id, 30, thisWeekDay(5), "13:00", p.session_duration, p.cpt_code, "Scheduled")
+  );
+})();
+
+// Jasmine Williams — extra session tomorrow (Friday) at 15:00
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "jasmine-williams")!;
+  allAppointments.push(
+    apt(p.id, 30, thisWeekDay(5), "15:00", p.session_duration, p.cpt_code, "Scheduled")
+  );
+})();
+
+// ── CANCELLATIONS FOR TOMORROW (Friday) ──────────────────────────────────────
+
+// Daniel Park — cancelled tomorrow's session
+(() => {
+  const tomorrowStr = thisWeekDay(5); // Friday
+  const existing = allAppointments.find(
+    (a) => a.patient_id === "daniel-park" && a.date === tomorrowStr && a.status === "Scheduled"
+  );
+  if (existing) {
+    existing.status = "Cancelled";
+    existing.notes = "Patient cancelled — family emergency";
+  }
+})();
+
+// Kevin Rhodes — cancelled tomorrow's session (reschedule requested)
+(() => {
+  const tomorrowStr = thisWeekDay(5); // Friday
+  const existing = allAppointments.find(
+    (a) => a.patient_id === "kevin-rhodes" && a.date === tomorrowStr && a.status === "Scheduled"
+  );
+  if (existing) {
+    existing.status = "Cancelled";
+    existing.notes = "Reschedule requested — work conflict";
+  }
+})();
+
 // ── CANCELLATIONS (visible in schedule week 2) ─────────────────────────────
 
 // Kevin Rhodes — cancelled week 2 session

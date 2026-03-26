@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Heading } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
@@ -72,30 +73,6 @@ function buildScheduleAlerts(): ScheduleAlert[] {
     });
   }
 
-  // 2. First scheduled appointment for today (patient arrived)
-  const todayScheduled = APPOINTMENTS.filter(
-    (a) => a.date === todayStr && a.status === "Scheduled"
-  ).sort((a, b) => a.start_time.localeCompare(b.start_time));
-
-  if (todayScheduled[0]) {
-    const apt = todayScheduled[0];
-    const patient = PATIENTS.find((p) => p.id === apt.patient_id);
-    if (patient) {
-      alerts.push({
-        id: `sa-arrived-${apt.id}`,
-        name: `${patient.first_name} ${patient.last_name}`,
-        initials: `${patient.first_name[0]}${patient.last_name[0]}`,
-        avatarSrc: patient.avatar_url || undefined,
-        time: formatTime(apt.start_time),
-        detail: apt.service_type,
-        timeAgo: "JUST NOW",
-        unread: false,
-        status: "Patient arrived",
-        statusColor: "success",
-      });
-    }
-  }
-
   return alerts.slice(0, 5);
 }
 
@@ -108,6 +85,8 @@ const statusStyles: Record<string, string> = {
 };
 
 export function ScheduleAlertsWidget() {
+  const router = useRouter();
+
   if (alerts.length === 0) return null;
 
   return (
@@ -121,6 +100,7 @@ export function ScheduleAlertsWidget() {
         {alerts.map((alert) => (
           <div
             key={alert.id}
+            onClick={() => router.push("/home/schedule")}
             className="!bg-teal/[0.06] hover:!bg-teal/[0.10] border-border/60 cursor-pointer rounded-lg border p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
             <div className="flex items-start gap-3">

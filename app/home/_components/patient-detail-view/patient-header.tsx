@@ -33,12 +33,21 @@ export function PatientHeader({ patient }: PatientHeaderProps) {
       <div className="flex flex-col gap-4 pr-8 sm:gap-6 sm:pr-0 lg:flex-row lg:items-start lg:justify-between">
         {/* Left - Avatar and Info */}
         <div className="flex items-start gap-3 sm:gap-4">
-          <Avatar className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
-            {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
-            <AvatarFallback className="bg-avatar-fallback text-base font-medium text-white sm:text-lg lg:text-xl">
+          {patient.avatarSrc ? (
+            <Avatar className="h-16 w-16 shrink-0 sm:h-20 sm:w-20 lg:h-24 lg:w-24">
+              <AvatarImage src={patient.avatarSrc} alt={patient.name} />
+              <AvatarFallback
+                delayMs={0}
+                className="bg-avatar-fallback text-base font-medium text-white sm:text-lg lg:text-xl"
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="bg-avatar-fallback flex h-16 w-16 shrink-0 items-center justify-center rounded-full text-base font-medium text-white sm:h-20 sm:w-20 sm:text-lg lg:h-24 lg:w-24 lg:text-xl">
               {initials}
-            </AvatarFallback>
-          </Avatar>
+            </div>
+          )}
 
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">

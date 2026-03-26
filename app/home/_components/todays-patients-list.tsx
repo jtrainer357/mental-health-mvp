@@ -26,13 +26,25 @@ function getPatientOutstandingBalance(patientUUID: string): number {
   ).reduce((sum, inv) => sum + inv.balance, 0);
 }
 
-type AppointmentStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED" | "CANCELLED";
+type AppointmentStatus =
+  | "ENDED"
+  | "IN PROGRESS"
+  | "CHECKED IN"
+  | "SCHEDULED"
+  | "CANCELLED"
+  | "ARRIVING";
 
 // Map database status to component status
-function mapStatus(status: string, startTime: string): AppointmentStatus {
+function mapStatus(status: string, startTime: string, patientId?: string): AppointmentStatus {
   if (status === "Completed") return "ENDED";
   if (status === "Cancelled") return "CANCELLED";
   if (status === "No-Show") return "ENDED";
+
+  // Robert Fitzgerald shows as arrived
+  if (patientId) {
+    const extId = getExternalIdFromUUID(patientId);
+    if (extId === "robert-fitzgerald") return "ARRIVING";
+  }
 
   // Check if appointment is in progress based on time
   const now = new Date();
@@ -221,7 +233,7 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
                 patient={`${apt.patient.first_name} ${apt.patient.last_name}`}
                 type={apt.service_type.toUpperCase()}
                 provider="Dr. Demo"
-                status={mapStatus(apt.status, apt.start_time)}
+                status={mapStatus(apt.status, apt.start_time, apt.patient.id)}
                 room={apt.location || "Main Office"}
                 avatarSrc={apt.patient.avatar_url || undefined}
                 avatarHref={`/home/patients?patient=${apt.patient.id}`}

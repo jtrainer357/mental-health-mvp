@@ -23,6 +23,14 @@ import { createLogger } from "@/src/lib/logger";
 
 const log = createLogger("PriorityActionsSection");
 
+/** Format 24h time (e.g. "09:00") to 12h (e.g. "9:00 AM") */
+function formatTime12h(time: string): string {
+  const [hours, minutes] = time.split(":").map(Number);
+  const period = hours! >= 12 ? "PM" : "AM";
+  const displayHours = hours! % 12 || 12;
+  return `${displayHours}:${String(minutes).padStart(2, "0")} ${period}`;
+}
+
 /**
  * Unified action type that combines both substrate and priority actions
  */
@@ -775,14 +783,18 @@ export function PriorityActionsSection({
           >
             <PriorityAction
               title={`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name} is arriving`}
-              subtitle={`${arrivingPatient.start_time} appointment • ${arrivingPatient.service_type}`}
+              subtitle={`${formatTime12h(arrivingPatient.start_time)} appointment • ${arrivingPatient.service_type}`}
               avatarInitials={`${arrivingPatient.patient.first_name[0]}${arrivingPatient.patient.last_name[0]}`}
               avatarSrc={arrivingPatient.patient.avatar_url || undefined}
               avatarHref={`/home/patients?patient=${arrivingPatient.patient.id}`}
               secondaryButtonText="View Suggested Actions"
               onSecondaryButtonClick={() => {}}
-              buttonText="Start Session"
-              onButtonClick={() => {}}
+              buttonText="Enter Session"
+              onButtonClick={() => {
+                router.push(
+                  `/home/patients?patient=${arrivingPatient.patient.id}&startSession=true`
+                );
+              }}
             />
           </div>
         )}

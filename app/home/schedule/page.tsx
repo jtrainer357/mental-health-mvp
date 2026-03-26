@@ -56,20 +56,38 @@ import { createLogger } from "@/src/lib/logger";
 
 const log = createLogger("SchedulePage");
 
-// Color mapping based on appointment type - uses design system colors (no blue/purple)
-function getEventColor(serviceType: string, status: string): CalendarEvent["color"] {
+// Patient color palette - muted brand colors, rotated per patient for visual variety
+const patientColorPalette: CalendarEvent["color"][] = [
+  "teal",
+  "rose",
+  "sage",
+  "lavender",
+  "green",
+  "yellow",
+  "neutral",
+  "blue",
+];
+
+// Deterministic hash from patient name to palette index
+function getPatientColorIndex(patientName: string): number {
+  let hash = 0;
+  for (let i = 0; i < patientName.length; i++) {
+    hash = (hash * 31 + patientName.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) % patientColorPalette.length;
+}
+
+// Color mapping — status overrides take priority, then per-patient color
+function getEventColor(
+  serviceType: string,
+  status: string,
+  patientName: string
+): CalendarEvent["color"] {
   if (status === "Completed") return "gray";
   if (status === "Cancelled" || status === "No-Show") return "pink";
-  if (serviceType.toLowerCase().includes("initial") || serviceType.toLowerCase().includes("intake"))
-    return "green";
-  if (serviceType.toLowerCase().includes("crisis")) return "pink";
-  if (
-    serviceType.toLowerCase().includes("medication") ||
-    serviceType.toLowerCase().includes("med review")
-  )
-    return "yellow";
-  // Default: use neutral instead of blue to comply with design system
-  return "neutral";
+  if (serviceType.toLowerCase().includes("crisis")) return "red";
+  // Regular appointments: color by patient for visual variety
+  return patientColorPalette[getPatientColorIndex(patientName)]!;
 }
 
 // Convert DB appointment to CalendarEvent
@@ -95,7 +113,11 @@ function appointmentToEvent(apt: AppointmentWithPatient): CalendarEvent {
     title,
     startTime,
     endTime,
-    color: getEventColor(apt.service_type, apt.status),
+    color: getEventColor(
+      apt.service_type,
+      apt.status,
+      `${apt.patient.first_name} ${apt.patient.last_name}`
+    ),
     hasNotification: apt.patient.risk_level === "high",
   };
 }

@@ -112,12 +112,21 @@ export function MinimalDemographics({
             </Button>
           )}
           {/* Avatar - 40px */}
-          <Avatar className="h-10 w-10 shrink-0">
-            {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
-            <AvatarFallback className="bg-avatar-fallback text-xs font-medium text-white">
+          {patient.avatarSrc ? (
+            <Avatar className="h-10 w-10 shrink-0">
+              <AvatarImage src={patient.avatarSrc} alt={patient.name} />
+              <AvatarFallback
+                delayMs={0}
+                className="bg-avatar-fallback text-xs font-medium text-white"
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="bg-avatar-fallback flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white">
               {initials}
-            </AvatarFallback>
-          </Avatar>
+            </div>
+          )}
 
           {/* Name + Status Badge (inline) */}
           <div className="flex items-center gap-2">

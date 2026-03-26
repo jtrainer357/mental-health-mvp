@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Heading } from "@/design-system/components/ui/typography";
 import { PATIENTS } from "@/src/lib/data/patients";
@@ -10,6 +11,7 @@ import { today } from "@/src/lib/data/helpers";
 
 interface BalanceAlert {
   id: string;
+  patientId: string;
   name: string;
   initials: string;
   avatarSrc?: string;
@@ -45,6 +47,7 @@ function buildBalanceAlerts(): BalanceAlert[] {
 
     alerts.push({
       id: `ba-${patient.id}`,
+      patientId: patient.id,
       name: `${patient.first_name} ${patient.last_name}`,
       initials: `${patient.first_name[0]}${patient.last_name[0]}`,
       avatarSrc: patient.avatar_url || undefined,
@@ -67,6 +70,7 @@ function buildBalanceAlerts(): BalanceAlert[] {
 
     alerts.push({
       id: `ba-${patient.id}`,
+      patientId: patient.id,
       name: `${patient.first_name} ${patient.last_name}`,
       initials: `${patient.first_name[0]}${patient.last_name[0]}`,
       avatarSrc: patient.avatar_url || undefined,
@@ -84,6 +88,8 @@ function buildBalanceAlerts(): BalanceAlert[] {
 const alerts = buildBalanceAlerts();
 
 export function BalanceAlertsWidget() {
+  const router = useRouter();
+
   if (alerts.length === 0) return null;
 
   return (
@@ -97,6 +103,11 @@ export function BalanceAlertsWidget() {
         {alerts.map((alert) => (
           <div
             key={alert.id}
+            onClick={() =>
+              router.push(
+                `/home/patients?patientName=${encodeURIComponent(alert.name)}&tab=billing`
+              )
+            }
             className="!bg-teal/[0.06] hover:!bg-teal/[0.10] border-border/60 cursor-pointer rounded-lg border p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
             <div className="flex items-start gap-3">

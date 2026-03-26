@@ -109,6 +109,33 @@ function getSessionNumber(activity: SelectedActivity, patient?: PatientDetail): 
 }
 
 function getDAPContent(activity?: SelectedActivity): NoteSection[] {
+  // Blank note for new session — empty sections awaiting voice input
+  if (activity?.id === "new-session") {
+    return [
+      {
+        key: "data",
+        label: "DATA",
+        prefix: "D",
+        status: "machine-generated",
+        content: "Session recording will populate this section. Tap Begin Listening to start.",
+      },
+      {
+        key: "assessment",
+        label: "ASSESSMENT",
+        prefix: "A",
+        status: "machine-generated",
+        content: "Assessment will be generated from session recording.",
+      },
+      {
+        key: "plan",
+        label: "PLAN",
+        prefix: "P",
+        status: "machine-generated",
+        content: ["Awaiting session recording...", "—", "—"].join("\n"),
+      },
+    ];
+  }
+
   // Use real SOAP data if available, mapping S+O→Data, A→Assessment, P→Plan
   if (activity?.subjective && activity?.objective) {
     return [
@@ -651,13 +678,11 @@ export function ClinicalNoteView({
               className="h-10 w-10 rounded-full object-cover"
             />
           ) : (
-            <div className="bg-primary/10 border-primary/20 flex h-10 w-10 items-center justify-center rounded-full border">
-              <Text size="sm" className="text-primary font-bold">
-                {patientName
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </Text>
+            <div className="bg-avatar-fallback flex h-10 w-10 items-center justify-center rounded-full text-xs font-medium text-white">
+              {patientName
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
             </div>
           )}
           <div>
@@ -731,10 +756,10 @@ export function ClinicalNoteView({
         {isFullView && patientContextSidebar}
 
         {/* Center: Session Note */}
-        <div className="min-w-0 flex-1">
+        <div className="flex min-w-0 flex-1 flex-col">
           <CardWrapper
             className={cn(
-              "space-y-5",
+              "flex flex-1 flex-col space-y-5",
               !isFullView && "border-0 bg-transparent px-0 shadow-none backdrop-blur-none"
             )}
           >
@@ -742,7 +767,7 @@ export function ClinicalNoteView({
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="space-y-5"
+              className={cn("space-y-5", activity.id === "new-session" && "flex flex-1 flex-col")}
             >
               {/* ── DAP Sections ─────────────────────────────────── */}
               {sections.map((section) => (
@@ -775,7 +800,12 @@ export function ClinicalNoteView({
                   </div>
 
                   {/* Section content card */}
-                  <Card className="border-border/70 bg-card p-5 shadow-sm">
+                  <Card
+                    className={cn(
+                      "border-border/70 bg-card p-5 shadow-sm",
+                      activity.id === "new-session" && "min-h-[120px] py-8"
+                    )}
+                  >
                     {section.key === "plan" ? (
                       <ol className="space-y-2.5">
                         {section.content.split("\n").map((item, i) => (
@@ -829,7 +859,10 @@ export function ClinicalNoteView({
 
               <motion.div
                 variants={sectionVariants}
-                className="grid grid-cols-1 gap-2 lg:grid-cols-2"
+                className={cn(
+                  "grid grid-cols-1 gap-2 lg:grid-cols-2",
+                  activity.id === "new-session" && "mt-auto"
+                )}
               >
                 {/* CPT Approval */}
                 <Card className="border-border/70 bg-teal/5 flex flex-col overflow-hidden p-0 shadow-sm">
@@ -845,71 +878,83 @@ export function ClinicalNoteView({
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-1 flex-col p-5">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <Text className="text-3xl font-bold tracking-tight">
-                          {activity.cptCode || "90837"}
-                        </Text>
-                        <Text size="xs" className="text-muted-foreground mt-1">
-                          {activity.appointmentType || "Individual Therapy"},{" "}
-                          {activity.duration || "50 min"}
-                        </Text>
-                      </div>
-                      <div className="bg-muted/50 rounded-lg px-3 py-2 text-right">
-                        <Text
-                          size="xs"
-                          className="text-muted-foreground text-sm font-bold tracking-wider uppercase"
-                        >
-                          Duration
-                        </Text>
-                        <Text size="sm" className="font-bold">
-                          {activity.duration || "50 min"}
-                        </Text>
-                      </div>
-                    </div>
-
-                    <Card className="bg-card/60 border-border/30 mt-4 flex-1 p-3.5">
-                      <Text
-                        size="xs"
-                        className="text-muted-foreground mb-2 text-sm font-bold tracking-wider uppercase"
-                      >
-                        Compliance Evidence
+                  {activity.id === "new-session" ? (
+                    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
+                      <Shield className="text-muted-foreground/30 mb-3 h-8 w-8" />
+                      <Text size="sm" className="text-muted-foreground">
+                        CPT code will be suggested after the session is recorded.
                       </Text>
-                      <ul className="space-y-1.5">
-                        {[
-                          `Transcript confirms ${activity.duration || "50 min"} of psychotherapy content`,
-                          'Payer requires "counseling vs. medical management" documentation \u2014 auto-inserted',
-                          "No up-coding risk detected",
-                        ].map((item, i) => (
-                          <li key={i} className="flex items-start gap-2">
-                            <div className="bg-success mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" />
-                            <Text size="xs" className="text-foreground/65 leading-relaxed">
-                              {item}
-                            </Text>
-                          </li>
-                        ))}
-                      </ul>
-                    </Card>
-
-                    <div className="mt-4">
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        onClick={() => setCptApproved(true)}
-                        disabled={cptApproved}
-                        className={cn(
-                          "w-full",
-                          cptApproved &&
-                            "border-success/30 bg-success/10 text-success hover:bg-success/10"
-                        )}
-                      >
-                        {cptApproved
-                          ? `CPT ${activity.cptCode || "90837"} Approved \u2713`
-                          : `Approve CPT ${activity.cptCode || "90837"}`}
+                      <Button variant="outline" size="sm" disabled className="mt-4 opacity-50">
+                        Approve CPT Code
                       </Button>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex flex-1 flex-col p-5">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <Text className="text-3xl font-bold tracking-tight">
+                            {activity.cptCode || "90837"}
+                          </Text>
+                          <Text size="xs" className="text-muted-foreground mt-1">
+                            {activity.appointmentType || "Individual Therapy"},{" "}
+                            {activity.duration || "50 min"}
+                          </Text>
+                        </div>
+                        <div className="bg-muted/50 rounded-lg px-3 py-2 text-right">
+                          <Text
+                            size="xs"
+                            className="text-muted-foreground text-sm font-bold tracking-wider uppercase"
+                          >
+                            Duration
+                          </Text>
+                          <Text size="sm" className="font-bold">
+                            {activity.duration || "50 min"}
+                          </Text>
+                        </div>
+                      </div>
+
+                      <Card className="bg-card/60 border-border/30 mt-4 flex-1 p-3.5">
+                        <Text
+                          size="xs"
+                          className="text-muted-foreground mb-2 text-sm font-bold tracking-wider uppercase"
+                        >
+                          Compliance Evidence
+                        </Text>
+                        <ul className="space-y-1.5">
+                          {[
+                            `Transcript confirms ${activity.duration || "50 min"} of psychotherapy content`,
+                            'Payer requires "counseling vs. medical management" documentation \u2014 auto-inserted',
+                            "No up-coding risk detected",
+                          ].map((item, i) => (
+                            <li key={i} className="flex items-start gap-2">
+                              <div className="bg-success mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full" />
+                              <Text size="xs" className="text-foreground/65 leading-relaxed">
+                                {item}
+                              </Text>
+                            </li>
+                          ))}
+                        </ul>
+                      </Card>
+
+                      <div className="mt-4">
+                        <Button
+                          variant="outline"
+                          size="lg"
+                          onClick={() => setCptApproved(true)}
+                          disabled={cptApproved}
+                          className={cn(
+                            "w-full",
+                            cptApproved &&
+                              "border-success/30 bg-success/10 text-success hover:bg-success/10"
+                          )}
+                        >
+                          {cptApproved
+                            ? `CPT ${activity.cptCode || "90837"} Approved \u2713`
+                            : `Approve CPT ${activity.cptCode || "90837"}`}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </Card>
 
                 {/* Extracted Actions */}
@@ -926,58 +971,70 @@ export function ClinicalNoteView({
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-1 flex-col px-5 pb-5">
-                    <div className="divide-border/30 flex-1 divide-y">
-                      {actions.map((action, i) => (
-                        <motion.div
-                          key={action.id}
-                          className="flex items-start gap-3 py-3"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.08 * i, duration: 0.3 }}
-                        >
-                          <motion.button
-                            onClick={() => toggleAction(action.id)}
-                            className={cn(
-                              "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
-                              action.checked
-                                ? "border-success bg-success/15 text-success"
-                                : "border-border hover:border-primary/40 hover:bg-primary/5"
-                            )}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            {action.checked && <Check className="h-3 w-3" />}
-                          </motion.button>
-                          <div className="min-w-0 flex-1">
-                            <Text size="xs" className="font-bold">
-                              {action.title}
-                            </Text>
-                            <Text
-                              size="xs"
-                              className="text-muted-foreground mt-0.5 leading-relaxed"
-                            >
-                              {action.description}
-                            </Text>
-                            {action.requiresApproval && (
-                              <div className="mt-1 flex items-center gap-1.5">
-                                <Shield className="text-warning h-3 w-3" />
-                                <Text size="xs" className="text-warning font-medium italic">
-                                  Requires provider approval (HITL)
-                                </Text>
-                              </div>
-                            )}
-                          </div>
-                        </motion.div>
-                      ))}
-                    </div>
-
-                    <div className="mt-3">
-                      <Button variant="outline" size="lg" className="w-full">
+                  {activity.id === "new-session" ? (
+                    <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
+                      <Zap className="text-muted-foreground/30 mb-3 h-8 w-8" />
+                      <Text size="sm" className="text-muted-foreground">
+                        Actions will be extracted after the session note is generated.
+                      </Text>
+                      <Button variant="outline" size="sm" disabled className="mt-4 opacity-50">
                         Approve & Execute All
                       </Button>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="flex flex-1 flex-col px-5 pb-5">
+                      <div className="divide-border/30 flex-1 divide-y">
+                        {actions.map((action, i) => (
+                          <motion.div
+                            key={action.id}
+                            className="flex items-start gap-3 py-3"
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.08 * i, duration: 0.3 }}
+                          >
+                            <motion.button
+                              onClick={() => toggleAction(action.id)}
+                              className={cn(
+                                "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+                                action.checked
+                                  ? "border-success bg-success/15 text-success"
+                                  : "border-border hover:border-primary/40 hover:bg-primary/5"
+                              )}
+                              whileHover={{ scale: 1.1 }}
+                              whileTap={{ scale: 0.9 }}
+                            >
+                              {action.checked && <Check className="h-3 w-3" />}
+                            </motion.button>
+                            <div className="min-w-0 flex-1">
+                              <Text size="xs" className="font-bold">
+                                {action.title}
+                              </Text>
+                              <Text
+                                size="xs"
+                                className="text-muted-foreground mt-0.5 leading-relaxed"
+                              >
+                                {action.description}
+                              </Text>
+                              {action.requiresApproval && (
+                                <div className="mt-1 flex items-center gap-1.5">
+                                  <Shield className="text-warning h-3 w-3" />
+                                  <Text size="xs" className="text-warning font-medium italic">
+                                    Requires provider approval (HITL)
+                                  </Text>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+
+                      <div className="mt-3">
+                        <Button variant="outline" size="lg" className="w-full">
+                          Approve & Execute All
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </Card>
               </motion.div>
             </motion.div>
@@ -993,16 +1050,31 @@ export function ClinicalNoteView({
         )}
       >
         <div className="flex items-center gap-3">
-          <Button variant="outline" size="sm">
-            Save Draft
-          </Button>
-          <Button variant="outline" size="sm">
-            Discard AI Note
-          </Button>
+          {activity.id === "new-session" ? (
+            <Button variant="outline" size="sm">
+              Cancel Session
+            </Button>
+          ) : (
+            <>
+              <Button variant="outline" size="sm">
+                Save Draft
+              </Button>
+              <Button variant="outline" size="sm">
+                Discard AI Note
+              </Button>
+            </>
+          )}
         </div>
-        <Button variant="default" size="lg" className="text-base font-bold">
-          Sign & Approve Note
-        </Button>
+        {activity.id === "new-session" ? (
+          <Button variant="default" size="lg" className="gap-2 text-base font-bold">
+            <Activity className="h-5 w-5" />
+            Begin Listening
+          </Button>
+        ) : (
+          <Button variant="default" size="lg" className="text-base font-bold">
+            Sign & Approve Note
+          </Button>
+        )}
       </div>
     </motion.div>
   );

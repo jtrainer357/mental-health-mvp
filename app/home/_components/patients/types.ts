@@ -44,6 +44,7 @@ export interface PatientsPageProps {
   initialPatientId?: string;
   initialPatientName?: string;
   initialTab?: string;
+  startSession?: boolean;
 }
 
 export const patientFilterTabs = [

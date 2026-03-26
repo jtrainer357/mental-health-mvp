@@ -122,12 +122,21 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
             </Button>
           )}
           {/* Avatar - 56px */}
-          <Avatar className="h-14 w-14 shrink-0">
-            {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
-            <AvatarFallback className="bg-avatar-fallback text-sm font-medium text-white">
+          {patient.avatarSrc ? (
+            <Avatar className="h-14 w-14 shrink-0">
+              <AvatarImage src={patient.avatarSrc} alt={patient.name} />
+              <AvatarFallback
+                delayMs={0}
+                className="bg-avatar-fallback text-sm font-medium text-white"
+              >
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <div className="bg-avatar-fallback flex h-14 w-14 shrink-0 items-center justify-center rounded-full text-sm font-medium text-white">
               {initials}
-            </AvatarFallback>
-          </Avatar>
+            </div>
+          )}
 
           {/* Patient Info */}
           <div className="min-w-0 flex-1">

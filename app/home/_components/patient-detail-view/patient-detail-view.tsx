@@ -107,6 +107,7 @@ export function PatientDetailView({
   patient,
   className,
   initialTab = "overview",
+  startSession = false,
   onBackToRoster,
 }: PatientDetailViewProps) {
   // Get view state from store
@@ -157,6 +158,41 @@ export function PatientDetailView({
       setActiveTab(initialTab);
     }
   }, [initialTab]);
+
+  // Blank session activity for startSession mode
+  const blankSessionActivity = React.useMemo<SelectedActivity | null>(() => {
+    if (!startSession || !patient) return null;
+    const today = new Date().toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+    return {
+      id: "new-session",
+      title: "Psychotherapy Session",
+      description: "",
+      date: today,
+      duration: "50 minutes",
+      provider: "Dr. Sarah Chen",
+      appointmentType: "Individual Therapy",
+      cptCode: "90837",
+      noteStatus: "draft" as const,
+      noteType: "progress_note" as const,
+    };
+  }, [startSession, patient]);
+
+  // Auto-open note view when startSession is true
+  const hasStartedSession = React.useRef(false);
+  React.useEffect(() => {
+    if (startSession && patient && blankSessionActivity && !hasStartedSession.current) {
+      hasStartedSession.current = true;
+      // Add blank activity to patient data and navigate to note
+      if (!patient.recentActivity.find((a) => a.id === "new-session")) {
+        patient.recentActivity.unshift(blankSessionActivity);
+      }
+      transitionTo("fullView", "new-session");
+    }
+  }, [startSession, patient, blankSessionActivity, transitionTo]);
 
   // Find selected activity based on selectedVisitId
   const selectedActivity = React.useMemo<SelectedActivity | null>(() => {
@@ -211,88 +247,158 @@ export function PatientDetailView({
 
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
-        {/* View switching — no AnimatePresence to avoid stale-animation bugs */}
-        {viewState === "default" && (
-          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
-            <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className="flex h-full w-full flex-col"
-              >
-                <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
-                  <TabsTrigger value="overview" className={tabTriggerStyles}>
-                    Overview
-                  </TabsTrigger>
-                  <TabsTrigger value="appointments" className={tabTriggerStyles}>
-                    Appointments
-                  </TabsTrigger>
-                  <TabsTrigger value="medical-records" className={tabTriggerStyles}>
-                    Medical Records
-                  </TabsTrigger>
-                  <TabsTrigger value="billing" className={tabTriggerStyles}>
-                    Billing
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="overview" className="mt-0 flex-1 lg:overflow-y-auto">
-                  <OverviewTab
-                    key={patient.id}
-                    patient={patient}
-                    onActivitySelect={handleActivitySelect}
-                  />
-                </TabsContent>
-
-                <TabsContent value="appointments" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                  <AppointmentsTab patient={patient} />
-                </TabsContent>
-
-                <TabsContent
-                  value="medical-records"
-                  className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+        <AnimatePresence mode="wait" initial={false}>
+          {viewState === "default" && (
+            <motion.div
+              key={`default-${patient.id}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+            >
+              <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
+                <Tabs
+                  value={activeTab}
+                  onValueChange={setActiveTab}
+                  className="flex h-full w-full flex-col"
                 >
-                  <MedicalRecordsTab patient={patient} />
-                </TabsContent>
+                  <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
+                    <TabsTrigger value="overview" className={tabTriggerStyles}>
+                      Overview
+                    </TabsTrigger>
+                    <TabsTrigger value="appointments" className={tabTriggerStyles}>
+                      Appointments
+                    </TabsTrigger>
+                    <TabsTrigger value="medical-records" className={tabTriggerStyles}>
+                      Medical Records
+                    </TabsTrigger>
+                    <TabsTrigger value="billing" className={tabTriggerStyles}>
+                      Billing
+                    </TabsTrigger>
+                  </TabsList>
 
-                <TabsContent value="billing" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                  <BillingTab patient={patient} />
-                </TabsContent>
-              </Tabs>
-            </CardWrapper>
-          </div>
-        )}
+                  <TabsContent
+                    value="overview"
+                    className="mt-0 flex-1 lg:overflow-y-auto"
+                    forceMount={activeTab === "overview" ? true : undefined}
+                  >
+                    <motion.div
+                      key={`tab-overview-${patient.id}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
+                    >
+                      <OverviewTab
+                        key={patient.id}
+                        patient={patient}
+                        onActivitySelect={handleActivitySelect}
+                      />
+                    </motion.div>
+                  </TabsContent>
 
-        {viewState === "summary" && selectedActivity && (
-          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
-            <CardWrapper className="lg:h-full lg:overflow-hidden">
-              <VisitSummaryPanel
-                activity={selectedActivity}
-                patientName={patient.name}
-                onBack={handleBackFromSummary}
-              />
-            </CardWrapper>
-          </div>
-        )}
+                  <TabsContent
+                    value="appointments"
+                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    forceMount={activeTab === "appointments" ? true : undefined}
+                  >
+                    <motion.div
+                      key={`tab-appointments-${patient.id}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
+                    >
+                      <AppointmentsTab patient={patient} />
+                    </motion.div>
+                  </TabsContent>
 
-        {viewState === "note" && selectedActivity && (
-          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
-            <CardWrapper className="lg:h-full lg:overflow-hidden">
-              <ClinicalNoteView
-                activity={selectedActivity}
-                patientName={patient.name}
-                patient={patient}
-              />
-            </CardWrapper>
-          </div>
-        )}
+                  <TabsContent
+                    value="medical-records"
+                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    forceMount={activeTab === "medical-records" ? true : undefined}
+                  >
+                    <motion.div
+                      key={`tab-medical-${patient.id}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
+                    >
+                      <MedicalRecordsTab patient={patient} />
+                    </motion.div>
+                  </TabsContent>
 
-        {(viewState === "summary" || viewState === "note") && !selectedActivity && (
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <CardWrapper className="flex h-full items-center justify-center">
-              <Text muted>Select an activity to view details</Text>
-            </CardWrapper>
-          </div>
-        )}
+                  <TabsContent
+                    value="billing"
+                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    forceMount={activeTab === "billing" ? true : undefined}
+                  >
+                    <motion.div
+                      key={`tab-billing-${patient.id}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, ease: [0.25, 0.1, 0.25, 1.0] }}
+                    >
+                      <BillingTab patient={patient} />
+                    </motion.div>
+                  </TabsContent>
+                </Tabs>
+              </CardWrapper>
+            </motion.div>
+          )}
+
+          {viewState === "summary" && selectedActivity && (
+            <motion.div
+              key="summary-view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+            >
+              <CardWrapper className="lg:h-full lg:overflow-hidden">
+                <VisitSummaryPanel
+                  activity={selectedActivity}
+                  patientName={patient.name}
+                  onBack={handleBackFromSummary}
+                />
+              </CardWrapper>
+            </motion.div>
+          )}
+
+          {viewState === "note" && selectedActivity && (
+            <motion.div
+              key="note-view"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
+              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+            >
+              <CardWrapper className="lg:h-full lg:overflow-hidden">
+                <ClinicalNoteView
+                  activity={selectedActivity}
+                  patientName={patient.name}
+                  patient={patient}
+                />
+              </CardWrapper>
+            </motion.div>
+          )}
+
+          {(viewState === "summary" || viewState === "note") && !selectedActivity && (
+            <motion.div
+              key="no-activity"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="flex min-h-0 flex-1 flex-col overflow-hidden"
+            >
+              <CardWrapper className="flex h-full items-center justify-center">
+                <Text muted>Select an activity to view details</Text>
+              </CardWrapper>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Full View: Clinical Note - Rendered outside AnimatePresence for overlay effect */}
         <AnimatePresence>

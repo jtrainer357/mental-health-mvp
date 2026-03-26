@@ -158,6 +158,26 @@
   --color-event-warm-text: oklch(0.52 0.06 60);
   --color-event-warm-border: oklch(0.8 0.05 70);
 
+  /* Teal event - Growth palette */
+  --color-event-teal-bg: oklch(0.92 0.03 190);
+  --color-event-teal-text: oklch(0.4 0.06 200);
+  --color-event-teal-border: oklch(0.58 0.05 195);
+
+  /* Rose event - Vitality palette (muted coral) */
+  --color-event-rose-bg: oklch(0.94 0.03 30);
+  --color-event-rose-text: oklch(0.48 0.08 25);
+  --color-event-rose-border: oklch(0.68 0.06 28);
+
+  /* Sage event - calming green */
+  --color-event-sage-bg: oklch(0.93 0.025 155);
+  --color-event-sage-text: oklch(0.42 0.06 160);
+  --color-event-sage-border: oklch(0.6 0.04 158);
+
+  /* Lavender event - soft muted purple-gray */
+  --color-event-lavender-bg: oklch(0.93 0.02 290);
+  --color-event-lavender-text: oklch(0.45 0.04 280);
+  --color-event-lavender-border: oklch(0.65 0.03 285);
+
   /* Activity indicator - coral/orange accent */
   --color-activity-indicator: oklch(0.72 0.15 35);
 

@@ -61,7 +61,7 @@ export const usePatientViewStore = create<PatientViewStore>()((set, get) => ({
 
     if (state === "summary" && id) {
       idUpdates.selectedVisitId = id;
-    } else if (state === "note" && id) {
+    } else if ((state === "note" || state === "fullView") && id) {
       idUpdates.selectedVisitId = id;
       idUpdates.selectedNoteId = id;
     }

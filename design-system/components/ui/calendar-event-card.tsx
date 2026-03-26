@@ -12,7 +12,11 @@ export type EventColor =
   | "gray"
   | "red"
   | "orange"
-  | "muted";
+  | "muted"
+  | "teal"
+  | "rose"
+  | "sage"
+  | "lavender";
 
 interface CalendarEventCardProps {
   title: string;
@@ -81,6 +85,30 @@ const colorStyles: Record<
     text: "text-foreground",
     borderLeft: "border-l-event-neutral-border",
     borderOuter: "border-event-neutral-border/30",
+  },
+  teal: {
+    bg: "bg-event-teal-bg/60",
+    text: "text-event-teal-text",
+    borderLeft: "border-l-event-teal-border",
+    borderOuter: "border-event-teal-border/30",
+  },
+  rose: {
+    bg: "bg-event-rose-bg/60",
+    text: "text-event-rose-text",
+    borderLeft: "border-l-event-rose-border",
+    borderOuter: "border-event-rose-border/30",
+  },
+  sage: {
+    bg: "bg-event-sage-bg/60",
+    text: "text-event-sage-text",
+    borderLeft: "border-l-event-sage-border",
+    borderOuter: "border-event-sage-border/30",
+  },
+  lavender: {
+    bg: "bg-event-lavender-bg/60",
+    text: "text-event-lavender-text",
+    borderLeft: "border-l-event-lavender-border",
+    borderOuter: "border-event-lavender-border/30",
   },
 };
 

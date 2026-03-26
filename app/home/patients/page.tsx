@@ -14,12 +14,14 @@ function PatientsContent() {
   const initialPatientId = searchParams.get("patient") || undefined;
   const initialPatientName = searchParams.get("patientName") || undefined;
   const initialTab = searchParams.get("tab") || undefined;
+  const startSession = searchParams.get("startSession") === "true";
 
   return (
     <PatientsPage
       initialPatientId={initialPatientId}
       initialPatientName={initialPatientName}
       initialTab={initialTab}
+      startSession={startSession}
     />
   );
 }
