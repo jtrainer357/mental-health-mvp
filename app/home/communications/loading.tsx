@@ -1,10 +1,10 @@
-import { Skeleton, ConversationCardSkeleton } from "@/design-system/components/ui/skeleton";
+import { Skeleton } from "@/design-system/components/ui/skeleton";
 
 export default function CommunicationsLoading() {
   return (
     <div className="min-h-screen pb-24 md:pb-0">
       {/* Left Nav Skeleton */}
-      <div className="fixed bottom-0 z-40 flex w-full items-center justify-around border-t border-gray-200 bg-white/95 px-4 py-2 backdrop-blur-sm md:top-0 md:left-0 md:h-screen md:w-20 md:flex-col md:items-center md:justify-start md:gap-6 md:border-t-0 md:border-r md:px-0 md:py-8">
+      <div className="border-border bg-background/95 fixed bottom-0 z-40 flex w-full items-center justify-around border-t px-4 py-2 backdrop-blur-sm md:top-0 md:left-0 md:h-screen md:w-20 md:flex-col md:items-center md:justify-start md:gap-6 md:border-t-0 md:border-r md:px-0 md:py-8">
         <Skeleton className="hidden h-8 w-20 md:block" />
         <div className="flex w-full items-center justify-around md:mt-8 md:flex-col md:gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -14,89 +14,35 @@ export default function CommunicationsLoading() {
       </div>
 
       {/* Main Content Wrapper */}
-      <div className="md:pl-20">
+      <div className="md:pl-24">
         {/* Header Search Skeleton */}
-        <header className="sticky top-0 z-30 border-b border-gray-200/50 bg-white/80 px-4 py-3 backdrop-blur-sm sm:px-6">
+        <header className="border-border/50 bg-background/80 sticky top-0 z-30 border-b px-4 py-3 backdrop-blur-sm sm:px-6">
           <div className="mx-auto flex max-w-[1600px] items-center gap-4">
             <Skeleton className="h-10 max-w-md flex-1 rounded-full" />
             <Skeleton className="h-10 w-10 rounded-full" />
           </div>
         </header>
 
-        <main className="px-4 py-4 sm:px-6 sm:py-6 md:py-8">
-          <div className="mx-auto flex max-w-[1800px] flex-col">
-            <div className="flex h-full flex-col gap-4 lg:flex-row">
-              {/* Conversations List */}
-              <div className="w-full rounded-xl border border-gray-200/50 bg-white/90 p-4 lg:w-80">
-                {/* Search */}
-                <Skeleton className="mb-4 h-10 w-full rounded-lg" />
+        <main className="px-4 sm:px-6">
+          {/* Coming Soon centered skeleton — matches actual page layout */}
+          <div className="flex min-h-[calc(100vh-10rem)] flex-col items-center justify-center">
+            <div className="flex w-full max-w-3xl flex-col items-center px-4 text-center">
+              {/* Icon placeholder */}
+              <Skeleton className="mb-10 h-24 w-24 rounded-3xl" />
 
-                {/* Filter Tabs */}
-                <div className="mb-4 flex gap-2">
-                  <Skeleton className="h-8 w-16 rounded-full" />
-                  <Skeleton className="h-8 w-20 rounded-full" />
-                  <Skeleton className="h-8 w-20 rounded-full" />
-                </div>
+              {/* Headline */}
+              <Skeleton className="mb-4 h-10 w-80" />
 
-                {/* Conversation Cards */}
-                <div className="space-y-2">
-                  {Array.from({ length: 8 }).map((_, i) => (
-                    <ConversationCardSkeleton key={i} />
-                  ))}
-                </div>
-              </div>
+              {/* "Coming Soon" text */}
+              <Skeleton className="mb-3 h-7 w-40" />
 
-              {/* Message Thread */}
-              <div className="flex flex-1 flex-col rounded-xl border border-gray-200/50 bg-white/90">
-                {/* Thread Header */}
-                <div className="border-b border-gray-200 p-4">
-                  <div className="flex items-center gap-3">
-                    <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
-                    <div className="flex-1">
-                      <Skeleton className="mb-1 h-5 w-32" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                    <Skeleton className="h-8 w-8 rounded-lg" />
-                  </div>
-                </div>
+              {/* Description */}
+              <Skeleton className="mx-auto mb-12 h-14 w-full max-w-lg" />
 
-                {/* Messages Area */}
-                <div className="flex-1 space-y-4 p-4">
-                  {/* Incoming message */}
-                  <div className="flex gap-3">
-                    <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
-                    <Skeleton className="h-20 w-2/3 rounded-lg" />
-                  </div>
-                  {/* Outgoing message */}
-                  <div className="flex justify-end">
-                    <Skeleton className="h-16 w-1/2 rounded-lg" />
-                  </div>
-                  {/* Incoming message */}
-                  <div className="flex gap-3">
-                    <Skeleton className="h-8 w-8 shrink-0 rounded-full" />
-                    <Skeleton className="h-24 w-3/5 rounded-lg" />
-                  </div>
-                </div>
-
-                {/* Message Input */}
-                <div className="border-t border-gray-200 p-4">
-                  <div className="flex items-center gap-2">
-                    <Skeleton className="h-10 flex-1 rounded-lg" />
-                    <Skeleton className="h-10 w-10 rounded-lg" />
-                  </div>
-                </div>
-              </div>
-
-              {/* AI Suggested Replies (Desktop) */}
-              <div className="hidden w-72 flex-col gap-3 xl:flex">
-                <div className="rounded-xl border border-gray-200/50 bg-white/90 p-4">
-                  <Skeleton className="mb-3 h-5 w-28" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-16 w-full rounded-lg" />
-                    <Skeleton className="h-16 w-full rounded-lg" />
-                    <Skeleton className="h-16 w-full rounded-lg" />
-                  </div>
-                </div>
+              {/* Email input + button */}
+              <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row">
+                <Skeleton className="h-12 flex-1 rounded-lg" />
+                <Skeleton className="h-12 w-32 rounded-lg" />
               </div>
             </div>
           </div>
