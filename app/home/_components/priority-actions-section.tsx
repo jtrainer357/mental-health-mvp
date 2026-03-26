@@ -786,13 +786,13 @@ export function PriorityActionsSection({
               subtitle={`${formatTime12h(arrivingPatient.start_time)} appointment • ${arrivingPatient.service_type}`}
               avatarInitials={`${arrivingPatient.patient.first_name[0]}${arrivingPatient.patient.last_name[0]}`}
               avatarSrc={arrivingPatient.patient.avatar_url || undefined}
-              avatarHref={`/home/patients?patient=${arrivingPatient.patient.id}`}
+              avatarHref={`/home/patients?patientName=${encodeURIComponent(`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name}`)}`}
               secondaryButtonText="View Suggested Actions"
               onSecondaryButtonClick={() => {}}
               buttonText="Enter Session"
               onButtonClick={() => {
                 router.push(
-                  `/home/patients?patient=${arrivingPatient.patient.id}&startSession=true`
+                  `/home/patients?patientName=${encodeURIComponent(`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name}`)}&startSession=true`
                 );
               }}
             />
@@ -827,7 +827,7 @@ export function PriorityActionsSection({
                 <AIActionCard
                   patientName={patientName}
                   avatarSrc={action.patient.avatar_url || undefined}
-                  avatarHref={`/home/patients?patient=${action.patient.id}`}
+                  avatarHref={`/home/patients?patientName=${encodeURIComponent(patientName)}`}
                   mainAction={action.title}
                   statusIndicators={statusIndicator}
                   readyStatus={`Confidence: ${action.confidence}%`}

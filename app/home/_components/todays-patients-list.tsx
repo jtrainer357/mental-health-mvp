@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { ScheduleRowCard } from "@/design-system/components/ui/schedule-row-card";
 import { Card } from "@/design-system/components/ui/card";
 import { Heading, Text } from "@/design-system/components/ui/typography";
@@ -165,8 +166,11 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
     setExpandedId((prev) => (prev === aptId ? null : aptId));
   };
 
-  const handleEnterVisit = (_apt: AppointmentWithPatient) => {
-    // No-op: Enter Visit buttons disabled for now
+  const router = useRouter();
+
+  const handleEnterVisit = (apt: AppointmentWithPatient) => {
+    const name = `${apt.patient.first_name} ${apt.patient.last_name}`;
+    router.push(`/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`);
   };
 
   // Loading state
@@ -236,13 +240,14 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
                 status={mapStatus(apt.status, apt.start_time, apt.patient.id)}
                 room={apt.location || "Main Office"}
                 avatarSrc={apt.patient.avatar_url || undefined}
-                avatarHref={`/home/patients?patient=${apt.patient.id}`}
+                avatarHref={`/home/patients?patientName=${encodeURIComponent(`${apt.patient.first_name} ${apt.patient.last_name}`)}`}
                 outstandingBalance={getPatientOutstandingBalance(apt.patient.id)}
                 className="border-0 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
               />
               <VisitPrepPanel
                 appointment={apt}
                 isExpanded={isExpanded}
+                showEnterVisit={getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"}
                 onEnterVisit={() => handleEnterVisit(apt)}
               />
             </Card>

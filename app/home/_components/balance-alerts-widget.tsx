@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Heading } from "@/design-system/components/ui/typography";
@@ -111,12 +112,17 @@ export function BalanceAlertsWidget() {
             className="!bg-teal/[0.06] hover:!bg-teal/[0.10] border-border/60 cursor-pointer rounded-lg border p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
             <div className="flex items-start gap-3">
-              <Avatar className="h-10 w-10">
-                {alert.avatarSrc && <AvatarImage src={alert.avatarSrc} alt={alert.name} />}
-                <AvatarFallback className="bg-avatar-fallback/70 text-sm text-white">
-                  {alert.initials}
-                </AvatarFallback>
-              </Avatar>
+              <Link
+                href={`/home/patients?patientName=${encodeURIComponent(alert.name)}`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Avatar className="h-10 w-10 cursor-pointer transition-opacity hover:opacity-80">
+                  {alert.avatarSrc && <AvatarImage src={alert.avatarSrc} alt={alert.name} />}
+                  <AvatarFallback className="bg-avatar-fallback/70 text-sm text-white">
+                    {alert.initials}
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <div className="min-w-0 flex-1">
                 <div className="mb-0.5 flex items-center justify-between gap-2">
                   <h5 className="truncate text-sm font-bold">{alert.name}</h5>
