@@ -141,6 +141,9 @@ export interface PatientDetail {
   reviews?: PatientReview[];
 }
 
+/** Type for selected activity with full details */
+export type SelectedActivity = PatientDetail["recentActivity"][number];
+
 export interface PatientDetailViewProps {
   patient: PatientDetail | null;
   className?: string;
