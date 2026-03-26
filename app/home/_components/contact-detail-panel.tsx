@@ -133,7 +133,7 @@ export function ContactDetailPanel({
         <Button
           variant="ghost"
           size="icon"
-          className="h-9 w-9 shrink-0 sm:h-11 sm:w-11"
+          className="h-11 w-11 shrink-0"
           onClick={onClose}
           aria-label="Close panel"
         >

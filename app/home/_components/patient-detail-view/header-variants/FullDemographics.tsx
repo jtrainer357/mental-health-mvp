@@ -180,7 +180,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-9 w-9 rounded-full transition-colors"
+            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-11 w-11 rounded-full transition-colors"
             aria-label="Send message"
           >
             <MessageSquare className="h-4 w-4" />
@@ -188,7 +188,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-9 w-9 rounded-full transition-colors"
+            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-11 w-11 rounded-full transition-colors"
             aria-label="Create note"
           >
             <FileText className="h-4 w-4" />
@@ -196,7 +196,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-9 w-9 rounded-full transition-colors"
+            className="text-muted-foreground hover:bg-primary/10 hover:text-primary h-11 w-11 rounded-full transition-colors"
             aria-label="Start video call"
           >
             <Video className="h-4 w-4" />
@@ -204,7 +204,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
           <Button
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:bg-muted h-9 w-9 rounded-full transition-colors"
+            className="text-muted-foreground hover:bg-muted h-11 w-11 rounded-full transition-colors"
             aria-label="More options"
           >
             <MoreVertical className="h-4 w-4" />

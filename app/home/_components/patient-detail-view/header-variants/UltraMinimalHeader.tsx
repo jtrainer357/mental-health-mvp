@@ -79,7 +79,7 @@ export function UltraMinimalHeader({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 shrink-0"
+            className="h-11 w-11 shrink-0"
             onClick={onBack}
             aria-label="Go back"
           >
@@ -123,7 +123,7 @@ export function UltraMinimalHeader({
         <Button
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0"
+          className="h-11 w-11 shrink-0"
           onClick={onClose}
           aria-label="Close full view"
         >

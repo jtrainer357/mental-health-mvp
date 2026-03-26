@@ -161,7 +161,7 @@ export function VisitSummaryPanel({
         <motion.button
           onClick={handleBack}
           aria-label="Go back to overview"
-          className="bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground flex h-10 w-10 items-center justify-center rounded-xl transition-all"
+          className="bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground flex h-11 w-11 items-center justify-center rounded-xl transition-all"
           whileHover={{ scale: 1.05, backgroundColor: "rgba(var(--primary), 0.1)" }}
           whileTap={{ scale: 0.95 }}
         >

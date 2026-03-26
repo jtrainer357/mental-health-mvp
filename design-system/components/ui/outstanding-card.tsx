@@ -38,7 +38,7 @@ export function OutstandingCard({
           <Button
             variant="outline"
             size="sm"
-            className="h-7 shrink-0 rounded-full px-4 text-xs font-bold"
+            className="h-9 shrink-0 rounded-full px-4 text-xs font-bold"
             onClick={onButtonClick}
           >
             {buttonText}

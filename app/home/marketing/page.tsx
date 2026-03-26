@@ -192,7 +192,7 @@ export default function MarketingPage() {
       <LeftNav activePage="marketing" />
 
       {/* Main Content Wrapper */}
-      <div className="md:pl-20">
+      <div className="md:pl-24">
         <HeaderSearch />
 
         <main
@@ -233,11 +233,14 @@ export default function MarketingPage() {
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <Button
                       variant="ghost"
-                      className="border border-white/30 text-white hover:bg-white/10"
+                      className="min-h-[44px] border border-white/30 text-white hover:bg-white/10"
                     >
                       Learn More
                     </Button>
-                    <Button variant="secondary" className="text-teal bg-white hover:bg-white/90">
+                    <Button
+                      variant="secondary"
+                      className="text-teal min-h-[44px] bg-white hover:bg-white/90"
+                    >
                       Upgrade Now
                     </Button>
                   </div>
@@ -469,7 +472,7 @@ export default function MarketingPage() {
                     ))}
                   </div>
                   <div className="mt-auto flex justify-center pt-4">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="default">
                       Learn More
                     </Button>
                   </div>
@@ -503,7 +506,7 @@ export default function MarketingPage() {
                     ))}
                   </div>
                   <div className="mt-auto flex justify-center pt-4">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="default">
                       Learn More
                     </Button>
                   </div>
@@ -547,7 +550,7 @@ export default function MarketingPage() {
                     </div>
                   </div>
                   <div className="mt-auto flex justify-center pt-4">
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="default">
                       Learn More
                     </Button>
                   </div>

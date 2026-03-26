@@ -105,7 +105,7 @@ export function MinimalDemographics({
               variant="ghost"
               size="icon"
               onClick={onBackToRoster}
-              className="text-muted-foreground hover:text-foreground -ml-2 h-9 w-9 shrink-0 rounded-full lg:hidden"
+              className="text-muted-foreground hover:text-foreground -ml-2 h-11 w-11 shrink-0 rounded-full lg:hidden"
               aria-label="Back to patients"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -163,7 +163,7 @@ export function MinimalDemographics({
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-muted-foreground hover:bg-muted h-8 w-8 rounded-full transition-colors"
+                className="text-muted-foreground hover:bg-muted h-11 w-11 rounded-full transition-colors"
                 aria-label="More options"
               >
                 <MoreHorizontal className="h-4 w-4" />

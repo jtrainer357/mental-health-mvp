@@ -259,11 +259,14 @@ export default function BillingPage() {
                   <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
                     <Button
                       variant="ghost"
-                      className="border border-white/30 text-white hover:bg-white/10"
+                      className="min-h-[44px] border border-white/30 text-white hover:bg-white/10"
                     >
                       Learn More
                     </Button>
-                    <Button variant="secondary" className="text-teal bg-white hover:bg-white/90">
+                    <Button
+                      variant="secondary"
+                      className="text-teal min-h-[44px] bg-white hover:bg-white/90"
+                    >
                       Upgrade Now
                     </Button>
                   </div>
