@@ -4,10 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { Card } from "@/design-system/components/ui/card";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Heading, Text } from "@/design-system/components/ui/typography";
-import type { PatientDetail } from "./types";
-
-// Type for selected activity with full details
-type SelectedActivity = PatientDetail["recentActivity"][number];
+import type { SelectedActivity } from "./types";
 
 interface FullNoteViewProps {
   activity: SelectedActivity;

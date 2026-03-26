@@ -17,10 +17,7 @@ import { Heading, Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
 import { smoothEase } from "@/design-system/lib/animation-constants";
 import { usePatientViewNavigation } from "@/src/lib/stores/patient-view-store";
-import type { PatientDetail } from "./types";
-
-// Type for selected activity with full details
-type SelectedActivity = PatientDetail["recentActivity"][number];
+import type { SelectedActivity } from "./types";
 
 // Container variants for staggered children
 const containerVariants = {
