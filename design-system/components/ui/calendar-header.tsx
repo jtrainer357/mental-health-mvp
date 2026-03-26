@@ -96,24 +96,26 @@ export function CalendarHeader({
           </Button>
         </div>
 
-        {/* View selector */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-11 gap-2 px-3">
-              {viewLabels[viewType]}
-              <ChevronDown className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => onViewTypeChange?.("day")}>Day view</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onViewTypeChange?.("week")}>
-              Week view
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onViewTypeChange?.("month")}>
-              Month view
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* View selector — only shown when onViewTypeChange is provided */}
+        {onViewTypeChange && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="h-11 gap-2 px-3">
+                {viewLabels[viewType]}
+                <ChevronDown className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onViewTypeChange("day")}>Day view</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onViewTypeChange("week")}>
+                Week view
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onViewTypeChange("month")}>
+                Month view
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
     </div>
   );

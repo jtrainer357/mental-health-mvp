@@ -256,7 +256,7 @@ export default function SchedulePage() {
       <LeftNav activePage="schedule" />
 
       {/* Main Content Wrapper */}
-      <div className="md:pl-20">
+      <div className="md:pl-24">
         <HeaderSearch />
 
         <main
@@ -363,7 +363,6 @@ export default function SchedulePage() {
                         currentDate={currentDate}
                         dateRange={dateRange}
                         viewType={viewType}
-                        onViewTypeChange={setViewType}
                         onPrevious={handlePrevious}
                         onNext={handleNext}
                         onToday={handleToday}
