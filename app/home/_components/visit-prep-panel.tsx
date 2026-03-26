@@ -6,7 +6,8 @@ import { cn } from "@/design-system/lib/utils";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
-import { Pill, TrendingDown, TrendingUp, Minus, AlertTriangle } from "lucide-react";
+import { Pill, AlertTriangle } from "lucide-react";
+import { TrendIndicator } from "@/design-system/components/ui/trend-indicator";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
 import { PATIENTS as SYNTHETIC_PATIENTS } from "@/src/lib/data/patients";
 import { PRIORITY_ACTIONS as SYNTHETIC_PRIORITY_ACTIONS } from "@/src/lib/data/priority-actions";
@@ -236,12 +237,6 @@ function GoalStatus({ status }: { status: "On Track" | "Partial" | "Not Started"
   );
 }
 
-function TrendIcon({ direction }: { direction: "improving" | "worsening" | "stable" }) {
-  if (direction === "improving") return <TrendingDown className="text-success h-5 w-5" />;
-  if (direction === "worsening") return <TrendingUp className="text-destructive h-5 w-5" />;
-  return <Minus className="text-muted-foreground h-5 w-5" />;
-}
-
 // ── Main Component ──────────────────────────────────────────────────────
 
 interface VisitPrepPanelProps {
@@ -374,7 +369,7 @@ export function VisitPrepPanel({
               </div>
               {/* Score trend */}
               <div className="bg-muted/30 mb-3 flex items-center gap-2.5 rounded-lg px-3 py-2.5">
-                <TrendIcon direction={prep.direction} />
+                <TrendIndicator direction={prep.direction} className="h-5 w-5" />
                 <div>
                   <div className="text-foreground text-sm font-semibold">
                     {prep.scoreMeasure}: {prep.scorePrev} → {prep.scoreCurrent}

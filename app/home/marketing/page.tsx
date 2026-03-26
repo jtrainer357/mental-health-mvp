@@ -8,16 +8,8 @@ import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { PageTransition } from "@/design-system/components/ui/page-transition";
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { Button } from "@/design-system/components/ui/button";
-import {
-  Star,
-  Search,
-  MapPin,
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Sparkles,
-  Lock,
-} from "lucide-react";
+import { Star, Search, MapPin, TrendingUp, TrendingDown, Sparkles, Lock } from "lucide-react";
+import { TrendIndicator } from "@/design-system/components/ui/trend-indicator";
 
 // Competitive landscape data
 const competitorData = [
@@ -90,19 +82,13 @@ const competitorData = [
   },
 ];
 
-function TrendIcon({ trend }: { trend: "up" | "down" | "flat" }) {
-  if (trend === "up") return <TrendingUp className="text-success h-4 w-4" />;
-  if (trend === "down") return <TrendingDown className="text-destructive h-4 w-4" />;
-  return <Minus className="text-muted-foreground h-4 w-4" />;
-}
-
 function ScoreWithTrend({ score, trend }: { score: number; trend: "up" | "down" | "flat" }) {
   const color =
     trend === "up" ? "text-success" : trend === "down" ? "text-destructive" : "text-warning";
   return (
     <div className="flex items-center gap-1">
       <span className={`font-medium ${color}`}>{score}</span>
-      <TrendIcon trend={trend} />
+      <TrendIndicator direction={trend} />
     </div>
   );
 }
