@@ -145,8 +145,11 @@ export function PatientsPage({
           detailData.prioritizedActions = priorityActions.map(dbActionToUiAction);
           setPatientDetails(detailData);
         }
-      } catch {
-        // Error loading patient details
+      } catch (err: unknown) {
+        console.error("[PatientsPage] Error loading patient details:", err);
+        if (!cancelled) {
+          setPatientDetails(null);
+        }
       } finally {
         if (!cancelled) setDetailLoading(false);
       }

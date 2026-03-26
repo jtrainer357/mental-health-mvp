@@ -17,7 +17,7 @@ export type PatientViewState = "default" | "summary" | "note" | "fullView";
 export const ROSTER_WIDTH_CONFIG: Record<PatientViewState, number> = {
   default: 320,
   summary: 140,
-  note: 140,
+  note: 260,
   fullView: 0,
 } as const;
 

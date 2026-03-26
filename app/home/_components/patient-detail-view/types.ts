@@ -68,6 +68,14 @@ export interface PatientDetail {
   email: string;
   insurance?: string;
   avatarSrc?: string;
+  primaryDiagnosisCode?: string;
+  primaryDiagnosisName?: string;
+  secondaryDiagnosisCode?: string;
+  secondaryDiagnosisName?: string;
+  medications?: string[];
+  riskLevel?: string;
+  provider?: string;
+  treatmentStartDate?: string;
   lastVisit: {
     date: string;
     type: string;
@@ -116,6 +124,16 @@ export interface PatientDetail {
     diagnosisCodes?: string[];
     treatmentNotes?: string;
     nextSteps?: string;
+    // SOAP note data from SESSION_NOTES
+    subjective?: string;
+    objective?: string;
+    assessment?: string;
+    plan?: string;
+    noteStatus?: "signed" | "draft";
+    signedAt?: string;
+    signedBy?: string;
+    cptCode?: string;
+    noteType?: "progress_note" | "initial_evaluation";
   }>;
   messages?: PatientMessage[];
   invoices?: PatientInvoice[];

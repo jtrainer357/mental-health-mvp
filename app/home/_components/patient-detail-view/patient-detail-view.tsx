@@ -32,7 +32,7 @@ const tabTriggerStyles =
 const smoothEase: [number, number, number, number] = [0.25, 0.1, 0.25, 1.0];
 
 // Animation variants for view transitions
-const viewVariants = {
+const _viewVariants = {
   initial: (direction: number) => ({
     opacity: 0,
     x: direction > 0 ? 40 : -40,
@@ -122,7 +122,7 @@ export function PatientDetailView({
   const [activeTab, setActiveTab] = React.useState(initialTab);
 
   // Track direction for animations
-  const [direction, setDirection] = React.useState(0);
+  const [_direction, setDirection] = React.useState(0);
   const previousViewState = React.useRef(viewState);
   const isFirstRender = React.useRef(true);
 
@@ -140,17 +140,15 @@ export function PatientDetailView({
     previousViewState.current = viewState;
   }, [viewState]);
 
-  // Reset view state when patient changes
+  // Reset view state when patient changes or on initial mount
   React.useEffect(() => {
-    if (
-      patient?.id &&
-      previousPatientId.current !== null &&
-      previousPatientId.current !== patient.id
-    ) {
-      // Patient changed, reset to default view
-      reset();
+    if (patient?.id) {
+      if (previousPatientId.current !== patient.id) {
+        // Patient changed (or first load), reset to default view
+        reset();
+      }
+      previousPatientId.current = patient.id;
     }
-    previousPatientId.current = patient?.id ?? null;
   }, [patient?.id, reset]);
 
   // Update activeTab when initialTab changes (e.g., from voice command)
@@ -182,7 +180,7 @@ export function PatientDetailView({
   // Handle activity selection from overview tab
   const handleActivitySelect = React.useCallback(
     (activity: SelectedActivity) => {
-      transitionTo("summary", activity.id);
+      transitionTo("note", activity.id);
     },
     [transitionTo]
   );
@@ -204,133 +202,114 @@ export function PatientDetailView({
 
   return (
     <div className={cn("flex flex-col gap-2 lg:h-full", className)}>
-      {/* Adaptive Patient Header - shrinks based on view state */}
-      <div className="shrink-0">
-        <AdaptivePatientHeader patient={patient} onBackToRoster={onBackToRoster} />
-      </div>
+      {/* Adaptive Patient Header - hidden in note/fullView since clinical note has its own header */}
+      {viewState !== "note" && viewState !== "fullView" && (
+        <div className="shrink-0">
+          <AdaptivePatientHeader patient={patient} onBackToRoster={onBackToRoster} />
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
-        {/* Simplified: Always show default view when viewState is "default" */}
+        {/* View switching — no AnimatePresence to avoid stale-animation bugs */}
         {viewState === "default" && (
-          <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="flex h-full w-full flex-col"
-            >
-              <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
-                <TabsTrigger value="overview" className={tabTriggerStyles}>
-                  Overview
-                </TabsTrigger>
-                <TabsTrigger value="appointments" className={tabTriggerStyles}>
-                  Appointments
-                </TabsTrigger>
-                <TabsTrigger value="medical-records" className={tabTriggerStyles}>
-                  Medical Records
-                </TabsTrigger>
-                <TabsTrigger value="messages" className={tabTriggerStyles}>
-                  Messages
-                </TabsTrigger>
-                <TabsTrigger value="billing" className={tabTriggerStyles}>
-                  Billing
-                </TabsTrigger>
-                <TabsTrigger value="reviews" className={tabTriggerStyles}>
-                  Reviews
-                </TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="overview" className="mt-0 flex-1 lg:overflow-y-auto">
-                <OverviewTab patient={patient} onActivitySelect={handleActivitySelect} />
-              </TabsContent>
-
-              <TabsContent value="appointments" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                <AppointmentsTab patient={patient} />
-              </TabsContent>
-
-              <TabsContent value="medical-records" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                <MedicalRecordsTab patient={patient} />
-              </TabsContent>
-
-              <TabsContent
-                value="messages"
-                className="-mx-4 mt-0 -mb-4 flex-1 overflow-hidden sm:-mx-6 sm:-mb-6"
+          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
+            <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
+              <Tabs
+                value={activeTab}
+                onValueChange={setActiveTab}
+                className="flex h-full w-full flex-col"
               >
-                <MessagesTab patient={patient} />
-              </TabsContent>
+                <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
+                  <TabsTrigger value="overview" className={tabTriggerStyles}>
+                    Overview
+                  </TabsTrigger>
+                  <TabsTrigger value="appointments" className={tabTriggerStyles}>
+                    Appointments
+                  </TabsTrigger>
+                  <TabsTrigger value="medical-records" className={tabTriggerStyles}>
+                    Medical Records
+                  </TabsTrigger>
+                  <TabsTrigger value="messages" className={tabTriggerStyles}>
+                    Messages
+                  </TabsTrigger>
+                  <TabsTrigger value="billing" className={tabTriggerStyles}>
+                    Billing
+                  </TabsTrigger>
+                  <TabsTrigger value="reviews" className={tabTriggerStyles}>
+                    Reviews
+                  </TabsTrigger>
+                </TabsList>
 
-              <TabsContent value="billing" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                <BillingTab patient={patient} />
-              </TabsContent>
+                <TabsContent value="overview" className="mt-0 flex-1 lg:overflow-y-auto">
+                  <OverviewTab
+                    key={patient.id}
+                    patient={patient}
+                    onActivitySelect={handleActivitySelect}
+                  />
+                </TabsContent>
 
-              <TabsContent value="reviews" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
-                <ReviewsTab patient={patient} />
-              </TabsContent>
-            </Tabs>
-          </CardWrapper>
+                <TabsContent value="appointments" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
+                  <AppointmentsTab patient={patient} />
+                </TabsContent>
+
+                <TabsContent
+                  value="medical-records"
+                  className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                >
+                  <MedicalRecordsTab patient={patient} />
+                </TabsContent>
+
+                <TabsContent
+                  value="messages"
+                  className="-mx-4 mt-0 -mb-4 flex-1 overflow-hidden sm:-mx-6 sm:-mb-6"
+                >
+                  <MessagesTab patient={patient} />
+                </TabsContent>
+
+                <TabsContent value="billing" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
+                  <BillingTab patient={patient} />
+                </TabsContent>
+
+                <TabsContent value="reviews" className="mt-0 flex-1 pr-1 lg:overflow-y-auto">
+                  <ReviewsTab patient={patient} />
+                </TabsContent>
+              </Tabs>
+            </CardWrapper>
+          </div>
         )}
 
-        {/* AnimatePresence for other views */}
-        <AnimatePresence mode="wait" custom={direction} initial={false}>
-          {/* Summary View: Visit Summary Panel */}
-          {viewState === "summary" && selectedActivity && (
-            <motion.div
-              key="summary-view"
-              custom={direction}
-              variants={viewVariants}
-              initial={false}
-              animate="animate"
-              exit="exit"
-              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
-            >
-              <CardWrapper className="lg:h-full lg:overflow-hidden">
-                <VisitSummaryPanel
-                  activity={selectedActivity}
-                  patientName={patient.name}
-                  onBack={handleBackFromSummary}
-                />
-              </CardWrapper>
-            </motion.div>
-          )}
+        {viewState === "summary" && selectedActivity && (
+          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
+            <CardWrapper className="lg:h-full lg:overflow-hidden">
+              <VisitSummaryPanel
+                activity={selectedActivity}
+                patientName={patient.name}
+                onBack={handleBackFromSummary}
+              />
+            </CardWrapper>
+          </div>
+        )}
 
-          {/* Note View: Clinical Note (not full view) */}
-          {viewState === "note" && selectedActivity && (
-            <motion.div
-              key="note-view"
-              custom={direction}
-              variants={viewVariants}
-              initial={false}
-              animate="animate"
-              exit="exit"
-              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
-            >
-              <CardWrapper className="lg:h-full lg:overflow-hidden">
-                <ClinicalNoteView
-                  activity={selectedActivity}
-                  patientName={patient.name}
-                  patient={patient}
-                />
-              </CardWrapper>
-            </motion.div>
-          )}
+        {viewState === "note" && selectedActivity && (
+          <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
+            <CardWrapper className="lg:h-full lg:overflow-hidden">
+              <ClinicalNoteView
+                activity={selectedActivity}
+                patientName={patient.name}
+                patient={patient}
+              />
+            </CardWrapper>
+          </div>
+        )}
 
-          {/* Fallback when no activity is selected but we're in summary/note state */}
-          {(viewState === "summary" || viewState === "note") && !selectedActivity && (
-            <motion.div
-              key="fallback-view"
-              custom={direction}
-              variants={viewVariants}
-              initial={false}
-              animate="animate"
-              exit="exit"
-              className="flex min-h-0 flex-1 flex-col overflow-hidden"
-            >
-              <CardWrapper className="flex h-full items-center justify-center">
-                <Text muted>Select an activity to view details</Text>
-              </CardWrapper>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {(viewState === "summary" || viewState === "note") && !selectedActivity && (
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <CardWrapper className="flex h-full items-center justify-center">
+              <Text muted>Select an activity to view details</Text>
+            </CardWrapper>
+          </div>
+        )}
 
         {/* Full View: Clinical Note - Rendered outside AnimatePresence for overlay effect */}
         <AnimatePresence>

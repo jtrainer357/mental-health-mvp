@@ -9,9 +9,13 @@ import type { SeedPatient } from "./types";
 // DATE HELPERS
 // ============================================================================
 
-/** Returns today's date as YYYY-MM-DD */
+/** Returns today's date as YYYY-MM-DD (local time, not UTC) */
 export function today(): string {
-  return new Date().toISOString().split("T")[0]!;
+  const d = new Date();
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 /** Returns a Date object for today at noon (avoids timezone edge cases) */
@@ -80,6 +84,28 @@ export function computeEndTime(startTime: string, durationMinutes: number): stri
  */
 export function toISO(dateStr: string, time: string = "12:00:00"): string {
   return `${dateStr}T${time}Z`;
+}
+
+/**
+ * Get the date for a specific weekday in the current week.
+ * 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat
+ */
+export function thisWeekDay(dayOfWeek: number): string {
+  const d = todayDate();
+  const currentDay = d.getDay();
+  const diff = dayOfWeek - currentDay;
+  d.setDate(d.getDate() + diff);
+  return d.toISOString().split("T")[0]!;
+}
+
+/**
+ * Get a future date N weeks from a given weekday's current-week occurrence.
+ */
+export function futureWeekDate(preferredDay: number, weeksAhead: number): string {
+  const base = thisWeekDay(preferredDay);
+  const d = new Date(base + "T12:00:00");
+  d.setDate(d.getDate() + weeksAhead * 7);
+  return d.toISOString().split("T")[0]!;
 }
 
 // ============================================================================

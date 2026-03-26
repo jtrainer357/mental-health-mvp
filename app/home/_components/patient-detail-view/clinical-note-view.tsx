@@ -9,9 +9,6 @@ import {
   Check,
   Pencil,
   RotateCcw,
-  Clock,
-  ChevronDown,
-  AlertTriangle,
   Pill,
   Target,
   TrendingDown,
@@ -111,7 +108,37 @@ function getSessionNumber(activity: SelectedActivity, patient?: PatientDetail): 
   return idx >= 0 ? idx + 1 : patient.recentActivity.length;
 }
 
-function getDAPContent(): NoteSection[] {
+function getDAPContent(activity?: SelectedActivity): NoteSection[] {
+  // Use real SOAP data if available, mapping S+O→Data, A→Assessment, P→Plan
+  if (activity?.subjective && activity?.objective) {
+    return [
+      {
+        key: "data",
+        label: "DATA",
+        prefix: "D",
+        status: "machine-generated",
+        content: activity.subjective + "\n\n" + activity.objective,
+      },
+      {
+        key: "assessment",
+        label: "ASSESSMENT",
+        prefix: "A",
+        status: activity.noteStatus === "signed" ? "accepted" : "human-edited",
+        tags: activity.noteStatus === "signed" ? [] : ["Factual correction", "Style preference"],
+        content: activity.assessment || "Assessment pending.",
+      },
+      {
+        key: "plan",
+        label: "PLAN",
+        prefix: "P",
+        status: "machine-generated",
+        tags: ["Extraction Target"],
+        content: activity.plan || "Plan pending.",
+      },
+    ];
+  }
+
+  // Fallback: generic content
   return [
     {
       key: "data",
@@ -330,7 +357,7 @@ export function ClinicalNoteView({
   const isFullView = viewState === "fullView";
 
   const sessionNum = getSessionNumber(activity, patient);
-  const sections = getDAPContent();
+  const sections = getDAPContent(activity);
   const [actions, setActions] = React.useState(getExtractedActions);
   const [cptApproved, setCptApproved] = React.useState(false);
 
@@ -359,15 +386,24 @@ export function ClinicalNoteView({
       variants={sidebarVariants}
       initial="hidden"
       animate="visible"
-      className="w-full shrink-0 lg:w-[400px]"
+      className="w-full shrink-0 lg:w-[440px]"
     >
       <CardWrapper className="space-y-2 lg:overflow-y-auto">
         {/* 01 Current Situation */}
         <Card className="border-border/40 p-4 shadow-sm">
           <SidebarSectionHeader number="01" title="Current Situation" icon={Activity} />
           <Text size="xs" className="text-foreground/70 leading-relaxed">
-            Follow-up individual therapy, last seen {otherVisits[0]?.date || "recently"}. Active dx:
-            GAD F41.1. PHQ-9: 8 (Mild). Recent med change: Buspar 10mg discontinued.
+            {activity.appointmentType || "Individual Therapy"}, last seen{" "}
+            {otherVisits[0]?.date || "recently"}.{" "}
+            {patient.primaryDiagnosisCode && (
+              <>
+                Active dx: {patient.primaryDiagnosisName} {patient.primaryDiagnosisCode}.{" "}
+              </>
+            )}
+            {patient.riskLevel === "high" && "Elevated risk level. "}
+            {patient.medications && patient.medications.length > 0 && (
+              <>Current meds: {patient.medications.join(", ")}.</>
+            )}
           </Text>
           <div className="bg-muted/40 mt-3 rounded-lg px-3 py-2">
             <Text
@@ -377,7 +413,14 @@ export function ClinicalNoteView({
               Problem List
             </Text>
             <Text size="xs" className="text-foreground/60 font-medium">
-              GAD F41.1 &middot; Panic disorder F41.0 &middot; Insomnia G47.00
+              {[
+                patient.primaryDiagnosisCode &&
+                  `${patient.primaryDiagnosisName} ${patient.primaryDiagnosisCode}`,
+                patient.secondaryDiagnosisCode &&
+                  `${patient.secondaryDiagnosisName} ${patient.secondaryDiagnosisCode}`,
+              ]
+                .filter(Boolean)
+                .join(" · ") || "No active diagnoses"}
             </Text>
           </div>
         </Card>
@@ -386,37 +429,53 @@ export function ClinicalNoteView({
         <Card className="border-border/40 p-4 shadow-sm">
           <SidebarSectionHeader number="02" title="Key Background" icon={FileText} />
           <Text size="xs" className="text-foreground/70 leading-relaxed">
-            GAD F41.1. Referred via EAP. Mindfulness-Based therapy since Dec 24, 2025.
+            {patient.primaryDiagnosisCode && <>{patient.primaryDiagnosisCode}. </>}
+            {patient.provider || "Dr. Sarah Chen"} since{" "}
+            {patient.treatmentStartDate
+              ? new Date(patient.treatmentStartDate).toLocaleDateString("en-US", {
+                  month: "short",
+                  year: "numeric",
+                })
+              : "recently"}
+            .
           </Text>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {["Body scan", "RAIN", "Breathing"].map((t) => (
-              <motion.span
-                key={t}
-                className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-[11px] font-medium"
-                whileHover={{ scale: 1.03 }}
-              >
-                {t}
-              </motion.span>
-            ))}
-          </div>
+          {patient.medications && patient.medications.length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {patient.medications.map((med) => (
+                <motion.span
+                  key={med}
+                  className="bg-muted/50 border-border/40 rounded-full border px-3 py-1 text-[11px] font-medium"
+                  whileHover={{ scale: 1.03 }}
+                >
+                  {med}
+                </motion.span>
+              ))}
+            </div>
+          )}
           <div className="mt-3">
             <Text
               size="xs"
               className="text-muted-foreground mb-1.5 text-[10px] font-bold tracking-wider uppercase"
             >
-              Allergies
+              Risk Level
             </Text>
-            <div className="flex flex-wrap gap-1.5">
-              {["Penicillin", "Sulfa drugs"].map((a) => (
-                <span
-                  key={a}
-                  className="bg-destructive/5 border-destructive/15 text-destructive/80 flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-medium"
-                >
-                  <AlertTriangle className="h-3 w-3" />
-                  {a}
-                </span>
-              ))}
-            </div>
+            <Badge
+              variant="outline"
+              className={cn(
+                "rounded-md px-2 py-0.5 text-[10px] font-semibold",
+                patient.riskLevel === "high"
+                  ? "border-destructive/30 bg-destructive/10 text-destructive"
+                  : patient.riskLevel === "medium"
+                    ? "border-warning/30 bg-warning/10 text-warning"
+                    : "border-success/30 bg-success/10 text-success"
+              )}
+            >
+              {patient.riskLevel === "high"
+                ? "High"
+                : patient.riskLevel === "medium"
+                  ? "Medium"
+                  : "Low"}
+            </Badge>
           </div>
         </Card>
 
@@ -459,84 +518,109 @@ export function ClinicalNoteView({
         <Card className="border-border/40 p-4 shadow-sm">
           <SidebarSectionHeader number="03" title="Active Care Plan" icon={Shield} />
           <div className="space-y-2.5">
-            {[
-              {
-                name: "Fluoxetine 40mg",
-                freq: "Once daily",
-                prescriber: "Dr. Linda Chen, MD",
-              },
-              {
-                name: "Hydroxyzine 25mg",
-                freq: "PRN anxiety",
-                prescriber: "Dr. Linda Chen, MD",
-              },
-            ].map((med) => (
-              <div key={med.name} className="bg-muted/30 flex items-start gap-2.5 rounded-lg p-2.5">
-                <div className="bg-primary/10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg">
-                  <Pill className="text-primary h-3.5 w-3.5" />
+            {patient.medications && patient.medications.length > 0 ? (
+              patient.medications.map((med) => (
+                <div key={med} className="bg-muted/30 flex items-start gap-2.5 rounded-lg p-2.5">
+                  <div className="bg-primary/10 mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg">
+                    <Pill className="text-primary h-3.5 w-3.5" />
+                  </div>
+                  <div>
+                    <Text size="xs" className="font-bold">
+                      {med}
+                    </Text>
+                    <Text size="xs" className="text-muted-foreground">
+                      {patient.provider || "Dr. Sarah Chen"}
+                    </Text>
+                  </div>
                 </div>
-                <div>
-                  <Text size="xs" className="font-bold">
-                    {med.name}
-                  </Text>
-                  <Text size="xs" className="text-muted-foreground">
-                    {med.freq} &middot; {med.prescriber}
-                  </Text>
-                </div>
-              </div>
-            ))}
+              ))
+            ) : (
+              <Text size="xs" className="text-muted-foreground italic">
+                No current medications
+              </Text>
+            )}
           </div>
 
-          <div className="border-border/30 mt-3 border-t pt-3">
-            <Text size="xs" className="text-muted-foreground mb-2">
-              3 goals: 2 in progress, 1 not started
-            </Text>
-            <div className="space-y-2">
-              {[
-                { goal: "Goal 1: Reduce panic attacks", status: "Not Started", warn: false },
-                {
-                  goal: "Goal 2: Decrease avoidance",
-                  status: "Partial",
-                  detail: "overdue \u2014 target Mar 4",
-                  warn: true,
-                },
-              ].map((g) => (
-                <div key={g.goal} className="flex items-center justify-between gap-2">
+          {patient.primaryDiagnosisName && (
+            <div className="border-border/30 mt-3 border-t pt-3">
+              <Text size="xs" className="text-muted-foreground mb-2">
+                Treatment focus: {patient.primaryDiagnosisName}
+              </Text>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    <Target
-                      className={cn(
-                        "h-3.5 w-3.5",
-                        g.warn ? "text-warning" : "text-muted-foreground"
-                      )}
-                    />
+                    <Target className="text-muted-foreground h-3.5 w-3.5" />
                     <Text size="xs" className="font-medium">
-                      {g.goal}
+                      Symptom reduction
                     </Text>
                   </div>
                   <Badge
                     variant="outline"
-                    className={cn(
-                      "rounded-md px-2 py-0 text-[10px] font-medium",
-                      g.warn
-                        ? "border-warning/30 bg-warning/10 text-warning"
-                        : "border-border/50 text-muted-foreground"
-                    )}
+                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-[10px] font-medium"
                   >
-                    {g.status}
+                    In Progress
                   </Badge>
                 </div>
-              ))}
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Target className="text-muted-foreground h-3.5 w-3.5" />
+                    <Text size="xs" className="font-medium">
+                      Functional improvement
+                    </Text>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className="border-border/50 text-muted-foreground rounded-md px-2 py-0 text-[10px] font-medium"
+                  >
+                    In Progress
+                  </Badge>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
         </Card>
 
         {/* 04 Outcome Trends */}
         <Card className="border-border/40 p-4 shadow-sm">
           <SidebarSectionHeader number="04" title="Outcome Trends" icon={TrendingDown} />
           <div className="bg-muted/30 rounded-lg px-3 py-2">
-            <OutcomeTrendRow label="PHQ-9" score={8} change={-4} />
-            <div className="border-border/20 my-1 border-t" />
-            <OutcomeTrendRow label="GAD-7" score={10} change={-2} />
+            {(() => {
+              const measures = patient.outcomeMeasures || [];
+              const byType = new Map<string, PatientDetail["outcomeMeasures"]>();
+              measures.forEach((m) => {
+                if (!m) return;
+                const existing = byType.get(m.measureType) || [];
+                existing.push(m);
+                byType.set(m.measureType, existing);
+              });
+              const rows: { label: string; score: number; change: number }[] = [];
+              byType.forEach((ms, type) => {
+                if (!ms || ms.length === 0) return;
+                const sorted = [...ms].sort((a, b) =>
+                  b.measurementDate.localeCompare(a.measurementDate)
+                );
+                const latest = sorted[0]!;
+                const previous = sorted[1];
+                const change =
+                  previous && latest.score !== null && previous.score !== null
+                    ? latest.score - previous.score
+                    : 0;
+                rows.push({ label: type, score: latest.score ?? 0, change });
+              });
+              if (rows.length === 0) {
+                return (
+                  <Text size="xs" className="text-muted-foreground py-1 italic">
+                    No outcome measures recorded
+                  </Text>
+                );
+              }
+              return rows.map((row, i) => (
+                <React.Fragment key={row.label}>
+                  {i > 0 && <div className="border-border/20 my-1 border-t" />}
+                  <OutcomeTrendRow label={row.label} score={row.score} change={row.change} />
+                </React.Fragment>
+              ));
+            })()}
           </div>
         </Card>
       </CardWrapper>
@@ -566,21 +650,31 @@ export function ClinicalNoteView({
           >
             <ArrowLeft className="h-5 w-5" />
           </motion.button>
-          <div className="bg-primary/10 border-primary/20 flex h-10 w-10 items-center justify-center rounded-full border">
-            <Text size="sm" className="text-primary font-bold">
-              {patientName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </Text>
-          </div>
+          {patient?.avatarSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={patient.avatarSrc}
+              alt={patientName}
+              className="h-10 w-10 rounded-full object-cover"
+            />
+          ) : (
+            <div className="bg-primary/10 border-primary/20 flex h-10 w-10 items-center justify-center rounded-full border">
+              <Text size="sm" className="text-primary font-bold">
+                {patientName
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
+              </Text>
+            </div>
+          )}
           <div>
             <Heading level={4} className="text-lg font-semibold sm:text-xl">
               {patientName} &middot; Session #{sessionNum}
             </Heading>
             <Text size="sm" muted className="mt-0.5">
-              {activity.date} &middot; {activity.appointmentType || "Individual"} &middot;{" "}
-              {activity.duration || "53 min"} &middot; Telehealth (video)
+              {activity.date} &middot; {activity.appointmentType || "Individual Therapy"} &middot;{" "}
+              {activity.duration || "50 min"} &middot; {activity.cptCode || "90837"} &middot;{" "}
+              {activity.signedBy || patient?.provider || "Dr. Sarah Chen"}
             </Text>
           </div>
         </div>
@@ -790,9 +884,12 @@ export function ClinicalNoteView({
                   <div className="flex flex-1 flex-col p-5">
                     <div className="flex items-start justify-between">
                       <div>
-                        <Text className="text-3xl font-bold tracking-tight">90837</Text>
+                        <Text className="text-3xl font-bold tracking-tight">
+                          {activity.cptCode || "90837"}
+                        </Text>
                         <Text size="xs" className="text-muted-foreground mt-1">
-                          Individual psychotherapy, 53+ min
+                          {activity.appointmentType || "Individual Therapy"},{" "}
+                          {activity.duration || "50 min"}
                         </Text>
                       </div>
                       <div className="bg-muted/50 rounded-lg px-3 py-2 text-right">
@@ -803,7 +900,7 @@ export function ClinicalNoteView({
                           Duration
                         </Text>
                         <Text size="sm" className="font-bold">
-                          53 min
+                          {activity.duration || "50 min"}
                         </Text>
                       </div>
                     </div>
@@ -817,7 +914,7 @@ export function ClinicalNoteView({
                       </Text>
                       <ul className="space-y-1.5">
                         {[
-                          "Transcript confirms 53 min of psychotherapy content",
+                          `Transcript confirms ${activity.duration || "50 min"} of psychotherapy content`,
                           'Payer requires "counseling vs. medical management" documentation \u2014 auto-inserted',
                           "No up-coding risk detected",
                         ].map((item, i) => (
@@ -843,7 +940,9 @@ export function ClinicalNoteView({
                             "border-success/30 bg-success/10 text-success hover:bg-success/10"
                         )}
                       >
-                        {cptApproved ? "CPT 90837 Approved \u2713" : "Approve CPT 90837"}
+                        {cptApproved
+                          ? `CPT ${activity.cptCode || "90837"} Approved \u2713`
+                          : `Approve CPT ${activity.cptCode || "90837"}`}
                       </Button>
                     </div>
                   </div>

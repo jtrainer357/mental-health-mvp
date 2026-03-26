@@ -90,16 +90,16 @@ export function PatientListCard({
               />
             )}
           </AnimatePresence>
-          <div className="flex flex-col items-center gap-1 text-center">
+          <div className="flex items-center gap-2.5">
             <motion.div animate={{ scale: selected ? 1.05 : 1 }} transition={{ duration: 0.2 }}>
-              <Avatar className="h-9 w-9 shrink-0">
+              <Avatar className="h-8 w-8 shrink-0">
                 {avatarSrc && <AvatarImage src={avatarSrc} alt={name} />}
                 <AvatarFallback className="bg-avatar-fallback text-[10px] font-medium text-white">
                   {initials}
                 </AvatarFallback>
               </Avatar>
             </motion.div>
-            <span className="text-card-foreground text-[11px] leading-tight font-medium">
+            <span className="text-card-foreground min-w-0 text-left text-xs leading-tight font-medium">
               {name}
             </span>
           </div>

@@ -15,61 +15,71 @@ interface FullNoteViewProps {
   onBack: () => void;
 }
 
-// Generate realistic SOAP note content based on session type
-function getNoteContent(activity: SelectedActivity, patientName: string) {
-  const isSubstanceUse =
-    activity.title?.toLowerCase().includes("substance") ||
-    activity.diagnosisCodes?.some((c) => c.toLowerCase().includes("substance"));
-
-  if (isSubstanceUse || activity.appointmentType === "Individual Therapy") {
-    return {
-      chiefComplaint:
-        "Follow-up for ongoing individual therapy, mood management, and coping skills development.",
-      subjective: `Patient reports: "I've been doing better this week. The techniques we discussed last session really helped when I felt triggered." Patient describes improved sleep quality (6-7 hours/night vs 4-5 previously). Denies any return to substance use. Reports attending 2 support group meetings this week. Mood described as "mostly stable with some anxiety around work deadlines." No suicidal or homicidal ideation. Appetite normal. Energy levels improving.`,
-      objective: `Patient arrived on time, appropriately dressed with good hygiene. Alert and oriented x4. Speech normal rate/rhythm/volume. Mood: "better." Affect: congruent, full range, appropriate. Thought process: linear, goal-directed. No evidence of psychosis, delusions, or hallucinations. Insight: good. Judgment: intact. Eye contact appropriate throughout session.`,
-      assessment: `${patientName} continues to make progress in treatment. Demonstrates improved coping skills and increased insight into triggers. Sustained recovery maintained. GAD symptoms showing improvement with current interventions. Patient remains engaged and motivated in treatment.`,
-      plan: [
-        "Continue individual therapy weekly x 4 sessions",
-        "Maintain current coping strategies (mindfulness, journaling, sponsor contact)",
-        "Continue support group attendance (minimum 2x/week)",
-        "Practice grounding techniques discussed today",
-        "Review sleep hygiene handout provided",
-        "Next appointment scheduled in 1 week",
-      ],
-      diagnoses: [
-        "F10.20 - Alcohol Use Disorder, Moderate, In Sustained Remission",
-        "F41.1 - Generalized Anxiety Disorder",
-      ],
-      vitals: {
-        bp: "122/78",
-        hr: "72",
-        phq9: "8 (mild)",
-        gad7: "10 (moderate)",
-      },
-    };
-  }
-
-  // Default therapy note
+// Extract PHQ-9 and GAD-7 scores from objective text if present
+function extractScoresFromObjective(objective: string) {
+  const phq9Match = objective.match(/PHQ-9:\s*(\d+)\s*(?:\(([^)]+)\))?/i);
+  const gad7Match = objective.match(/GAD-7:\s*(\d+)\s*(?:\(([^)]+)\))?/i);
+  const pcl5Match = objective.match(/PCL-5:\s*(\d+)\s*(?:\(([^)]+)\))?/i);
   return {
-    chiefComplaint: "Scheduled follow-up for ongoing psychotherapy and symptom management.",
-    subjective: `Patient reports overall improvement since last session. Describes practicing coping techniques discussed previously with moderate success. Sleep and appetite within normal limits. Denies suicidal or homicidal ideation. Reports some ongoing stressors related to work/family but feels better equipped to manage them.`,
-    objective: `Patient arrived on time, casually dressed, good hygiene. Alert and oriented x4. Cooperative and engaged throughout session. Mood: "okay." Affect: appropriate, full range. Thought process: linear and goal-directed. No evidence of psychosis. Insight and judgment intact.`,
-    assessment: `Patient demonstrates continued engagement in treatment and progress toward therapeutic goals. Current symptoms are well-managed with existing treatment approach.`,
-    plan: [
-      "Continue current treatment approach",
-      "Practice techniques discussed in session",
-      "Schedule follow-up appointment",
-    ],
-    diagnoses: ["F41.1 - Generalized Anxiety Disorder"],
-    vitals: {
-      phq9: "6 (mild)",
-      gad7: "8 (mild)",
-    },
+    phq9: phq9Match ? `${phq9Match[1]}${phq9Match[2] ? ` (${phq9Match[2]})` : ""}` : undefined,
+    gad7: gad7Match ? `${gad7Match[1]}${gad7Match[2] ? ` (${gad7Match[2]})` : ""}` : undefined,
+    pcl5: pcl5Match ? `${pcl5Match[1]}${pcl5Match[2] ? ` (${pcl5Match[2]})` : ""}` : undefined,
   };
 }
 
+// Parse plan text into numbered items
+function parsePlanItems(plan: string): string[] {
+  // Split on numbered items like "1. " or "1) "
+  const items = plan.split(/\d+\.\s+/).filter((item) => item.trim().length > 0);
+  if (items.length > 1) return items.map((item) => item.trim());
+  // Fallback: split on newlines
+  const lines = plan.split("\n").filter((line) => line.trim().length > 0);
+  if (lines.length > 1) return lines.map((line) => line.replace(/^\d+[.)]\s*/, "").trim());
+  // Single item
+  return [plan.trim()];
+}
+
+// Format signed_at timestamp
+function formatSignedTime(signedAt?: string): string {
+  if (!signedAt) return "";
+  try {
+    return new Date(signedAt).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    });
+  } catch {
+    return "";
+  }
+}
+
 export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProps) {
-  const note = getNoteContent(activity, patientName);
+  const _hasRealNote = Boolean(activity.subjective && activity.objective);
+
+  const subjective =
+    activity.subjective ||
+    `Patient reports overall improvement since last session. Describes practicing coping techniques discussed previously with moderate success. Sleep and appetite within normal limits. Denies suicidal or homicidal ideation.`;
+  const objective =
+    activity.objective ||
+    `Patient arrived on time, casually dressed, good hygiene. Alert and oriented x4. Cooperative and engaged throughout session. Mood: "okay." Affect: appropriate, full range. Thought process: linear and goal-directed. No evidence of psychosis. Insight and judgment intact.`;
+  const assessment =
+    activity.assessment ||
+    `Patient demonstrates continued engagement in treatment and progress toward therapeutic goals. Current symptoms are well-managed with existing treatment approach.`;
+  const plan =
+    activity.plan ||
+    "1. Continue current treatment approach\n2. Practice techniques discussed in session\n3. Schedule follow-up appointment";
+
+  const planItems = parsePlanItems(plan);
+  const scores = extractScoresFromObjective(objective);
+  const provider = activity.signedBy || activity.provider || "Dr. Sarah Chen";
+  const signedTime = formatSignedTime(activity.signedAt);
+  const noteStatus = activity.noteStatus || "signed";
+  const noteTypeLabel =
+    activity.noteType === "initial_evaluation" ? "Initial Evaluation" : "Progress Note";
+  const cptLabel = activity.cptCode ? `CPT ${activity.cptCode}` : undefined;
 
   return (
     <div className="flex h-full flex-col">
@@ -85,16 +95,30 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           </button>
           <div>
             <Heading level={5} className="text-base sm:text-lg">
-              Clinical Note
+              {noteTypeLabel}
             </Heading>
             <Text size="sm" muted>
               {activity.title} - {activity.date}
             </Text>
           </div>
         </div>
-        <Badge variant="secondary" className="text-xs">
-          Signed & Locked
-        </Badge>
+        <div className="flex items-center gap-2">
+          {cptLabel && (
+            <Badge variant="outline" className="text-xs">
+              {cptLabel}
+            </Badge>
+          )}
+          <Badge
+            variant="secondary"
+            className={
+              noteStatus === "signed"
+                ? "bg-green-100 text-green-700"
+                : "bg-amber-100 text-amber-700"
+            }
+          >
+            {noteStatus === "signed" ? "Signed & Locked" : "Draft"}
+          </Badge>
+        </div>
       </div>
 
       {/* Note Content */}
@@ -123,7 +147,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
                 Provider
               </Text>
               <Text size="sm" className="font-medium">
-                {activity.provider || "Dr. Demo"}
+                {provider}
               </Text>
             </div>
             <div>
@@ -137,68 +161,48 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           </div>
         </Card>
 
-        {/* Vitals / Assessments */}
-        {note.vitals && (
+        {/* Clinical Measures */}
+        {(scores.phq9 || scores.gad7 || scores.pcl5) && (
           <div>
             <Text size="sm" className="mb-2 font-semibold text-stone-500">
               CLINICAL MEASURES
             </Text>
             <Card className="p-4">
               <div className="flex flex-wrap gap-4">
-                {note.vitals.bp && (
-                  <div className="flex items-center gap-2">
-                    <div className="bg-muted flex h-7 w-7 items-center justify-center rounded-full">
-                      <Text size="xs" className="font-medium">
-                        BP
-                      </Text>
-                    </div>
-                    <Text size="sm">{note.vitals.bp} mmHg</Text>
-                  </div>
-                )}
-                {note.vitals.hr && (
-                  <div className="flex items-center gap-2">
-                    <div className="bg-muted flex h-7 w-7 items-center justify-center rounded-full">
-                      <Text size="xs" className="font-medium">
-                        HR
-                      </Text>
-                    </div>
-                    <Text size="sm">{note.vitals.hr} bpm</Text>
-                  </div>
-                )}
-                {note.vitals.phq9 && (
+                {scores.phq9 && (
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 items-center justify-center rounded-full bg-blue-100 px-2.5">
                       <Text size="xs" className="font-medium text-blue-700">
                         PHQ-9
                       </Text>
                     </div>
-                    <Text size="sm">{note.vitals.phq9}</Text>
+                    <Text size="sm">{scores.phq9}</Text>
                   </div>
                 )}
-                {note.vitals.gad7 && (
+                {scores.gad7 && (
                   <div className="flex items-center gap-2">
                     <div className="flex h-7 items-center justify-center rounded-full bg-teal-100 px-2.5">
                       <Text size="xs" className="font-medium text-teal-700">
                         GAD-7
                       </Text>
                     </div>
-                    <Text size="sm">{note.vitals.gad7}</Text>
+                    <Text size="sm">{scores.gad7}</Text>
+                  </div>
+                )}
+                {scores.pcl5 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 items-center justify-center rounded-full bg-purple-100 px-2.5">
+                      <Text size="xs" className="font-medium text-purple-700">
+                        PCL-5
+                      </Text>
+                    </div>
+                    <Text size="sm">{scores.pcl5}</Text>
                   </div>
                 )}
               </div>
             </Card>
           </div>
         )}
-
-        {/* Chief Complaint */}
-        <div>
-          <Text size="sm" className="mb-2 font-semibold text-stone-500">
-            CHIEF COMPLAINT
-          </Text>
-          <Text size="sm" className="leading-relaxed">
-            {note.chiefComplaint}
-          </Text>
-        </div>
 
         {/* Subjective */}
         <div>
@@ -207,7 +211,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           </Text>
           <Card className="p-4">
             <Text size="sm" className="leading-relaxed whitespace-pre-wrap">
-              {note.subjective}
+              {subjective}
             </Text>
           </Card>
         </div>
@@ -218,8 +222,8 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
             OBJECTIVE
           </Text>
           <Card className="p-4">
-            <Text size="sm" className="leading-relaxed">
-              {note.objective}
+            <Text size="sm" className="leading-relaxed whitespace-pre-wrap">
+              {objective}
             </Text>
           </Card>
         </div>
@@ -230,21 +234,9 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
             ASSESSMENT
           </Text>
           <Card className="p-4">
-            <Text size="sm" className="mb-3 leading-relaxed">
-              {note.assessment}
+            <Text size="sm" className="leading-relaxed whitespace-pre-wrap">
+              {assessment}
             </Text>
-            <div className="border-t pt-3">
-              <Text size="xs" muted className="mb-2">
-                Diagnoses:
-              </Text>
-              <div className="space-y-1">
-                {note.diagnoses.map((dx, i) => (
-                  <Text key={i} size="sm" className="font-mono text-xs">
-                    {dx}
-                  </Text>
-                ))}
-              </div>
-            </div>
           </Card>
         </div>
 
@@ -255,7 +247,7 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           </Text>
           <Card className="p-4">
             <ul className="space-y-2">
-              {note.plan.map((item, i) => (
+              {planItems.map((item, i) => (
                 <li key={i} className="flex items-start gap-2">
                   <span className="bg-primary/10 text-primary mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs font-medium">
                     {i + 1}
@@ -272,13 +264,15 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
           <div className="flex items-center justify-between">
             <div>
               <Text size="sm" className="font-medium">
-                Electronically signed by {activity.provider || "Dr. Demo"}
+                {noteStatus === "signed" ? "Electronically signed by" : "Draft by"} {provider}
               </Text>
               <Text size="xs" muted>
-                {activity.date} at 4:32 PM
+                {signedTime || activity.date}
               </Text>
             </div>
-            <Badge className="bg-green-100 text-green-700">Verified</Badge>
+            {noteStatus === "signed" && (
+              <Badge className="bg-green-100 text-green-700">Verified</Badge>
+            )}
           </div>
         </Card>
       </div>

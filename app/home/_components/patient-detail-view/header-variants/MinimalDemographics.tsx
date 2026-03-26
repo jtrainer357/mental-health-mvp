@@ -93,7 +93,7 @@ export function MinimalDemographics({
       initial="hidden"
       animate="visible"
       exit="exit"
-      className={cn("flex flex-col gap-2 p-4 pb-6", className)}
+      className={cn("flex flex-col gap-2 p-4", className)}
     >
       {/* Main Row: Avatar, Name + Badge, Actions */}
       <div className="flex items-center justify-between gap-3">

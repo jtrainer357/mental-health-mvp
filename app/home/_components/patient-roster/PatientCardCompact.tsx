@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { Phone } from "lucide-react";
 import { motion } from "framer-motion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Text } from "@/design-system/components/ui/typography";
@@ -35,13 +34,6 @@ export function PatientCardCompact({
     }
   }, [patient.status]);
 
-  // Truncate name for compact display
-  const truncatedName = React.useMemo(() => {
-    const maxLength = 12;
-    if (patient.name.length <= maxLength) return patient.name;
-    return patient.name.substring(0, maxLength - 1) + "...";
-  }, [patient.name]);
-
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -56,9 +48,9 @@ export function PatientCardCompact({
       <button
         type="button"
         className={cn(
-          "flex w-full flex-col items-center gap-1.5 rounded-lg p-2 transition-colors",
+          "flex w-full items-center gap-2.5 rounded-lg p-2 transition-colors",
           "hover:bg-card-hover/70 focus-visible:outline-ring",
-          "min-h-[72px]", // Ensure 44px+ touch target
+          "min-h-[44px]",
           selected && "bg-accent/30",
           className
         )}
@@ -66,43 +58,34 @@ export function PatientCardCompact({
         aria-label={`Select ${patient.name}, ${patient.status.toLowerCase()}`}
         aria-pressed={selected}
       >
-        {/* Avatar with status overlay - 32px as specified */}
-        <div className="relative">
-          <Avatar className="h-8 w-8 shrink-0">
+        {/* Avatar with status dot */}
+        <div className="relative shrink-0">
+          <Avatar className="h-7 w-7">
             {patient.avatarSrc && <AvatarImage src={patient.avatarSrc} alt={patient.name} />}
-            <AvatarFallback className="bg-avatar-fallback text-xs font-medium text-white">
+            <AvatarFallback className="bg-avatar-fallback text-[10px] font-medium text-white">
               {initials}
             </AvatarFallback>
           </Avatar>
 
-          {/* Status dot overlay on avatar */}
           <span
             className={cn(
-              "absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-white",
+              "absolute -right-0.5 -bottom-0.5 h-2.5 w-2.5 rounded-full border-2 border-white",
               statusConfig.dotClass
             )}
             aria-label={`Status: ${patient.status}`}
           />
         </div>
 
-        {/* Truncated name */}
+        {/* Name — left-aligned, wraps naturally */}
         <Text
           size="xs"
           className={cn(
-            "w-full truncate text-center font-medium",
+            "min-w-0 flex-1 text-left leading-tight font-medium",
             selected ? "text-foreground" : "text-muted-foreground"
           )}
         >
-          {truncatedName}
+          {patient.name}
         </Text>
-
-        {/* Phone icon only */}
-        <div
-          className="text-muted-foreground flex items-center justify-center"
-          aria-label={`Phone: ${patient.phone}`}
-        >
-          <Phone className="h-3 w-3" aria-hidden="true" />
-        </div>
       </button>
     </motion.div>
   );

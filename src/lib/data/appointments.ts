@@ -1,18 +1,30 @@
 /**
  * Seed Appointments — Generated from patient schedule preferences
  * All dates are relative to today so the prototype always looks fresh.
+ *
+ * Schedule distribution (Mon–Fri, no overlaps):
+ *   Mon: carmen-alvarez 09:00, sarah-johnson 10:00, natalie-kim 11:00,
+ *        derek-washington 13:00, aaliyah-brooks 14:00
+ *   Tue: rachel-torres 09:00, james-okafor 10:00, sophia-chen 13:00,
+ *        marcus-washington 14:00
+ *   Wed: emma-kowalski 09:00, maria-rodriguez 10:00, tyler-harrison 11:00,
+ *        priya-sharma 14:00, jasmine-williams 15:00
+ *   Thu: robert-fitzgerald 09:00, lisa-whitfield 10:00, david-nakamura 11:00,
+ *        benjamin-cole 14:00, omar-hassan 15:00
+ *   Fri: daniel-park 09:00, kevin-rhodes 10:00, river-chen 11:00,
+ *        michael-chen 14:00
  */
 
 import type { SeedAppointment } from "./types";
 import { PATIENTS } from "./patients";
 import {
-  today,
+  todayDate,
   weeklyHistoryDates,
-  nextAppointmentDate,
   computeEndTime,
   patientName,
-  daysFromNow,
   weeksAgo,
+  thisWeekDay,
+  futureWeekDate,
 } from "./helpers";
 
 // ============================================================================
@@ -55,220 +67,91 @@ function apt(
 // ============================================================================
 
 const allAppointments: SeedAppointment[] = [];
+const todayDow = todayDate().getDay(); // 0=Sun … 6=Sat
 
-// ── TODAY'S SCHEDULE ────────────────────────────────────────────────────────
-// rachel-torres: 4 past + today + 1 future
-(() => {
-  const p = PATIENTS.find((p) => p.id === "rachel-torres")!;
+// ── ACTIVE PATIENTS WITH RECURRING WEEKLY APPOINTMENTS ──────────────────────
+// Generates: 4 weeks past (completed) + this week + 4 weeks future (scheduled)
+
+const SKIP_IDS = new Set([
+  "tyler-harrison", // new patient — handled separately
+  "derek-washington", // no-show pattern — handled separately
+  "margaret-williams", // inactive
+  "thomas-reed", // inactive
+]);
+
+for (const p of PATIENTS) {
+  if (SKIP_IDS.has(p.id) || p.preferred_day === 0 || p.status === "Inactive") continue;
+
+  let idx = 0;
+
+  // Past 4 weeks — all completed
   const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
+  for (const d of hist) {
+    idx++;
     allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(apt(p.id, 5, today(), "09:00", p.session_duration, p.cpt_code, "Scheduled"));
-  allAppointments.push(
-    apt(
-      p.id,
-      6,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-})();
+      apt(p.id, idx, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
+    );
+  }
 
-// james-okafor: 4 past + today + 1 future
-(() => {
-  const p = PATIENTS.find((p) => p.id === "james-okafor")!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
+  // This week — completed if day has passed, scheduled if today or upcoming
+  const thisWeekDate = thisWeekDay(p.preferred_day);
+  idx++;
+  const thisWeekStatus: SeedAppointment["status"] =
+    p.preferred_day < todayDow ? "Completed" : "Scheduled";
+  allAppointments.push(
+    apt(p.id, idx, thisWeekDate, p.preferred_time, p.session_duration, p.cpt_code, thisWeekStatus)
+  );
+
+  // Next 4 weeks — all scheduled
+  for (let w = 1; w <= 4; w++) {
+    idx++;
     allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(apt(p.id, 5, today(), "10:30", p.session_duration, p.cpt_code, "Scheduled"));
-  allAppointments.push(
-    apt(
-      p.id,
-      6,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-})();
-
-// sophia-chen: 4 past + today + 1 future
-(() => {
-  const p = PATIENTS.find((p) => p.id === "sophia-chen")!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(apt(p.id, 5, today(), "13:00", p.session_duration, p.cpt_code, "Scheduled"));
-  allAppointments.push(
-    apt(
-      p.id,
-      6,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-})();
-
-// marcus-washington: 4 past + today + 1 future
-(() => {
-  const p = PATIENTS.find((p) => p.id === "marcus-washington")!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(apt(p.id, 5, today(), "15:30", p.session_duration, p.cpt_code, "Scheduled"));
-  allAppointments.push(
-    apt(
-      p.id,
-      6,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-})();
-
-// tyler-harrison: NEW patient — only 1 appointment today (initial eval)
-(() => {
-  allAppointments.push(apt("tyler-harrison", 1, today(), "14:30", 60, "90791", "Scheduled"));
-})();
-
-// lisa-whitfield: 4 past + today + 1 future
-(() => {
-  const p = PATIENTS.find((p) => p.id === "lisa-whitfield")!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(apt(p.id, 5, today(), "11:30", p.session_duration, p.cpt_code, "Scheduled"));
-  allAppointments.push(
-    apt(
-      p.id,
-      6,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-})();
-
-// ── RICH HISTORY (10 patients) — 4 past + 1 future ─────────────────────────
-
-for (const pid of [
-  "emma-kowalski",
-  "david-nakamura",
-  "carmen-alvarez",
-  "kevin-rhodes",
-  "priya-sharma",
-  "robert-fitzgerald",
-  "aaliyah-brooks",
-  "daniel-park",
-  "maria-rodriguez",
-  "benjamin-cole",
-]) {
-  const p = PATIENTS.find((pt) => pt.id === pid)!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(
-    apt(
-      p.id,
-      5,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
+      apt(
+        p.id,
+        idx,
+        futureWeekDate(p.preferred_day, w),
+        p.preferred_time,
+        p.session_duration,
+        p.cpt_code,
+        "Scheduled"
+      )
+    );
+  }
 }
 
-// ── LIGHT HISTORY (5 patients) — 2-3 past + 1 future ───────────────────────
-
-for (const pid of [
-  "sarah-johnson",
-  "michael-chen",
-  "jasmine-williams",
-  "omar-hassan",
-  "natalie-kim",
-]) {
-  const p = PATIENTS.find((pt) => pt.id === pid)!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  // Take only the last 2-3 history dates (skip oldest)
-  const recentHist =
-    pid === "jasmine-williams" || pid === "natalie-kim" ? hist.slice(2) : hist.slice(1);
-  recentHist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
-  allAppointments.push(
-    apt(
-      p.id,
-      recentHist.length + 1,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
-  );
-}
-
-// ── INACTIVE / DISCHARGED — old appointments, all completed ─────────────────
-
-// margaret-williams: 4 old appointments (8-11 weeks ago)
+// ── TYLER HARRISON — New patient, initial evaluation this week ──────────────
 (() => {
-  const p = PATIENTS.find((pt) => pt.id === "margaret-williams")!;
-  for (let i = 0; i < 4; i++) {
+  const p = PATIENTS.find((pt) => pt.id === "tyler-harrison")!;
+  const thisWeekDate = thisWeekDay(p.preferred_day);
+  const thisWeekStatus: SeedAppointment["status"] =
+    p.preferred_day < todayDow ? "Completed" : "Scheduled";
+
+  // Initial eval this week
+  allAppointments.push(
+    apt(p.id, 1, thisWeekDate, p.preferred_time, p.session_duration, "90791", thisWeekStatus)
+  );
+
+  // Future weeks — switches to regular therapy (90837)
+  for (let w = 1; w <= 4; w++) {
     allAppointments.push(
-      apt(p.id, i + 1, weeksAgo(11 - i), "10:00", p.session_duration, p.cpt_code, "Completed")
+      apt(
+        p.id,
+        w + 1,
+        futureWeekDate(p.preferred_day, w),
+        p.preferred_time,
+        p.session_duration,
+        "90837",
+        "Scheduled"
+      )
     );
   }
 })();
 
-// thomas-reed: 3 old appointments (9-11 weeks ago)
-(() => {
-  const p = PATIENTS.find((pt) => pt.id === "thomas-reed")!;
-  for (let i = 0; i < 3; i++) {
-    allAppointments.push(
-      apt(p.id, i + 1, weeksAgo(11 - i), "14:00", p.session_duration, p.cpt_code, "Completed")
-    );
-  }
-})();
-
-// ── CHRONIC NO-SHOW — derek-washington: 4 appointments, 2 completed, 2 no-show
+// ── DEREK WASHINGTON — Chronic no-show pattern ──────────────────────────────
 (() => {
   const p = PATIENTS.find((pt) => pt.id === "derek-washington")!;
   const hist = weeklyHistoryDates(p.preferred_day);
+
   // Week -4: Completed
   allAppointments.push(
     apt(p.id, 1, hist[0]!, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
@@ -285,39 +168,61 @@ for (const pid of [
   allAppointments.push(
     apt(p.id, 4, hist[3]!, p.preferred_time, p.session_duration, p.cpt_code, "No-Show")
   );
-})();
-
-// ── RIVER CHEN — 4 past + 1 future (rich history level) ────────────────────
-(() => {
-  const p = PATIENTS.find((pt) => pt.id === "river-chen")!;
-  const hist = weeklyHistoryDates(p.preferred_day);
-  hist.forEach((d, i) =>
-    allAppointments.push(
-      apt(p.id, i + 1, d, p.preferred_time, p.session_duration, p.cpt_code, "Completed")
-    )
-  );
+  // This week: scheduled (provider hopes he shows up)
+  const thisWeekDate = thisWeekDay(p.preferred_day);
+  const thisWeekStatus: SeedAppointment["status"] =
+    p.preferred_day < todayDow ? "Completed" : "Scheduled";
   allAppointments.push(
-    apt(
-      p.id,
-      5,
-      nextAppointmentDate(p.preferred_day),
-      p.preferred_time,
-      p.session_duration,
-      p.cpt_code,
-      "Scheduled"
-    )
+    apt(p.id, 5, thisWeekDate, p.preferred_time, p.session_duration, p.cpt_code, thisWeekStatus)
   );
+  // Next 2 weeks
+  for (let w = 1; w <= 2; w++) {
+    allAppointments.push(
+      apt(
+        p.id,
+        5 + w,
+        futureWeekDate(p.preferred_day, w),
+        p.preferred_time,
+        p.session_duration,
+        p.cpt_code,
+        "Scheduled"
+      )
+    );
+  }
 })();
 
-// ── NEXT-WEEK CANCELLATIONS (visible in schedule alerts) ─────────────────────
-// Kevin Rhodes — cancelled next week's session (same-day cancel pattern)
+// ── INACTIVE / DISCHARGED — old appointments only ───────────────────────────
+
+// Margaret Williams: 4 old appointments (8–11 weeks ago)
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "margaret-williams")!;
+  for (let i = 0; i < 4; i++) {
+    allAppointments.push(
+      apt(p.id, i + 1, weeksAgo(11 - i), "10:00", p.session_duration, p.cpt_code, "Completed")
+    );
+  }
+})();
+
+// Thomas Reed: 3 old appointments (9–11 weeks ago)
+(() => {
+  const p = PATIENTS.find((pt) => pt.id === "thomas-reed")!;
+  for (let i = 0; i < 3; i++) {
+    allAppointments.push(
+      apt(p.id, i + 1, weeksAgo(11 - i), "14:00", p.session_duration, p.cpt_code, "Completed")
+    );
+  }
+})();
+
+// ── CANCELLATIONS (visible in schedule week 2) ─────────────────────────────
+
+// Kevin Rhodes — cancelled week 2 session
 (() => {
   const p = PATIENTS.find((pt) => pt.id === "kevin-rhodes")!;
   allAppointments.push(
     apt(
       p.id,
-      10,
-      nextAppointmentDate(p.preferred_day),
+      20,
+      futureWeekDate(p.preferred_day, 2),
       p.preferred_time,
       p.session_duration,
       p.cpt_code,
@@ -327,14 +232,14 @@ for (const pid of [
   );
 })();
 
-// Sarah Johnson — cancelled next week's session (reschedule requested)
+// Sarah Johnson — cancelled week 2 session (reschedule requested)
 (() => {
   const p = PATIENTS.find((pt) => pt.id === "sarah-johnson")!;
   allAppointments.push(
     apt(
       p.id,
-      10,
-      nextAppointmentDate(p.preferred_day),
+      20,
+      futureWeekDate(p.preferred_day, 2),
       p.preferred_time,
       p.session_duration,
       p.cpt_code,

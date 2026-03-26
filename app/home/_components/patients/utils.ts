@@ -20,6 +20,8 @@ import type {
   PatientReview,
   PriorityAction,
 } from "./types";
+import { getDemoSessionNoteByAppointmentId, getExternalIdFromUUID } from "@/src/lib/data/adapter";
+import { PATIENTS } from "@/src/lib/data/patients";
 
 // Convert DB patient to list format
 export function dbPatientToListItem(patient: DbPatient): Patient {
@@ -233,22 +235,38 @@ export function createPatientDetail(
               patient.first_name,
               a.duration_minutes
             );
+            // Look up real SOAP note by appointment external_id
+            const sessionNote = a.external_id
+              ? getDemoSessionNoteByAppointmentId(a.external_id)
+              : null;
             return {
               id: a.id,
               title: getActivityTitle(a.service_type),
-              description: getActivityDescription(a, patient.first_name),
+              description: sessionNote
+                ? sessionNote.subjective.slice(0, 120) + "..."
+                : getActivityDescription(a, patient.first_name),
               date: new Date(a.date).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
               }),
-              visitSummary: a.notes || details.treatmentNotes,
-              duration: details.duration,
-              provider: details.provider,
+              visitSummary: sessionNote?.assessment || a.notes || details.treatmentNotes,
+              duration: sessionNote ? `${sessionNote.duration_minutes} minutes` : details.duration,
+              provider: sessionNote?.signed_by || details.provider,
               appointmentType: a.service_type,
               diagnosisCodes: details.diagnosisCodes,
-              treatmentNotes: details.treatmentNotes,
-              nextSteps: details.nextSteps,
+              treatmentNotes: sessionNote?.assessment || details.treatmentNotes,
+              nextSteps: sessionNote?.plan || details.nextSteps,
+              // Real SOAP data
+              subjective: sessionNote?.subjective,
+              objective: sessionNote?.objective,
+              assessment: sessionNote?.assessment,
+              plan: sessionNote?.plan,
+              noteStatus: sessionNote?.status,
+              signedAt: sessionNote?.signed_at,
+              signedBy: sessionNote?.signed_by,
+              cptCode: sessionNote?.cpt_code,
+              noteType: sessionNote?.note_type,
             };
           });
 
@@ -323,6 +341,18 @@ export function createPatientDetail(
     email: patient.email ?? "",
     insurance: patient.insurance_provider || "Self-Pay",
     avatarSrc: patient.avatar_url || undefined,
+    primaryDiagnosisCode: patient.primary_diagnosis_code ?? undefined,
+    primaryDiagnosisName: patient.primary_diagnosis_name ?? undefined,
+    secondaryDiagnosisCode: patient.secondary_diagnosis_code ?? undefined,
+    secondaryDiagnosisName: (() => {
+      const extId = getExternalIdFromUUID(patient.id);
+      const seed = extId ? PATIENTS.find((p) => p.id === extId) : null;
+      return seed?.secondary_diagnosis_name;
+    })(),
+    medications: patient.medications ?? undefined,
+    riskLevel: patient.risk_level ?? undefined,
+    provider: patient.provider ?? undefined,
+    treatmentStartDate: patient.treatment_start_date ?? undefined,
     lastVisit: lastAppt
       ? {
           date: new Date(lastAppt.date).toLocaleDateString("en-US", {

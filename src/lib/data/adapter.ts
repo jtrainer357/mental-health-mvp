@@ -5,11 +5,12 @@
 
 import { PATIENTS } from "./patients";
 import { APPOINTMENTS } from "./appointments";
+import { SESSION_NOTES } from "./session-notes";
 import { OUTCOME_MEASURES } from "./outcome-measures";
 import { MESSAGES } from "./messages";
 import { INVOICES } from "./billing";
 import { PRIORITY_ACTIONS } from "./priority-actions";
-import { today, toISO } from "./helpers";
+import { today } from "./helpers";
 import type {
   SeedPatient,
   SeedAppointment,
@@ -259,13 +260,21 @@ export function getDemoUpcomingAppointments(days: number = 28): Array<
     >;
   }
 > {
-  const todayStr = today();
-  const endDate = new Date();
+  // Include the full current week (back to Monday) so the week view shows all days
+  const now = new Date();
+  now.setHours(12, 0, 0, 0);
+  const currentDay = now.getDay(); // 0=Sun … 6=Sat
+  const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
+  const weekStart = new Date(now);
+  weekStart.setDate(weekStart.getDate() + mondayOffset);
+  const startStr = `${weekStart.getFullYear()}-${String(weekStart.getMonth() + 1).padStart(2, "0")}-${String(weekStart.getDate()).padStart(2, "0")}`;
+
+  const endDate = new Date(now);
   endDate.setDate(endDate.getDate() + days);
-  const endStr = endDate.toISOString().split("T")[0]!;
+  const endStr = `${endDate.getFullYear()}-${String(endDate.getMonth() + 1).padStart(2, "0")}-${String(endDate.getDate()).padStart(2, "0")}`;
 
   const upcomingAppointments = APPOINTMENTS.filter(
-    (apt) => apt.date >= todayStr && apt.date <= endStr
+    (apt) => apt.date >= startStr && apt.date <= endStr
   );
 
   return upcomingAppointments
@@ -322,6 +331,20 @@ export function getDemoPatientInvoices(patientExternalId: string): Invoice[] {
 
 export function getDemoPatientPriorityActions(patientExternalId: string) {
   return PRIORITY_ACTIONS.filter((a) => a.patient_id === patientExternalId);
+}
+
+// ============================================================================
+// SESSION NOTES LOOKUPS
+// ============================================================================
+
+export function getDemoPatientSessionNotes(patientExternalId: string) {
+  return SESSION_NOTES.filter((n) => n.patient_id === patientExternalId).sort((a, b) =>
+    b.date_of_service.localeCompare(a.date_of_service)
+  );
+}
+
+export function getDemoSessionNoteByAppointmentId(appointmentExternalId: string) {
+  return SESSION_NOTES.find((n) => n.appointment_id === appointmentExternalId) || null;
 }
 
 // ============================================================================

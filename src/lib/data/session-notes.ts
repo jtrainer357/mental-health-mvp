@@ -5,41 +5,41 @@
  */
 
 import type { SeedSessionNote } from "./types";
-import { weeklyHistoryDates, today, toISO } from "./helpers";
+import { weeklyHistoryDates, toISO } from "./helpers";
 
 // ---------------------------------------------------------------------------
 // Date scaffolds — one per patient, preferred weekday
 // weeklyHistoryDates returns 4 dates: weeks -4, -3, -2, -1
 // ---------------------------------------------------------------------------
 const rachelDates = weeklyHistoryDates(2); // Tuesday
-const jamesDates = weeklyHistoryDates(3); // Wednesday
-const sophiaDates = weeklyHistoryDates(1); // Monday
-const marcusDates = weeklyHistoryDates(4); // Thursday
+const jamesDates = weeklyHistoryDates(2); // Tuesday
+const sophiaDates = weeklyHistoryDates(2); // Tuesday
+const marcusDates = weeklyHistoryDates(2); // Tuesday
 // tyler-harrison: NEW — no notes
-const lisaDates = weeklyHistoryDates(5); // Friday
-const emmaDates = weeklyHistoryDates(2); // Tuesday
-const davidDates = weeklyHistoryDates(3); // Wednesday
+const lisaDates = weeklyHistoryDates(4); // Thursday
+const emmaDates = weeklyHistoryDates(3); // Wednesday
+const davidDates = weeklyHistoryDates(4); // Thursday
 const carmenDates = weeklyHistoryDates(1); // Monday
-const kevinDates = weeklyHistoryDates(4); // Thursday
-const priyaDates = weeklyHistoryDates(5); // Friday
-const robertDates = weeklyHistoryDates(2); // Tuesday
-const aaliyahDates = weeklyHistoryDates(3); // Wednesday
-const danielDates = weeklyHistoryDates(1); // Monday
-const mariaDates = weeklyHistoryDates(4); // Thursday
-const benjaminDates = weeklyHistoryDates(5); // Friday
+const kevinDates = weeklyHistoryDates(5); // Friday
+const priyaDates = weeklyHistoryDates(3); // Wednesday
+const robertDates = weeklyHistoryDates(4); // Thursday
+const aaliyahDates = weeklyHistoryDates(1); // Monday
+const danielDates = weeklyHistoryDates(5); // Friday
+const mariaDates = weeklyHistoryDates(3); // Wednesday
+const benjaminDates = weeklyHistoryDates(4); // Thursday
 // Light history — 2 notes
-const sarahDates = weeklyHistoryDates(2).slice(2); // last 2 Tuesdays
-const michaelDates = weeklyHistoryDates(3).slice(2);
-const jasmineDates = weeklyHistoryDates(1).slice(2);
-const omarDates = weeklyHistoryDates(4).slice(2);
-const natalieDates = weeklyHistoryDates(5).slice(2);
+const sarahDates = weeklyHistoryDates(1).slice(2); // last 2 Mondays
+const michaelDates = weeklyHistoryDates(5).slice(2); // last 2 Fridays
+const jasmineDates = weeklyHistoryDates(3).slice(2); // last 2 Wednesdays
+const omarDates = weeklyHistoryDates(4).slice(2); // last 2 Thursdays
+const natalieDates = weeklyHistoryDates(1).slice(2); // last 2 Mondays
 // Inactive — 1 note only (use weeks-ago-4 as the final date)
 const margaretDates = weeklyHistoryDates(2).slice(0, 1);
 const thomasDates = weeklyHistoryDates(3).slice(0, 1);
 // No-show — 2 notes
-const derekDates = weeklyHistoryDates(4).slice(0, 2);
+const derekDates = weeklyHistoryDates(1).slice(0, 2); // Monday
 // Non-binary
-const riverDates = weeklyHistoryDates(1); // Monday
+const riverDates = weeklyHistoryDates(5); // Friday
 
 export const SESSION_NOTES: SeedSessionNote[] = [
   // ==========================================================================
