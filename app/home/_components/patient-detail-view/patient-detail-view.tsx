@@ -119,6 +119,15 @@ export function PatientDetailView({
   // Track patient ID to detect changes
   const previousPatientId = React.useRef<string | null>(null);
 
+  // Full view focus management
+  const fullViewRef = React.useRef<HTMLDivElement>(null);
+  const isFullView = viewState === "fullView";
+  React.useEffect(() => {
+    if (isFullView && fullViewRef.current) {
+      fullViewRef.current.focus();
+    }
+  }, [isFullView]);
+
   // State for controlled tab
   const [activeTab, setActiveTab] = React.useState(initialTab);
 
@@ -416,11 +425,19 @@ export function PatientDetailView({
               {/* Full view container with elegant scale animation */}
               <motion.div
                 key="fullview-content"
+                ref={fullViewRef}
+                tabIndex={-1}
+                onKeyDown={(e) => {
+                  if (e.key === "Escape") {
+                    e.preventDefault();
+                    goBack();
+                  }
+                }}
                 variants={fullViewVariants}
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className="fixed inset-0 z-50"
+                className="fixed inset-0 z-50 outline-none"
               >
                 <CardWrapper className="bg-background/95 h-full overflow-y-auto rounded-none border-0 shadow-none">
                   <ClinicalNoteView
