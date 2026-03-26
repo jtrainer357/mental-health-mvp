@@ -95,7 +95,7 @@ export function ScheduleRowCard({
         </div>
 
         {/* Right section — fixed width so status pill always starts at the same x */}
-        <div className="flex w-[300px] shrink-0 items-center gap-2">
+        <div className="hidden shrink-0 items-center gap-2 sm:flex sm:w-[300px]">
           <Badge
             variant={
               status === "IN PROGRESS"
