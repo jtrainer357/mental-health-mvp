@@ -57,7 +57,7 @@ export function LeftNav({
         role="navigation"
         aria-label="Main navigation"
         className={cn(
-          "pointer-events-auto fixed top-0 left-0 z-40 hidden h-screen w-36 flex-col items-center pt-6 pb-4 lg:flex",
+          "pointer-events-auto fixed top-0 left-0 z-40 hidden h-screen w-20 flex-col items-center pt-6 pb-4 md:flex",
           className
         )}
       >
@@ -65,13 +65,13 @@ export function LeftNav({
         <Link
           href="/home"
           prefetch={true}
-          className="mb-6 cursor-pointer px-4 transition-opacity hover:opacity-80"
+          className="mb-6 cursor-pointer px-2 transition-opacity hover:opacity-80"
         >
           <Image
             src={logo.src}
             alt={logo.alt || "Logo"}
-            width={logo.width || 96}
-            height={logo.height || 23}
+            width={logo.width || 64}
+            height={logo.height || 15}
           />
         </Link>
 
@@ -159,7 +159,7 @@ export function LeftNav({
       <nav
         role="navigation"
         aria-label="Mobile navigation"
-        className="bg-card/95 safe-area-pb pointer-events-auto fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t px-4 py-3 backdrop-blur-sm lg:hidden"
+        className="bg-card/95 safe-area-pb pointer-events-auto fixed right-0 bottom-0 left-0 z-40 flex items-center justify-around border-t px-4 py-3 backdrop-blur-sm md:hidden"
       >
         {items
           .filter((item) => item.label !== "Communications")

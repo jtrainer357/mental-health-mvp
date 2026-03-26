@@ -237,7 +237,7 @@ export function PatientDetailView({
   }
 
   return (
-    <div className={cn("flex flex-col gap-2 lg:h-full", className)}>
+    <div className={cn("flex flex-col gap-2", className)}>
       {/* Adaptive Patient Header - hidden in note/fullView since clinical note has its own header */}
       {viewState !== "note" && viewState !== "fullView" && (
         <div className="shrink-0">
@@ -246,7 +246,7 @@ export function PatientDetailView({
       )}
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden">
+      <div className="flex flex-1 flex-col">
         <AnimatePresence mode="wait" initial={false}>
           {viewState === "default" && (
             <motion.div
@@ -255,13 +255,13 @@ export function PatientDetailView({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
-              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+              className="flex flex-1 flex-col"
             >
-              <CardWrapper className="flex flex-1 flex-col pb-20 lg:min-h-0 lg:overflow-hidden lg:pb-0">
+              <CardWrapper className="flex flex-1 flex-col pb-20 md:pb-0">
                 <Tabs
                   value={activeTab}
                   onValueChange={setActiveTab}
-                  className="flex h-full w-full flex-col"
+                  className="flex w-full flex-col"
                 >
                   <TabsList className="border-border/50 scrollbar-none mb-3 h-auto w-full justify-start gap-0 overflow-x-auto border-b-2 bg-transparent p-0 sm:mb-6">
                     <TabsTrigger value="overview" className={tabTriggerStyles}>
@@ -280,7 +280,7 @@ export function PatientDetailView({
 
                   <TabsContent
                     value="overview"
-                    className="mt-0 flex-1 lg:overflow-y-auto"
+                    className="mt-0 flex-1"
                     forceMount={activeTab === "overview" ? true : undefined}
                   >
                     <motion.div
@@ -299,7 +299,7 @@ export function PatientDetailView({
 
                   <TabsContent
                     value="appointments"
-                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "appointments" ? true : undefined}
                   >
                     <motion.div
@@ -314,7 +314,7 @@ export function PatientDetailView({
 
                   <TabsContent
                     value="medical-records"
-                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "medical-records" ? true : undefined}
                   >
                     <motion.div
@@ -329,7 +329,7 @@ export function PatientDetailView({
 
                   <TabsContent
                     value="billing"
-                    className="mt-0 flex-1 pr-1 lg:overflow-y-auto"
+                    className="mt-0 flex-1 pr-1"
                     forceMount={activeTab === "billing" ? true : undefined}
                   >
                     <motion.div
@@ -353,9 +353,9 @@ export function PatientDetailView({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
-              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+              className="flex flex-1 flex-col"
             >
-              <CardWrapper className="lg:h-full lg:overflow-hidden">
+              <CardWrapper className="">
                 <VisitSummaryPanel
                   activity={selectedActivity}
                   patientName={patient.name}
@@ -372,9 +372,9 @@ export function PatientDetailView({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1.0] }}
-              className="flex flex-1 flex-col lg:min-h-0 lg:overflow-hidden"
+              className="flex flex-1 flex-col"
             >
-              <CardWrapper className="lg:h-full lg:overflow-hidden">
+              <CardWrapper className="">
                 <ClinicalNoteView
                   activity={selectedActivity}
                   patientName={patient.name}

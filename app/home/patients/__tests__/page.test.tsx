@@ -225,7 +225,7 @@ describe("PatientsRoute", () => {
 
       await waitFor(() => {
         expect(container.firstChild).toHaveClass("pb-24");
-        expect(container.firstChild).toHaveClass("lg:pb-0");
+        expect(container.firstChild).toHaveClass("md:pb-0");
       });
     });
   });

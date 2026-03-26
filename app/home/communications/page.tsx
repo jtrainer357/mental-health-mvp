@@ -9,14 +9,14 @@ import { PageTransition } from "@/design-system/components/ui/page-transition";
 
 export default function CommunicationsRoute() {
   return (
-    <div className="min-h-screen pb-24 lg:pb-0">
+    <div className="min-h-screen pb-24 md:pb-0">
       <AnimatedBackground />
 
       {/* Left Nav */}
       <LeftNav activePage="messages" />
 
       {/* Main Content Wrapper */}
-      <div className="lg:pl-36">
+      <div className="md:pl-20">
         <HeaderSearch />
 
         <main

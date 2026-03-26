@@ -25,7 +25,7 @@ export default function CommunicationsError({
       resetError={reset}
       section="Communications"
       digest={error.digest}
-      className="min-h-screen lg:pl-36"
+      className="min-h-screen md:pl-20"
     />
   );
 }

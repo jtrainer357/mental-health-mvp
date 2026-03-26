@@ -419,7 +419,7 @@ export function ClinicalNoteView({
       animate="visible"
       className="w-full shrink-0 lg:w-[440px]"
     >
-      <CardWrapper className="space-y-2 lg:overflow-y-auto">
+      <CardWrapper className="space-y-2">
         {/* 01 Current Situation */}
         <Card className="border-border/40 p-4 shadow-sm">
           <SidebarSectionHeader number="01" title="Current Situation" icon={Activity} />
@@ -661,11 +661,7 @@ export function ClinicalNoteView({
   // ─── Render ────────────────────────────────────────────────────────────
 
   return (
-    <motion.div
-      className={cn("flex flex-col lg:h-full", className)}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div className={cn("flex flex-col", className)} initial="hidden" animate="visible">
       {/* Header — sticky with blur */}
       <motion.div variants={headerVariants} className="mb-4 flex items-center justify-between py-3">
         <div className="flex items-center gap-4">
@@ -763,10 +759,7 @@ export function ClinicalNoteView({
 
       {/* Two-column layout */}
       <div
-        className={cn(
-          "flex-1 pb-20 lg:overflow-y-auto lg:pb-0",
-          isFullView && "flex flex-col gap-2 px-4 lg:flex-row"
-        )}
+        className={cn("flex-1 pb-20 md:pb-0", isFullView && "flex flex-col gap-2 px-4 lg:flex-row")}
       >
         {/* Left: Patient Context Sidebar */}
         {isFullView && patientContextSidebar}

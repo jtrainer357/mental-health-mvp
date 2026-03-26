@@ -37,14 +37,14 @@ function PatientsContentSkeleton() {
 
 export default function PatientsRoute() {
   return (
-    <div className="min-h-screen pb-24 lg:pb-0">
+    <div className="min-h-screen pb-24 md:pb-0">
       <AnimatedBackground />
 
       {/* Left Nav */}
       <LeftNav activePage="patients" />
 
       {/* Main Content Wrapper */}
-      <div className="lg:pl-36">
+      <div className="md:pl-20">
         <HeaderSearch />
 
         <main

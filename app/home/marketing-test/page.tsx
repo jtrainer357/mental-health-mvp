@@ -385,11 +385,11 @@ export default function MarketingTestPage() {
   };
 
   return (
-    <div className="min-h-screen pb-24 lg:pb-0">
+    <div className="min-h-screen pb-24 md:pb-0">
       <AnimatedBackground />
       <LeftNav activePage="marketing" />
 
-      <div className="lg:pl-36">
+      <div className="md:pl-20">
         <HeaderSearch />
 
         <main className="px-4 py-4 sm:px-6 sm:py-6 md:py-8">

@@ -226,7 +226,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
         }}
       >
         {/* Last Visit */}
-        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
+        <motion.div variants={metricVariants} className="min-w-0 flex-1">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <Calendar className="text-primary h-4 w-4" />
@@ -246,7 +246,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
         </motion.div>
 
         {/* Appointments */}
-        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
+        <motion.div variants={metricVariants} className="min-w-0 flex-1">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <CalendarClock className="text-primary h-4 w-4" />
@@ -266,7 +266,7 @@ export function FullDemographics({ patient, className, onBackToRoster }: FullDem
         </motion.div>
 
         {/* Balance */}
-        <motion.div variants={metricVariants} className="min-w-[160px] flex-1 lg:min-w-0">
+        <motion.div variants={metricVariants} className="min-w-0 flex-1">
           <Card className="border-border/40 flex cursor-default items-center gap-3 px-4 py-3 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="bg-primary/10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl">
               <DollarSign className="text-primary h-4 w-4" />

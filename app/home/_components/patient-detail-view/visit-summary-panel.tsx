@@ -151,7 +151,7 @@ export function VisitSummaryPanel({
 
   return (
     <motion.div
-      className={cn("flex flex-col pb-24 lg:h-full lg:pb-0", className)}
+      className={cn("flex flex-col pb-24 md:pb-0 lg:h-full", className)}
       initial="hidden"
       animate="visible"
       exit="exit"

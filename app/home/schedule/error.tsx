@@ -25,7 +25,7 @@ export default function ScheduleError({
       resetError={reset}
       section="Schedule"
       digest={error.digest}
-      className="min-h-screen lg:pl-36"
+      className="min-h-screen md:pl-20"
     />
   );
 }

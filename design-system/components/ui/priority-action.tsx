@@ -56,8 +56,8 @@ export function PriorityAction({
       )}
     >
       <CardContent className="p-6 sm:p-8">
-        <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4 sm:gap-5">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 items-center gap-4 sm:gap-5">
             {avatarHref ? (
               <Link href={avatarHref} onClick={(e) => e.stopPropagation()}>
                 {avatarElement}
@@ -84,18 +84,18 @@ export function PriorityAction({
               </Text>
             </div>
           </div>
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
             {secondaryButtonText && (
               <Button
                 onClick={onSecondaryButtonClick}
                 variant="outline"
                 size="lg"
-                className="w-full sm:w-auto"
+                className="whitespace-nowrap"
               >
                 {secondaryButtonText}
               </Button>
             )}
-            <Button onClick={onButtonClick} size="lg" className="w-full sm:w-auto">
+            <Button onClick={onButtonClick} size="lg" className="whitespace-nowrap">
               {buttonText}
             </Button>
           </div>

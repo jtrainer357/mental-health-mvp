@@ -2,19 +2,19 @@ import { Skeleton, MetricCardSkeleton } from "@/design-system/components/ui/skel
 
 export default function BillingLoading() {
   return (
-    <div className="flex h-screen flex-col pb-24 lg:pb-0">
+    <div className="flex h-screen flex-col pb-24 md:pb-0">
       {/* Left Nav Skeleton */}
-      <div className="fixed bottom-0 z-40 flex w-full items-center justify-around border-t border-gray-200 bg-white/95 px-4 py-2 backdrop-blur-sm lg:top-0 lg:left-0 lg:h-screen lg:w-36 lg:flex-col lg:items-center lg:justify-start lg:gap-6 lg:border-t-0 lg:border-r lg:px-0 lg:py-8">
-        <Skeleton className="hidden h-8 w-20 lg:block" />
-        <div className="flex w-full items-center justify-around lg:mt-8 lg:flex-col lg:gap-4">
+      <div className="fixed bottom-0 z-40 flex w-full items-center justify-around border-t border-gray-200 bg-white/95 px-4 py-2 backdrop-blur-sm md:top-0 md:left-0 md:h-screen md:w-20 md:flex-col md:items-center md:justify-start md:gap-6 md:border-t-0 md:border-r md:px-0 md:py-8">
+        <Skeleton className="hidden h-8 w-20 md:block" />
+        <div className="flex w-full items-center justify-around md:mt-8 md:flex-col md:gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-10 w-10 rounded-lg lg:h-12 lg:w-24" />
+            <Skeleton key={i} className="h-10 w-10 rounded-lg md:h-12 md:w-24" />
           ))}
         </div>
       </div>
 
       {/* Main Content Wrapper */}
-      <div className="flex min-h-0 flex-1 flex-col lg:pl-36">
+      <div className="flex min-h-0 flex-1 flex-col md:pl-20">
         {/* Header Search Skeleton */}
         <header className="sticky top-0 z-30 border-b border-gray-200/50 bg-white/80 px-4 py-3 backdrop-blur-sm sm:px-6">
           <div className="mx-auto flex max-w-[1600px] items-center gap-4">
