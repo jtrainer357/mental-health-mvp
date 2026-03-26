@@ -25,17 +25,17 @@ const taskItems: TaskItem[] = [
 export function TaskProgressSection({ className }: TaskProgressSectionProps) {
   return (
     <div className={cn("space-y-3", className)}>
-      <h4 className="text-sm font-semibold tracking-wide text-stone-500 uppercase">
+      <h4 className="text-muted-foreground text-sm font-semibold tracking-wide uppercase">
         Task Progress
       </h4>
 
-      <div className="rounded-lg border border-stone-200 bg-white">
+      <div className="border-border bg-card rounded-lg border">
         {taskItems.map((task, index) => (
           <div
             key={task.id}
             className={cn(
               "flex items-center gap-3 px-4 py-3",
-              index !== taskItems.length - 1 && "border-b border-stone-100",
+              index !== taskItems.length - 1 && "border-border/50 border-b",
               task.completed && "bg-priority-bg/30"
             )}
           >
@@ -44,14 +44,14 @@ export function TaskProgressSection({ className }: TaskProgressSectionProps) {
                 <CheckCircle2 className="h-4 w-4 text-white" />
               </div>
             ) : (
-              <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-stone-300 bg-white text-sm font-medium text-stone-500">
+              <div className="border-border bg-card text-muted-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 text-sm font-medium">
                 {task.step}
               </div>
             )}
             <span
               className={cn(
                 "text-sm font-medium",
-                task.completed ? "text-primary" : "text-stone-600"
+                task.completed ? "text-primary" : "text-muted-foreground"
               )}
             >
               {task.label}

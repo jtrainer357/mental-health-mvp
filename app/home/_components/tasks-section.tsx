@@ -30,7 +30,7 @@ export function TasksSection() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-light text-black">Today&apos;s Tasks</h2>
+        <h2 className="text-foreground text-xl font-light">Today&apos;s Tasks</h2>
         <Badge
           variant="outline"
           className="bg-accent/20 rounded-full border-none px-3 py-1 text-xs font-bold"

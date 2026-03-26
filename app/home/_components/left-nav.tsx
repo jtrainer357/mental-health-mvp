@@ -96,7 +96,7 @@ function UserMenu({
     <div
       ref={menuRef}
       className={cn(
-        "absolute z-50 w-56 rounded-xl border bg-white py-2 shadow-lg",
+        "bg-card absolute z-50 w-56 rounded-xl border py-2 shadow-lg",
         // Desktop: position to the right of the avatar
         "lg:bottom-2 lg:left-full lg:ml-3",
         // Mobile: position above the bottom nav
@@ -105,15 +105,15 @@ function UserMenu({
     >
       {/* User info header */}
       <div className="border-b px-4 py-3">
-        <p className="text-sm font-medium text-gray-900">{userName}</p>
-        <p className="truncate text-xs text-gray-500">{userEmail}</p>
+        <p className="text-foreground text-sm font-medium">{userName}</p>
+        <p className="text-muted-foreground truncate text-xs">{userEmail}</p>
       </div>
 
       {/* Logout */}
       <div className="border-t py-1">
         <button
           onClick={handleLogout}
-          className="flex min-h-[44px] w-full items-center gap-3 px-4 py-3 text-left text-sm text-red-600 hover:bg-red-50"
+          className="text-destructive hover:bg-destructive/10 flex min-h-[44px] w-full items-center gap-3 px-4 py-3 text-left text-sm"
         >
           <LogOut className="h-4 w-4" />
           Sign out
