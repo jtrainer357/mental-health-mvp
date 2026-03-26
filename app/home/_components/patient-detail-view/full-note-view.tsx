@@ -191,8 +191,8 @@ export function FullNoteView({ activity, patientName, onBack }: FullNoteViewProp
                 )}
                 {scores.pcl5 && (
                   <div className="flex items-center gap-2">
-                    <div className="flex h-7 items-center justify-center rounded-full bg-purple-100 px-2.5">
-                      <Text size="xs" className="font-medium text-purple-700">
+                    <div className="bg-primary/10 flex h-7 items-center justify-center rounded-full px-2.5">
+                      <Text size="xs" className="text-primary font-medium">
                         PCL-5
                       </Text>
                     </div>
