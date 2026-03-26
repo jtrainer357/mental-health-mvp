@@ -10,7 +10,6 @@ import {
   CreditCard,
   Clock,
   Lock,
-  TrendingUp,
   AlertTriangle,
   Sparkles,
   FileCheck,
@@ -25,140 +24,8 @@ import { ErrorState } from "../_components/shared/error-state";
 
 const log = createLogger("BillingPage");
 
-interface MetricCardProps {
-  title: string;
-  value: string;
-  subtitle: string;
-  icon: React.ElementType;
-  status: "good" | "needs-improvement" | "critical";
-  trend?: string;
-  trendUp?: boolean;
-}
-
-function MetricCard({
-  title,
-  value,
-  subtitle,
-  icon: Icon,
-  status,
-  trend,
-  trendUp,
-}: MetricCardProps) {
-  const valueColor =
-    status === "good"
-      ? "text-teal-dark"
-      : status === "needs-improvement"
-        ? "text-primary"
-        : "text-destructive";
-
-  const borderColor =
-    status === "good"
-      ? "border-teal-dark/40"
-      : status === "needs-improvement"
-        ? "border-primary/40"
-        : "border-destructive/40";
-
-  const leftBorderColor =
-    status === "good"
-      ? "border-l-teal-dark/60"
-      : status === "needs-improvement"
-        ? "border-l-primary/60"
-        : "border-l-destructive/60";
-
-  return (
-    <CardWrapper className={`border border-l-4 bg-white/90 p-6 ${borderColor} ${leftBorderColor}`}>
-      <div className="flex items-start gap-3">
-        <div className="text-teal-dark mt-0.5">
-          <Icon className="h-5 w-5" />
-        </div>
-        <div className="flex-1">
-          <Text size="sm" className="text-foreground font-medium">
-            {title}
-          </Text>
-          <div className="mt-1 flex items-baseline gap-2">
-            <Heading level={2} className={`text-4xl ${valueColor}`}>
-              {value}
-            </Heading>
-          </div>
-          <Text size="sm" muted className="mt-2">
-            {subtitle}
-          </Text>
-          {trend && (
-            <div className="mt-2 flex items-center gap-1">
-              <TrendingUp
-                className={`h-4 w-4 ${trendUp ? "text-success" : "text-destructive rotate-180"}`}
-              />
-              <Text size="xs" className={trendUp ? "text-success" : "text-destructive"}>
-                {trend}
-              </Text>
-            </div>
-          )}
-        </div>
-      </div>
-    </CardWrapper>
-  );
-}
-
-// Circular progress component
-function CircularProgress({
-  percentage,
-  color,
-  size = 100,
-}: {
-  percentage: number;
-  color: "teal" | "coral" | "gray";
-  size?: number;
-}) {
-  const strokeWidth = 8;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  const strokeColor =
-    color === "teal" ? "stroke-teal-dark" : color === "coral" ? "stroke-primary" : "stroke-border";
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <svg
-        className="rotate-[-90deg]"
-        width={size}
-        height={size}
-        role="progressbar"
-        aria-valuenow={percentage}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label="Collections Rate"
-      >
-        {/* Background circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={strokeWidth}
-          className="text-muted-foreground/30"
-        />
-        {/* Progress circle */}
-        <circle
-          cx={size / 2}
-          cy={size / 2}
-          r={radius}
-          fill="none"
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          className={strokeColor}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          style={{ transition: "stroke-dashoffset 0.5s ease-in-out" }}
-        />
-      </svg>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-semibold">{percentage}%</span>
-      </div>
-    </div>
-  );
-}
+import { CircularProgress } from "@/design-system/components/ui/circular-progress";
+import { MetricCard } from "./_components/metric-card";
 
 // Simple bar chart component
 function BarChart({ data }: { data: number[] }) {
