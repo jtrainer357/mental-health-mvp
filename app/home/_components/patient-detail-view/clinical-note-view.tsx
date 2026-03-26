@@ -697,29 +697,37 @@ export function ClinicalNoteView({
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {activity.id === "new-session" && (
+            <Button variant="default" size="sm" className="gap-2 font-bold">
+              <Activity className="h-4 w-4" />
+              Begin Listening
+            </Button>
+          )}
           <motion.div
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="hidden lg:block"
           >
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleFullView}
-              className="gap-2 transition-all"
-            >
-              {isFullView ? (
-                <>
-                  <Minimize2 className="h-4 w-4" />
-                  <span>Exit Full View</span>
-                </>
-              ) : (
-                <>
-                  <Maximize2 className="h-4 w-4" />
-                  <span>Full View</span>
-                </>
-              )}
-            </Button>
+            {isFullView ? (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={toggleFullView}
+                className="h-9 w-9 rounded-full transition-all"
+              >
+                <Minimize2 className="h-4 w-4" />
+              </Button>
+            ) : (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={toggleFullView}
+                className="gap-2 transition-all"
+              >
+                <Maximize2 className="h-4 w-4" />
+                <span>Full View</span>
+              </Button>
+            )}
           </motion.div>
         </div>
       </motion.div>
@@ -1049,31 +1057,22 @@ export function ClinicalNoteView({
           isFullView && "lg:pl-[calc(440px+2.5rem)]"
         )}
       >
-        <div className="flex items-center gap-3">
-          {activity.id === "new-session" ? (
-            <Button variant="outline" size="sm">
-              Cancel Session
-            </Button>
-          ) : (
-            <>
+        {activity.id === "new-session" ? (
+          <div />
+        ) : (
+          <>
+            <div className="flex items-center gap-3">
               <Button variant="outline" size="sm">
                 Save Draft
               </Button>
               <Button variant="outline" size="sm">
                 Discard AI Note
               </Button>
-            </>
-          )}
-        </div>
-        {activity.id === "new-session" ? (
-          <Button variant="default" size="lg" className="gap-2 text-base font-bold">
-            <Activity className="h-5 w-5" />
-            Begin Listening
-          </Button>
-        ) : (
-          <Button variant="default" size="lg" className="text-base font-bold">
-            Sign & Approve Note
-          </Button>
+            </div>
+            <Button variant="default" size="lg" className="text-base font-bold">
+              Sign & Approve Note
+            </Button>
+          </>
         )}
       </div>
     </motion.div>
