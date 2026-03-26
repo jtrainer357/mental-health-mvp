@@ -20,7 +20,7 @@ export function HeaderSearch() {
   const placeholder = voiceTranscript ? "" : isListening ? "Listening..." : DEFAULT_PLACEHOLDER;
 
   return (
-    <header className="w-full shrink-0 px-4 pt-[18px] pb-4 sm:px-6">
+    <header className="w-full shrink-0 px-4 pt-4 pb-3 sm:px-5 lg:px-6">
       {/* Mobile: Stack vertically, Desktop: Side by side */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
         {/* Title - responsive sizing */}

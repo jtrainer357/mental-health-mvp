@@ -37,7 +37,7 @@ function HomeContent() {
       </CardWrapper>
 
       {/* Right Sidebar Widgets - Hidden below lg, shown on lg+ */}
-      <aside className="hidden w-[380px] shrink-0 flex-col gap-2 lg:flex xl:w-[400px] 2xl:w-[440px]">
+      <aside className="hidden w-[320px] shrink-0 flex-col gap-2 lg:flex xl:w-[380px] 2xl:w-[440px]">
         <ScheduleAlertsWidget />
         <BalanceAlertsWidget />
         <FeedbackWidget />

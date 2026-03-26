@@ -25,7 +25,7 @@ export default function MarketingError({
       resetError={reset}
       section="Marketing"
       digest={error.digest}
-      className="min-h-screen md:pl-20"
+      className="min-h-screen md:pl-24"
     />
   );
 }

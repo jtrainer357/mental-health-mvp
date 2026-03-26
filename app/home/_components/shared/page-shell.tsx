@@ -35,7 +35,7 @@ export function PageShell({
           id="main-content"
           role="main"
           aria-label="Dashboard content"
-          className={mainClassName || "px-4 py-4 sm:px-6 sm:py-6 md:py-8"}
+          className={mainClassName || "px-4 py-3 sm:px-5 sm:py-4 lg:px-6 lg:py-5"}
         >
           <PageTransition>
             <div className={className || "mx-auto max-w-[1600px]"}>{children}</div>

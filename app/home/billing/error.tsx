@@ -25,7 +25,7 @@ export default function BillingError({
       resetError={reset}
       section="Billing"
       digest={error.digest}
-      className="min-h-screen md:pl-20"
+      className="min-h-screen md:pl-24"
     />
   );
 }

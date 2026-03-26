@@ -43,7 +43,7 @@ export default function HomeLoading() {
             </div>
 
             {/* Right Sidebar Widgets - Hidden below lg */}
-            <aside className="hidden w-[380px] shrink-0 flex-col gap-2 lg:flex xl:w-[400px] 2xl:w-[440px]">
+            <aside className="hidden w-[320px] shrink-0 flex-col gap-2 lg:flex xl:w-[380px] 2xl:w-[440px]">
               {/* Messages Widget Skeleton */}
               <div className="border-border/50 bg-card/90 rounded-xl border p-4">
                 <Skeleton className="mb-4 h-5 w-24" />

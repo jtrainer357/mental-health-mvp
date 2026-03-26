@@ -55,7 +55,7 @@ export function PriorityAction({
         className
       )}
     >
-      <CardContent className="p-6 sm:p-8">
+      <CardContent className="p-4 lg:p-5">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-4 sm:gap-5">
             {avatarHref ? (

@@ -25,7 +25,7 @@ export default function HomeError({
       resetError={reset}
       section="Dashboard"
       digest={error.digest}
-      className="min-h-screen md:pl-20"
+      className="min-h-screen md:pl-24"
     />
   );
 }

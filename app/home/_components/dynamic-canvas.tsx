@@ -85,9 +85,9 @@ export function DynamicCanvas({ className }: DynamicCanvasProps) {
   const isActions = view === "actions";
 
   return (
-    <div className={className + " -m-4 flex flex-col p-4 sm:-m-6 sm:p-6"}>
+    <div className={className + " -m-4 flex flex-col p-2 lg:-m-5 lg:p-2"}>
       {/* Fixed Header */}
-      <div className="mb-14 shrink-0">
+      <div className="mb-5 shrink-0 sm:mb-6 lg:mb-8">
         <TodaysActionsHeader appointmentCount={appointmentCount} isLoading={isLoading} />
       </div>
 

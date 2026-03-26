@@ -35,7 +35,7 @@ function SectionHeader({ appointmentCount, isLoading, children }: SectionHeaderP
   const formattedDate = formatDemoDate("long");
 
   return (
-    <div className="mb-14 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+    <div className="mb-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center lg:mb-5">
       <div className="flex items-center gap-4">
         <Image
           src="/icons/caring-hands.png"
@@ -112,13 +112,6 @@ export function TodaysActionsHeader({ appointmentCount, isLoading }: TodaysActio
           </Text>
         </div>
       </div>
-      <Button
-        variant="outline"
-        className="w-full shrink-0 cursor-not-allowed opacity-50 sm:ml-auto sm:w-auto"
-        aria-disabled="true"
-      >
-        Complete All Actions
-      </Button>
     </div>
   );
 }
@@ -297,13 +290,6 @@ export function PriorityActionsSection({
                 <Sparkles className="h-4 w-4" />
               )}
               {scanning ? "Analyzing..." : "Run AI Analysis"}
-            </Button>
-            <Button
-              variant="outline"
-              className="shrink-0 cursor-not-allowed opacity-50"
-              aria-disabled="true"
-            >
-              Complete All Actions
             </Button>
           </div>
         </SectionHeader>

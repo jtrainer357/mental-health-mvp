@@ -95,7 +95,7 @@ export function BalanceAlertsWidget() {
   if (alerts.length === 0) return null;
 
   return (
-    <section className="border-border/40 flex flex-col rounded-xl border bg-white/60 p-4 shadow-sm backdrop-blur-lg sm:p-6">
+    <section className="border-border/40 flex flex-col rounded-xl border bg-white/60 p-6 shadow-sm backdrop-blur-lg lg:p-7">
       <div className="flex items-center justify-between pb-4">
         <Heading level={4} className="text-lg">
           Balance Alerts
