@@ -11,7 +11,7 @@ export function CardWrapper({ children, className }: CardWrapperProps) {
   return (
     <div
       className={cn(
-        "border-border/40 rounded-xl border bg-white/60 p-6 shadow-sm backdrop-blur-lg transition-shadow duration-200 hover:shadow-md lg:p-7",
+        "border-border/40 rounded-xl border bg-white/[0.64] p-6 shadow-none backdrop-blur-lg transition-shadow duration-200 hover:shadow-none lg:p-7",
         className
       )}
     >

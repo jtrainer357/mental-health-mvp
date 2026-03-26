@@ -324,8 +324,6 @@ export function PriorityActionsSection({
               avatarInitials={`${arrivingPatient.patient.first_name[0]}${arrivingPatient.patient.last_name[0]}`}
               avatarSrc={arrivingPatient.patient.avatar_url || undefined}
               avatarHref={`/home/patients?patientName=${encodeURIComponent(`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name}`)}`}
-              secondaryButtonText="View Suggested Actions"
-              onSecondaryButtonClick={() => {}}
               buttonText="Enter Session"
               onButtonClick={() => {
                 router.push(
