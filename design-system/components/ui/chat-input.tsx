@@ -60,7 +60,7 @@ export function ChatInput({
   return (
     <div className={cn("border-border bg-card border-t p-4", className)}>
       <div className="flex items-center gap-2 sm:gap-3">
-        <div className="border-border bg-background focus-within:ring-ring flex h-10 min-w-0 flex-1 items-center rounded-full border pr-1 pl-3 focus-within:ring-2 sm:pr-2 sm:pl-4">
+        <div className="border-border bg-background focus-within:ring-ring flex h-11 min-w-0 flex-1 items-center rounded-full border pr-1 pl-3 focus-within:ring-2 sm:pr-2 sm:pl-4">
           <input
             type="text"
             value={currentValue}
@@ -79,7 +79,7 @@ export function ChatInput({
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-foreground relative h-9 w-9 sm:h-11 sm:w-11"
+              className="text-muted-foreground hover:text-foreground relative h-11 w-11"
               onClick={onAttachFile}
               disabled={disabled}
             >
@@ -89,7 +89,7 @@ export function ChatInput({
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-foreground xs:flex relative hidden h-9 w-9 sm:h-11 sm:w-11"
+              className="text-muted-foreground hover:text-foreground xs:flex relative hidden h-11 w-11"
               onClick={onAttachImage}
               disabled={disabled}
             >
@@ -109,7 +109,7 @@ export function ChatInput({
             <Button
               variant="ghost"
               size="icon"
-              className="text-muted-foreground hover:text-foreground relative h-9 w-9 sm:h-11 sm:w-11"
+              className="text-muted-foreground hover:text-foreground relative h-11 w-11"
               onClick={onEmoji}
               disabled={disabled}
             >
@@ -119,7 +119,11 @@ export function ChatInput({
           </div>
         </div>
 
-        <Button onClick={handleSend} disabled={disabled} className="shrink-0 gap-2 px-3 sm:px-4">
+        <Button
+          onClick={handleSend}
+          disabled={disabled}
+          className="h-11 shrink-0 gap-2 px-3 sm:px-4"
+        >
           <span className="hidden sm:inline">Send</span>
           <Send className="h-4 w-4" />
         </Button>
