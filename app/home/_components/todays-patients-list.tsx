@@ -1,22 +1,89 @@
 "use client";
 
 import * as React from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { ScheduleRowCard } from "@/design-system/components/ui/schedule-row-card";
 import { Card } from "@/design-system/components/ui/card";
 import { Heading, Text } from "@/design-system/components/ui/typography";
-import { Loader2 } from "lucide-react";
+import { Loader2, List, CalendarDays } from "lucide-react";
 import { cn } from "@/design-system/lib/utils";
-import { getTodayAppointments } from "@/src/lib/queries/appointments";
+import { getTodayAppointments, getUpcomingAppointments } from "@/src/lib/queries/appointments";
 import { isDatabasePopulated } from "@/src/lib/queries/practice";
 import type { AppointmentWithPatient } from "@/src/lib/queries/appointments";
+import type { CalendarEvent } from "@/design-system/components/ui/calendar-week-view";
 import type { OrchestrationContext } from "@/src/lib/orchestration/types";
 import { createLogger } from "@/src/lib/logger";
 import { getExternalIdFromUUID } from "@/src/lib/data/adapter";
 import { INVOICES as SYNTHETIC_INVOICES } from "@/src/lib/data/billing";
 import { VisitPrepPanel } from "./visit-prep-panel";
+import { DEMO_DATE_OBJECT } from "@/src/lib/utils/demo-date";
+import { startOfWeek, addDays, parseISO } from "date-fns";
+
+const CalendarWeekView = dynamic(
+  () =>
+    import("@/design-system/components/ui/calendar-week-view").then((mod) => mod.CalendarWeekView),
+  { ssr: false }
+);
 
 const log = createLogger("TodaysPatientsList");
+
+// Patient color palette for calendar view
+const patientColorPalette: CalendarEvent["color"][] = [
+  "teal",
+  "rose",
+  "sage",
+  "lavender",
+  "green",
+  "yellow",
+  "neutral",
+  "blue",
+];
+
+function getPatientColorIndex(patientName: string): number {
+  let hash = 0;
+  for (let i = 0; i < patientName.length; i++) {
+    hash = (hash * 31 + patientName.charCodeAt(i)) | 0;
+  }
+  return Math.abs(hash) % patientColorPalette.length;
+}
+
+function getEventColor(
+  serviceType: string,
+  status: string,
+  patientName: string
+): CalendarEvent["color"] {
+  if (status === "Completed") return "gray";
+  if (status === "Cancelled" || status === "No-Show") return "pink";
+  if (serviceType.toLowerCase().includes("crisis")) return "red";
+  return patientColorPalette[getPatientColorIndex(patientName)]!;
+}
+
+function appointmentToEvent(apt: AppointmentWithPatient): CalendarEvent {
+  const [hours, minutes] = apt.start_time.split(":").map(Number);
+  const [endHours, endMinutes] = apt.end_time.split(":").map(Number);
+  const date = parseISO(apt.date);
+  const startTime = new Date(date);
+  startTime.setHours(hours!, minutes!, 0, 0);
+  const endTime = new Date(date);
+  endTime.setHours(endHours!, endMinutes!, 0, 0);
+  const isCancelled = apt.status === "Cancelled";
+  const title = isCancelled
+    ? `CANCELLED — ${apt.patient.first_name} ${apt.patient.last_name}`
+    : `${apt.patient.first_name} ${apt.patient.last_name} - ${apt.service_type}`;
+  return {
+    id: apt.id,
+    title,
+    startTime,
+    endTime,
+    color: getEventColor(
+      apt.service_type,
+      apt.status,
+      `${apt.patient.first_name} ${apt.patient.last_name}`
+    ),
+    hasNotification: apt.patient.risk_level === "high",
+  };
+}
 
 // Get outstanding balance for a patient from synthetic billing data
 function getPatientOutstandingBalance(patientUUID: string): number {
@@ -132,9 +199,24 @@ interface TodaysPatientsListProps {
 
 export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatientsListProps) {
   const [appointments, setAppointments] = React.useState<AppointmentWithPatient[]>([]);
+  const [weekAppointments, setWeekAppointments] = React.useState<AppointmentWithPatient[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [dbReady, setDbReady] = React.useState<boolean | null>(null);
   const [expandedId, setExpandedId] = React.useState<string | null>(null);
+  const [viewMode, setViewMode] = React.useState<"list" | "calendar">("list");
+  const [selectedEventId, setSelectedEventId] = React.useState<string | null>(null);
+
+  // Week days for calendar view
+  const weekDays = React.useMemo(() => {
+    const start = startOfWeek(DEMO_DATE_OBJECT, { weekStartsOn: 0 });
+    return Array.from({ length: 7 }, (_, i) => addDays(start, i));
+  }, []);
+
+  // Convert week appointments to calendar events
+  const calendarEvents = React.useMemo(
+    () => weekAppointments.map(appointmentToEvent),
+    [weekAppointments]
+  );
 
   React.useEffect(() => {
     async function loadAppointments() {
@@ -150,8 +232,12 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
           return;
         }
 
-        const data = await getTodayAppointments();
-        setAppointments(data);
+        const [todayData, weekData] = await Promise.all([
+          getTodayAppointments(),
+          getUpcomingAppointments(undefined, 7, "all"),
+        ]);
+        setAppointments(todayData);
+        setWeekAppointments(weekData);
       } catch (err) {
         log.error("Failed to load today's appointments", err);
       } finally {
@@ -211,49 +297,92 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
 
   return (
     <div className={cn("flex min-h-0 flex-col", className)}>
-      <Heading
-        level={6}
-        className="text-muted-foreground mb-3 shrink-0 text-xs font-semibold tracking-wider uppercase"
-      >
-        Today&apos;s Patients ({appointments.length})
-      </Heading>
-
-      <div className="-mx-2 min-h-0 flex-1 space-y-2 overflow-y-auto px-2 pb-2">
-        {appointments.map((apt) => {
-          const isExpanded = expandedId === apt.id;
-          return (
-            <Card
-              key={apt.id}
-              opacity="transparent"
-              onClick={() => handleRowClick(apt.id)}
-              className={cn(
-                "cursor-pointer overflow-hidden transition-all",
-                "border-border/60",
-                isExpanded ? "bg-white/70 shadow-md" : "hover:bg-white/70 hover:shadow-md"
-              )}
-            >
-              <ScheduleRowCard
-                time={formatTime(apt.start_time)}
-                patient={`${apt.patient.first_name} ${apt.patient.last_name}`}
-                type={apt.service_type.toUpperCase()}
-                provider="Dr. Demo"
-                status={mapStatus(apt.status, apt.start_time, apt.patient.id)}
-                room={apt.location || "Main Office"}
-                avatarSrc={apt.patient.avatar_url || undefined}
-                avatarHref={`/home/patients?patientName=${encodeURIComponent(`${apt.patient.first_name} ${apt.patient.last_name}`)}`}
-                outstandingBalance={getPatientOutstandingBalance(apt.patient.id)}
-                className="border-0 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
-              />
-              <VisitPrepPanel
-                appointment={apt}
-                isExpanded={isExpanded}
-                showEnterVisit={getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"}
-                onEnterVisit={() => handleEnterVisit(apt)}
-              />
-            </Card>
-          );
-        })}
+      <div className="mb-3 flex shrink-0 items-center justify-between">
+        <Heading
+          level={6}
+          className="text-muted-foreground text-xs font-semibold tracking-wider uppercase"
+        >
+          Today&apos;s Patients ({appointments.length})
+        </Heading>
+        <div className="border-border/50 bg-backbone-1/60 flex items-center gap-0.5 rounded-lg border p-0.5">
+          <button
+            onClick={() => setViewMode("list")}
+            className={cn(
+              "rounded-md p-1.5 transition-all duration-150",
+              viewMode === "list"
+                ? "text-foreground bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
+                : "text-muted-foreground/50 hover:text-muted-foreground"
+            )}
+            aria-label="List view"
+          >
+            <List className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => setViewMode("calendar")}
+            className={cn(
+              "rounded-md p-1.5 transition-all duration-150",
+              viewMode === "calendar"
+                ? "text-foreground bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
+                : "text-muted-foreground/50 hover:text-muted-foreground"
+            )}
+            aria-label="Calendar view"
+          >
+            <CalendarDays className="h-3.5 w-3.5" />
+          </button>
+        </div>
       </div>
+
+      {viewMode === "list" ? (
+        <div className="-mx-2 min-h-0 flex-1 space-y-2 overflow-y-auto px-2 pb-2">
+          {appointments.map((apt) => {
+            const isExpanded = expandedId === apt.id;
+            return (
+              <Card
+                key={apt.id}
+                opacity="transparent"
+                onClick={() => handleRowClick(apt.id)}
+                className={cn(
+                  "cursor-pointer overflow-hidden transition-all",
+                  "border-border/60",
+                  isExpanded ? "bg-white/70 shadow-md" : "hover:bg-white/70 hover:shadow-md"
+                )}
+              >
+                <ScheduleRowCard
+                  time={formatTime(apt.start_time)}
+                  patient={`${apt.patient.first_name} ${apt.patient.last_name}`}
+                  type={apt.service_type.toUpperCase()}
+                  provider="Dr. Demo"
+                  status={mapStatus(apt.status, apt.start_time, apt.patient.id)}
+                  room={apt.location || "Main Office"}
+                  avatarSrc={apt.patient.avatar_url || undefined}
+                  avatarHref={`/home/patients?patientName=${encodeURIComponent(`${apt.patient.first_name} ${apt.patient.last_name}`)}`}
+                  outstandingBalance={getPatientOutstandingBalance(apt.patient.id)}
+                  className="border-0 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
+                />
+                <VisitPrepPanel
+                  appointment={apt}
+                  isExpanded={isExpanded}
+                  showEnterVisit={getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"}
+                  onEnterVisit={() => handleEnterVisit(apt)}
+                />
+              </Card>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="min-h-0 flex-1">
+          <CalendarWeekView
+            weekDays={weekDays}
+            events={calendarEvents}
+            startHour={8}
+            endHour={18}
+            selectedEventId={selectedEventId}
+            onEventClick={(event) => {
+              setSelectedEventId(selectedEventId === event.id ? null : event.id);
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
