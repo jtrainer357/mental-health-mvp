@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/design-system/lib/utils";
 import { CalendarEventCard, EventColor } from "./calendar-event-card";
 import { format, isSameDay, isToday } from "date-fns";
+import { demoNow } from "@/src/lib/data/helpers";
 
 export interface CalendarEvent {
   id: string;
@@ -31,12 +32,14 @@ const HOUR_HEIGHT = 64; // pixels per hour
 export function CalendarWeekView({
   weekDays,
   events,
-  startHour = 9,
-  endHour = 17,
+  startHour = 6,
+  endHour = 21,
   onEventClick,
   selectedEventId,
   className,
 }: CalendarWeekViewProps) {
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+
   const hours = React.useMemo(() => {
     const result: number[] = [];
     for (let i = startHour; i <= endHour; i++) {
@@ -44,6 +47,14 @@ export function CalendarWeekView({
     }
     return result;
   }, [startHour, endHour]);
+
+  // Auto-scroll to 8am on mount
+  React.useEffect(() => {
+    if (scrollRef.current) {
+      const scrollTo8am = (8 - startHour) * HOUR_HEIGHT;
+      scrollRef.current.scrollTop = scrollTo8am;
+    }
+  }, [startHour]);
 
   const formatHour = (hour: number) => {
     if (hour === 12) return "12 PM";
@@ -69,7 +80,7 @@ export function CalendarWeekView({
   };
 
   // Current time indicator
-  const now = new Date();
+  const now = demoNow();
   const currentTimeTop =
     (now.getHours() - startHour) * HOUR_HEIGHT + (now.getMinutes() / 60) * HOUR_HEIGHT;
   const showCurrentTime = now.getHours() >= startHour && now.getHours() <= endHour;
@@ -78,9 +89,8 @@ export function CalendarWeekView({
     <div
       className={cn("border-border/40 flex flex-col overflow-hidden rounded-xl border", className)}
     >
-      <div className="flex min-h-0 flex-1 flex-col overflow-x-auto md:min-w-0">
-        {/* Header with day names */}
-        <div className="border-border/40 bg-card/80 sticky top-0 z-20 grid grid-cols-[56px_repeat(7,1fr)] rounded-t-xl border-b backdrop-blur-sm">
+      {/* Header with day names — fixed, not scrollable */}
+      <div className="border-border/40 bg-card/80 z-20 grid grid-cols-[56px_repeat(7,1fr)] rounded-t-xl border-b backdrop-blur-sm">
           <div className="py-3" /> {/* Time column spacer */}
           {weekDays.map((day, idx) => {
             const today = isToday(day);
@@ -108,7 +118,8 @@ export function CalendarWeekView({
           })}
         </div>
 
-        {/* Time grid */}
+      {/* Scrollable time grid — viewport shows 8am–7pm (11 hours), scroll for full range */}
+      <div ref={scrollRef} className="overflow-y-auto" style={{ maxHeight: 11 * HOUR_HEIGHT }}>
         <div className="bg-card/40 relative grid grid-cols-[56px_repeat(7,1fr)]">
           {/* Time labels column */}
           <div className="relative">

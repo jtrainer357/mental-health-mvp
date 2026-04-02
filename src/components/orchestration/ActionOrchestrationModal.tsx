@@ -257,9 +257,9 @@ export function ActionOrchestrationModal() {
                 ) : (
                   <>
                     <span className="hidden sm:inline">
-                      Complete All Suggested Actions ({checkedCount})
+                      Let AI Handle These ({checkedCount})
                     </span>
-                    <span className="sm:hidden">Complete All ({checkedCount})</span>
+                    <span className="sm:hidden">Let AI Handle ({checkedCount})</span>
                   </>
                 )}
               </Button>

@@ -215,19 +215,21 @@ for (const p of PATIENTS) {
 
 // ── EXTRA APPOINTMENTS — Today (Thursday) and Tomorrow (Friday) ──────────────
 
-// Emma Kowalski — extra session today (Thursday) at 12:00
+// Emma Kowalski — extra session today (Thursday) at 13:00
+// Creates open slot 11:45–13:00 after David Nakamura
 (() => {
   const p = PATIENTS.find((pt) => pt.id === "emma-kowalski")!;
   allAppointments.push(
-    apt(p.id, 30, thisWeekDay(4), "12:00", p.session_duration, p.cpt_code, "Scheduled")
+    apt(p.id, 30, thisWeekDay(4), "13:00", p.session_duration, p.cpt_code, "Scheduled")
   );
 })();
 
-// Priya Sharma — extra session today (Thursday) at 16:00
+// Priya Sharma — extra session today (Thursday) at 17:00
+// Creates open slot 15:45–17:00 after Omar Hassan
 (() => {
   const p = PATIENTS.find((pt) => pt.id === "priya-sharma")!;
   allAppointments.push(
-    apt(p.id, 30, thisWeekDay(4), "16:00", p.session_duration, p.cpt_code, "Scheduled")
+    apt(p.id, 30, thisWeekDay(4), "17:00", p.session_duration, p.cpt_code, "Scheduled")
   );
 })();
 

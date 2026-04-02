@@ -7,6 +7,10 @@ import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { PatientListCard, PatientStatus } from "@/design-system/components/ui/patient-list-card";
 import { Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
+import { getDemoTodayAppointments } from "@/src/lib/data/adapter";
+
+/** Patient IDs with appointments today — computed once at module level */
+const todayPatientIds = new Set(getDemoTodayAppointments().map((a) => a.patient.id));
 
 export interface Patient {
   id: string;
@@ -57,7 +61,9 @@ export function PatientListSidebar({
     let filtered = patients;
 
     // Filter by tab
-    if (activeFilter === "active") {
+    if (activeFilter === "today") {
+      filtered = filtered.filter((p) => todayPatientIds.has(p.id));
+    } else if (activeFilter === "active") {
       filtered = filtered.filter((p) => p.status === "ACTIVE");
     } else if (activeFilter === "new") {
       filtered = filtered.filter((p) => p.status === "NEW");

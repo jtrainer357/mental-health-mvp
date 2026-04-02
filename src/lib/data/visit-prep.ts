@@ -91,6 +91,7 @@ export const goalsByDx: Record<
     { label: "Reduce anxiety symptoms", status: "On Track" },
     { label: "Improve stress coping", status: "Partial" },
     { label: "Decrease avoidance", status: "On Track" },
+    { label: "Maintain mood stability", status: "Partial" },
   ],
   "F33.1": [
     { label: "Improve mood stability", status: "On Track" },

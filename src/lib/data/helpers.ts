@@ -9,9 +9,20 @@ import type { SeedPatient } from "./types";
 // DATE HELPERS
 // ============================================================================
 
+/**
+ * Frozen demo date: Thursday April 3, 2026 at 8:40 AM
+ * Set for user testing sessions. Change to `null` to use real current date.
+ */
+const FROZEN_DEMO_DATE = new Date(2026, 3, 2, 8, 40, 0, 0); // Thu Apr 2, 2026 8:40 AM (month 0-indexed)
+
+/** Returns the frozen demo "now" (with time), or real Date if unfrozen */
+export function demoNow(): Date {
+  return FROZEN_DEMO_DATE ? new Date(FROZEN_DEMO_DATE) : new Date();
+}
+
 /** Returns today's date as YYYY-MM-DD (local time, not UTC) */
 export function today(): string {
-  const d = new Date();
+  const d = FROZEN_DEMO_DATE ?? new Date();
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, "0");
   const day = String(d.getDate()).padStart(2, "0");
@@ -20,7 +31,7 @@ export function today(): string {
 
 /** Returns a Date object for today at noon (avoids timezone edge cases) */
 export function todayDate(): Date {
-  const d = new Date();
+  const d = FROZEN_DEMO_DATE ? new Date(FROZEN_DEMO_DATE) : new Date();
   d.setHours(12, 0, 0, 0);
   return d;
 }

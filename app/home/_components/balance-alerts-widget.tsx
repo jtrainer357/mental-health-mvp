@@ -112,7 +112,7 @@ export function BalanceAlertsWidget() {
             }
             className="!bg-teal/[0.06] hover:!bg-teal/[0.10] border-border/60 cursor-pointer rounded-lg border p-3 opacity-[0.94] transition-all hover:border-white hover:opacity-100 hover:shadow-md"
           >
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <Link
                 href={`/home/patients?patientName=${encodeURIComponent(alert.name)}`}
                 onClick={(e) => e.stopPropagation()}

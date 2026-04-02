@@ -3,7 +3,9 @@
  * All dates are now relative to today so the prototype always looks fresh.
  */
 
-import { today, todayDate, daysFromNow } from "@/src/lib/data/helpers";
+import { today, todayDate, daysFromNow, demoNow } from "@/src/lib/data/helpers";
+
+export { demoNow };
 
 // "Today" — always the real current date
 export const DEMO_DATE = today();

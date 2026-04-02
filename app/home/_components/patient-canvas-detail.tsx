@@ -184,7 +184,7 @@ export function PatientCanvasDetail({
           Cancel
         </Button>
         <Button onClick={handleCompleteAll} className="min-h-[48px] w-full lg:min-h-0 lg:w-auto">
-          Complete All Suggested Actions
+          Let AI Handle These
         </Button>
       </div>
     </Card>

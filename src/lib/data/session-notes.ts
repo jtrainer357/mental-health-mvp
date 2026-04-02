@@ -22,6 +22,7 @@ const davidDates = weeklyHistoryDates(4); // Thursday
 const carmenDates = weeklyHistoryDates(1); // Monday
 const kevinDates = weeklyHistoryDates(5); // Friday
 const priyaDates = weeklyHistoryDates(3); // Wednesday
+const jordanDates = weeklyHistoryDates(4); // Thursday
 const robertDates = weeklyHistoryDates(4); // Thursday
 const aaliyahDates = weeklyHistoryDates(1); // Monday
 const danielDates = weeklyHistoryDates(5); // Friday
@@ -1075,6 +1076,75 @@ export const SESSION_NOTES: SeedSessionNote[] = [
     cpt_code: "90834",
     duration_minutes: 45,
     signed_at: toISO(robertDates[3]!, "17:00:00"),
+    signed_by: "Dr. Sarah Chen",
+    status: "signed",
+  },
+
+  // ==========================================================================
+  // JORDAN MITCHELL — GAD + mild MDD, 2yr weekly therapy, Sertraline 50mg
+  // PHQ-9: 10 -> 8 -> 7 -> 8 | GAD-7: 8 -> 7 -> 8 -> 11
+  // ==========================================================================
+  {
+    id: "note-jordan-mitchell-1",
+    patient_id: "jordan-mitchell",
+    appointment_id: "apt-jordan-mitchell-1",
+    date_of_service: jordanDates[0]!,
+    note_type: "progress_note",
+    subjective: `Patient reports a stable week overall. Anxiety remains manageable with current coping strategies. "I feel like I've hit a plateau — not getting worse but not really getting better either." Sleep is consistent at 7 hours. Reports mild depressive symptoms in the evenings, particularly loneliness after ending a long-term relationship 6 months ago. Has been attending a weekly running group which helps with mood.`,
+    objective: `Appearance: Well-groomed, casually dressed. Affect: Congruent, mildly restricted range. Mood: "Fine, I guess." Speech: Normal rate and volume. Thought process: Logical, future-oriented. No SI/HI. Insight: Good. PHQ-9: 10 (moderate). GAD-7: 8 (mild-moderate).`,
+    assessment: `F41.1 Generalized Anxiety Disorder. F33.0 Major Depressive Disorder, recurrent, mild. Patient has been in treatment for 2 years with good baseline stability. Current presentation suggests a plateau phase — symptoms are managed but residual anxiety and mild depressive features persist. Running group is a positive protective factor. Continue current treatment with focus on deepening CBT skills.`,
+    plan: `1. Continue Sertraline 50mg daily\n2. CBT focus: cognitive restructuring around relationship loss\n3. Maintain running group — discuss expanding social activities\n4. PHQ-9 and GAD-7 at each visit\n5. Follow up in 1 week`,
+    cpt_code: "90834",
+    duration_minutes: 45,
+    signed_at: toISO(jordanDates[0]!, "10:00:00"),
+    signed_by: "Dr. Sarah Chen",
+    status: "signed",
+  },
+  {
+    id: "note-jordan-mitchell-2",
+    patient_id: "jordan-mitchell",
+    appointment_id: "apt-jordan-mitchell-2",
+    date_of_service: jordanDates[1]!,
+    note_type: "progress_note",
+    subjective: `Patient reports improved week. Attended a social event with former colleagues and found it manageable. "I didn't enjoy every minute but I didn't dread it either. That's progress." Sleep remains stable. Reports less evening rumination since starting a journaling practice. Work remains a mild stressor — new project deadline approaching but feels more in control of his response to it.`,
+    objective: `Appearance: Well-groomed. Affect: Brighter than previous sessions, more animated. Mood: "Pretty good this week." Speech: Normal. Thought process: Goal-directed. No SI/HI. PHQ-9: 8 (mild). GAD-7: 7 (mild).`,
+    assessment: `F41.1 GAD and F33.0 MDD, mild — both showing improvement. PHQ-9 decreased from 10 to 8, GAD-7 from 8 to 7. Social engagement is increasing. Journaling appears effective for evening rumination. Work stress is present but patient is demonstrating improved coping.`,
+    plan: `1. Continue Sertraline 50mg\n2. Continue journaling — discuss themes next session\n3. Social goal: one social activity per week\n4. Work stress: practice worry time technique\n5. Follow up in 1 week`,
+    cpt_code: "90834",
+    duration_minutes: 43,
+    signed_at: toISO(jordanDates[1]!, "10:00:00"),
+    signed_by: "Dr. Sarah Chen",
+    status: "signed",
+  },
+  {
+    id: "note-jordan-mitchell-3",
+    patient_id: "jordan-mitchell",
+    appointment_id: "apt-jordan-mitchell-3",
+    date_of_service: jordanDates[2]!,
+    note_type: "progress_note",
+    subjective: `Patient reports mixed week. Work stress has intensified — new manager is micromanaging his team and he's been working late most nights. "I can feel my anxiety creeping back up. The old chest tightness is back." Sleep disrupted 2 nights this week — racing thoughts about work. Mood is slightly lower. Did not attend running group due to work schedule. Reports tension with his brother over family holiday planning. "It's not a huge deal but it's one more thing on the pile."`,
+    objective: `Appearance: Slightly fatigued, dressed for work. Affect: More tense than recent sessions, fidgeting with phone. Mood: "Stressed." Speech: Slightly pressured. Thought process: Logical but ruminative about work. No SI/HI. PHQ-9: 7 (mild). GAD-7: 8 (mild-moderate, uptick from 7).`,
+    assessment: `F41.1 GAD showing mild exacerbation secondary to work stress and family conflict. F33.0 MDD remains mild. GAD-7 increased from 7 to 8 — early signal of anxiety worsening. PHQ-9 slightly improved at 7 but the anxiety-depression interplay needs monitoring. Loss of running group routine is concerning — exercise is a key protective factor. Family conflict adding to overall stress load.`,
+    plan: `1. Continue Sertraline 50mg\n2. Priority: re-establish running group this week\n3. Work stress: boundaries conversation — practice saying no to overtime\n4. Family conflict: explore assertive communication for holiday planning\n5. Monitor GAD-7 trajectory closely\n6. Follow up in 1 week`,
+    cpt_code: "90834",
+    duration_minutes: 47,
+    signed_at: toISO(jordanDates[2]!, "10:00:00"),
+    signed_by: "Dr. Sarah Chen",
+    status: "signed",
+  },
+  {
+    id: "note-jordan-mitchell-4",
+    patient_id: "jordan-mitchell",
+    appointment_id: "apt-jordan-mitchell-4",
+    date_of_service: jordanDates[3]!,
+    note_type: "progress_note",
+    subjective: `Patient reports a difficult week. Work situation has escalated — received critical feedback from new manager that felt unfair. "I couldn't sleep at all Tuesday night. I was just lying there replaying the conversation." Anxiety is noticeably elevated — reports daily chest tightness and difficulty concentrating. Skipped running group again. Family conflict with brother continued via text — still unresolved holiday plans. Mood is lower but patient attributes it primarily to anxiety. "When I'm this anxious everything feels harder." Reports Sertraline is still helping baseline but not enough for the current spike.`,
+    objective: `Appearance: Tired, slightly disheveled compared to usual presentation. Affect: Anxious, restless, minimal eye contact initially. Mood: "Overwhelmed." Speech: Normal rate but sighing frequently. Thought process: Logical but preoccupied with work and family stressors. No SI/HI. Insight: Good — recognizes this is a stress response, not a new baseline. PHQ-9: 8 (mild, slight uptick). GAD-7: 11 (moderate — significant increase from 8).`,
+    assessment: `F41.1 GAD — moderate exacerbation. GAD-7 jumped from 8 to 11, now in moderate range. This represents a clinically meaningful increase driven by compounding work stress and family conflict. F33.0 MDD remains mild (PHQ-9: 8, slight uptick from 7). Sleep disruption is likely anxiety-driven. Loss of exercise routine (running group) removes a key protective factor. Patient's insight is good — he recognizes this as situational and is motivated to address it. No medication change warranted yet but will monitor closely. If GAD-7 remains elevated at next visit, consider Sertraline dose increase.`,
+    plan: `1. Continue Sertraline 50mg — reassess dose at next visit if GAD-7 stays elevated\n2. Immediate priority: return to running group this Thursday\n3. Work stress: practiced assertive response in session — will use with manager this week\n4. Family: suggested direct phone call with brother vs continuing text conflict\n5. Sleep: progressive muscle relaxation before bed, limit news/social media after 9pm\n6. GAD-7 and PHQ-9 at next visit — critical check on anxiety trajectory\n7. Follow up in 1 week`,
+    cpt_code: "90834",
+    duration_minutes: 48,
+    signed_at: toISO(jordanDates[3]!, "10:00:00"),
     signed_by: "Dr. Sarah Chen",
     status: "signed",
   },

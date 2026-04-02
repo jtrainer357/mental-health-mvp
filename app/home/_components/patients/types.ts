@@ -48,8 +48,7 @@ export interface PatientsPageProps {
 }
 
 export const patientFilterTabs = [
+  { id: "today", label: "Today's Patients" },
   { id: "all", label: "All Patients" },
-  { id: "active", label: "Active" },
   { id: "new", label: "New" },
-  { id: "inactive", label: "Inactive" },
 ];

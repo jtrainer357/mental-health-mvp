@@ -3468,7 +3468,7 @@ function MyForm() {
                     patient="Sarah Johnson"
                     type="ANNUAL PHYSICAL"
                     provider="Dr. Patel"
-                    status="ENDED"
+                    status="COMPLETED"
                     room="Room 101"
                   />
                   <ActionRowCard
@@ -3476,7 +3476,7 @@ function MyForm() {
                     patient="Michael Chen"
                     type="DIABETES FOLLOW-UP"
                     provider="Dr. Patel"
-                    status="IN PROGRESS"
+                    status="ARRIVED"
                     room="Room 101"
                   />
                   <ActionRowCard
@@ -3484,7 +3484,7 @@ function MyForm() {
                     patient="Emma Johnson"
                     type="SPORTS PHYSICAL"
                     provider="Dr. Chen"
-                    status="CHECKED IN"
+                    status="ROOMED"
                     room="Room 103"
                   />
                   <ActionRowCard
@@ -3503,7 +3503,7 @@ function MyForm() {
   patient="Michael Chen"
   type="DIABETES FOLLOW-UP"
   provider="Dr. Patel"
-  status="IN PROGRESS"  // "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED"
+  status="ARRIVED"  // "SCHEDULED" | "ARRIVED" | "ROOMED" | "COMPLETED" | "CANCELED" | "RESCHEDULED"
   room="Room 101"
 />`}
               />
@@ -3536,7 +3536,7 @@ function MyForm() {
                     patient="Sarah Johnson"
                     type="ANNUAL PHYSICAL"
                     provider="Dr. Patel"
-                    status="ENDED"
+                    status="COMPLETED"
                     room="Room 101"
                   />
                   <ScheduleRowCard
@@ -3544,7 +3544,7 @@ function MyForm() {
                     patient="Michael Chen"
                     type="DIABETES FOLLOW-UP"
                     provider="Dr. Patel"
-                    status="IN PROGRESS"
+                    status="ARRIVED"
                     room="Room 101"
                   />
                   <ScheduleRowCard
@@ -3552,7 +3552,7 @@ function MyForm() {
                     patient="Emma Johnson"
                     type="SPORTS PHYSICAL"
                     provider="Dr. Chen"
-                    status="CHECKED IN"
+                    status="ROOMED"
                     room="Room 103"
                   />
                   <ScheduleRowCard
@@ -3571,7 +3571,7 @@ function MyForm() {
   patient="Michael Chen"
   type="DIABETES FOLLOW-UP"
   provider="Dr. Patel"
-  status="IN PROGRESS"  // "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED"
+  status="ARRIVED"  // "SCHEDULED" | "ARRIVED" | "ROOMED" | "COMPLETED" | "CANCELED" | "RESCHEDULED"
   room="Room 101"
 />`}
               />

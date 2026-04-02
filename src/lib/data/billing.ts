@@ -40,6 +40,7 @@ const PENDING_CARMEN_APT_INDEX = 4; // her most recent completed appointment
 const lisaCompletedApts: string[] = [];
 const kevinCompletedApts: string[] = [];
 const carmenCompletedApts: string[] = [];
+const jordanCompletedApts: string[] = [];
 
 // First pass: collect completed appointment IDs per special patient
 for (const appt of APPOINTMENTS) {
@@ -47,6 +48,7 @@ for (const appt of APPOINTMENTS) {
     if (appt.patient_id === "lisa-whitfield") lisaCompletedApts.push(appt.id);
     if (appt.patient_id === "kevin-rhodes") kevinCompletedApts.push(appt.id);
     if (appt.patient_id === "carmen-alvarez") carmenCompletedApts.push(appt.id);
+    if (appt.patient_id === "jordan-mitchell") jordanCompletedApts.push(appt.id);
   }
 }
 
@@ -113,6 +115,16 @@ for (const appt of APPOINTMENTS) {
     invoiceStatus = "Pending";
     patientPaid = 0;
     balance = chargeAmount;
+  }
+
+  // jordan-mitchell: $150 outstanding (last completed appointment unpaid)
+  if (
+    appt.patient_id === "jordan-mitchell" &&
+    appt.id === jordanCompletedApts[jordanCompletedApts.length - 1]
+  ) {
+    invoiceStatus = "Pending";
+    patientPaid = 0;
+    balance = 150;
   }
 
   allInvoices.push({

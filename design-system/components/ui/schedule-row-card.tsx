@@ -2,22 +2,24 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, Video } from "lucide-react";
 import { Card } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Badge } from "@/design-system/components/ui/badge";
 import { cn } from "@/design-system/lib/utils";
 
-type ScheduleStatus =
-  | "ENDED"
-  | "IN PROGRESS"
-  | "CHECKED IN"
+/** PRD-aligned appointment statuses */
+export type ScheduleStatus =
   | "SCHEDULED"
-  | "CANCELLED"
-  | "ARRIVING";
+  | "ARRIVED"
+  | "ROOMED"
+  | "COMPLETED"
+  | "CANCELED"
+  | "RESCHEDULED";
 
 interface ScheduleRowCardProps {
   time: string;
+  endTime?: string;
   patient: string;
   type: string;
   provider: string;
@@ -26,12 +28,17 @@ interface ScheduleRowCardProps {
   avatarSrc?: string;
   avatarHref?: string;
   outstandingBalance?: number;
+  isTelehealth?: boolean;
+  isCancellation?: boolean;
+  rescheduleRequested?: boolean;
   actionSlot?: React.ReactNode;
+  primaryAction?: { label: string; onClick: () => void };
   className?: string;
 }
 
 export function ScheduleRowCard({
   time,
+  endTime,
   patient,
   type,
   provider: _provider,
@@ -40,7 +47,11 @@ export function ScheduleRowCard({
   avatarSrc,
   avatarHref,
   outstandingBalance,
+  isTelehealth,
+  isCancellation,
+  rescheduleRequested,
   actionSlot,
+  primaryAction,
   className,
 }: ScheduleRowCardProps) {
   const initials = patient
@@ -51,20 +62,29 @@ export function ScheduleRowCard({
   return (
     <Card
       opacity="transparent"
-      className={cn("p-3 transition-all hover:bg-white/70 hover:shadow-md sm:p-4", className)}
+      className={cn(
+        "p-4 transition-all hover:bg-white/70 hover:shadow-md sm:p-5",
+        isCancellation && "bg-destructive/[0.04] border-destructive/20",
+        className
+      )}
     >
       <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-4">
         {/* Time */}
-        <div className="flex shrink-0 items-center gap-1.5">
-          <Clock className="text-muted-foreground h-4 w-4" />
-          <span className="text-sm font-semibold">{time}</span>
+        <div className="flex w-[88px] shrink-0 flex-col items-start gap-0.5">
+          <div className="flex items-center gap-1.5">
+            <Clock className="text-muted-foreground h-4 w-4" />
+            <span className="text-sm font-semibold">{time}</span>
+          </div>
+          {endTime && (
+            <span className="text-muted-foreground pl-[22px] text-[11px]">{endTime}</span>
+          )}
         </div>
 
         {/* Patient info */}
-        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-5">
+        <div className="flex min-w-0 items-center gap-2 sm:max-w-[280px] sm:flex-1 sm:gap-5">
           {avatarHref ? (
             <Link href={avatarHref} onClick={(e) => e.stopPropagation()}>
-              <Avatar className="h-10 w-10 shrink-0 cursor-pointer transition-opacity hover:opacity-80 sm:ml-6">
+              <Avatar className="h-10 w-10 shrink-0 cursor-pointer transition-opacity hover:opacity-80 sm:ml-3">
                 {avatarSrc && <AvatarImage src={avatarSrc} alt={patient} />}
                 <AvatarFallback className="bg-avatar-fallback text-xs text-white">
                   {initials}
@@ -72,7 +92,7 @@ export function ScheduleRowCard({
               </Avatar>
             </Link>
           ) : (
-            <Avatar className="h-10 w-10 shrink-0 sm:ml-6">
+            <Avatar className="h-10 w-10 shrink-0 sm:ml-3">
               {avatarSrc && <AvatarImage src={avatarSrc} alt={patient} />}
               <AvatarFallback className="bg-avatar-fallback text-xs text-white">
                 {initials}
@@ -83,39 +103,61 @@ export function ScheduleRowCard({
             <h4
               className={cn(
                 "truncate text-sm font-bold",
-                status === "CANCELLED" && "line-through opacity-60"
+                status === "CANCELED" && "line-through opacity-60"
               )}
             >
               {patient}
             </h4>
-            <p className="text-muted-foreground truncate text-xs font-bold tracking-wider uppercase">
-              {type}
-            </p>
+            <div className="flex items-center gap-2">
+              <p className="text-muted-foreground truncate text-xs font-bold tracking-wider uppercase">
+                {type}
+              </p>
+              {isTelehealth && (
+                <span className="text-growth-3 flex items-center gap-0.5 text-[10px] font-semibold">
+                  <Video className="h-3 w-3" />
+                  Telehealth
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Right section — fixed width so status pill always starts at the same x */}
-        <div className="hidden shrink-0 items-center gap-2 sm:flex sm:w-[300px]">
-          <Badge
-            variant={
-              status === "IN PROGRESS"
-                ? "default"
-                : status === "CHECKED IN" || status === "ARRIVING"
-                  ? "secondary"
-                  : "outline"
-            }
-            className={cn(
-              "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
-              status === "ENDED" && "bg-muted text-muted-foreground border-none",
-              status === "SCHEDULED" && "text-muted-foreground border-border border bg-transparent",
-              status === "CANCELLED" && "bg-destructive/10 text-destructive border-destructive/20",
-              status === "ARRIVING" &&
-                "bg-event-green-bg/60 text-event-green-text border-event-green-border/30",
-              (status === "IN PROGRESS" || status === "CHECKED IN") && "border-none"
-            )}
-          >
-            {status}
-          </Badge>
+        {/* Right section — tags and status */}
+        <div className="hidden flex-1 items-center gap-2 pl-8 sm:flex">
+          {/* Action slot — fixed width so status pills align whether or not this is present */}
+          <div className="flex w-[110px] shrink-0">
+            {actionSlot}
+          </div>
+
+          {/* Status pill */}
+          <div className="flex w-[90px] shrink-0">
+            <Badge
+              variant="outline"
+              className={cn(
+                "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
+                status === "SCHEDULED" && "text-muted-foreground border-border border bg-transparent",
+                status === "ARRIVED" &&
+                  "bg-event-green-bg/60 text-event-green-text border-event-green-border/30",
+                status === "ROOMED" && "bg-growth-1/40 text-growth-4 border-growth-2/30",
+                status === "COMPLETED" && "bg-muted text-muted-foreground border-none",
+                status === "CANCELED" && "bg-destructive/10 text-destructive border-destructive/20",
+                status === "RESCHEDULED" &&
+                  "border-warning/40 bg-warning-bg text-warning-muted"
+              )}
+            >
+              {status}
+            </Badge>
+          </div>
+
+          {/* Other badges */}
+          {rescheduleRequested && (
+            <Badge
+              variant="outline"
+              className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+            >
+              Reschedule
+            </Badge>
+          )}
 
           {outstandingBalance != null && outstandingBalance > 0 && (
             <Badge
@@ -126,12 +168,23 @@ export function ScheduleRowCard({
             </Badge>
           )}
 
-          {actionSlot}
-
-          <div className="text-muted-foreground ml-auto flex items-center gap-1 text-xs font-bold">
-            <MapPin className="h-3.5 w-3.5" />
-            {room}
-          </div>
+          {primaryAction ? (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                primaryAction.onClick();
+              }}
+              className="ml-auto shrink-0 rounded-full bg-primary px-6 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+            >
+              {primaryAction.label}
+            </button>
+          ) : (
+            <div className="text-muted-foreground ml-auto flex shrink-0 items-center gap-1 text-xs font-bold">
+              <MapPin className="h-3.5 w-3.5" />
+              {room}
+            </div>
+          )}
         </div>
       </div>
     </Card>

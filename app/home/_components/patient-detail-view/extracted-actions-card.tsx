@@ -53,7 +53,7 @@ export function ExtractedActionsCard({
             Actions will be extracted after the session note is generated.
           </Text>
           <Button variant="outline" size="sm" disabled className="mt-4 opacity-50">
-            Approve & Execute All
+            Let AI Handle These
           </Button>
         </div>
       ) : (
@@ -105,7 +105,7 @@ export function ExtractedActionsCard({
 
           <div className="mt-3">
             <Button variant="outline" size="lg" className="w-full">
-              Approve & Execute All
+              Let AI Handle These
             </Button>
           </div>
         </div>

@@ -7,7 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/
 import { Badge } from "@/design-system/components/ui/badge";
 import { cn } from "@/design-system/lib/utils";
 
-type ActionStatus = "ENDED" | "IN PROGRESS" | "CHECKED IN" | "SCHEDULED";
+type ActionStatus = "SCHEDULED" | "ARRIVED" | "ROOMED" | "COMPLETED" | "CANCELED" | "RESCHEDULED";
 
 interface ActionRowCardProps {
   time: string;
@@ -62,13 +62,15 @@ export function ActionRowCard({
 
         {/* Status */}
         <Badge
-          variant={
-            status === "IN PROGRESS" ? "default" : status === "CHECKED IN" ? "secondary" : "outline"
-          }
+          variant="outline"
           className={cn(
-            "shrink-0 rounded-md border-none px-2 py-0.5 text-xs font-bold",
-            status === "ENDED" && "bg-muted text-muted-foreground",
-            status === "SCHEDULED" && "border-muted text-muted-foreground border bg-transparent"
+            "shrink-0 rounded-md px-2 py-0.5 text-xs font-bold",
+            status === "SCHEDULED" && "text-muted-foreground border-border border bg-transparent",
+            status === "ARRIVED" && "bg-event-green-bg/60 text-event-green-text border-event-green-border/30",
+            status === "ROOMED" && "bg-growth-1/40 text-growth-4 border-growth-2/30",
+            status === "COMPLETED" && "bg-muted text-muted-foreground border-none",
+            status === "CANCELED" && "bg-destructive/10 text-destructive border-destructive/20",
+            status === "RESCHEDULED" && "border-warning/40 bg-warning-bg text-warning-muted"
           )}
         >
           {status}

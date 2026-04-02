@@ -35,6 +35,9 @@ interface VisitPrepPanelProps {
   isExpanded: boolean;
   onEnterVisit?: () => void;
   showEnterVisit?: boolean;
+  visitButtonLabel?: string;
+  /** When true, renders content directly without AnimatePresence wrapper */
+  skipAnimation?: boolean;
   className?: string;
 }
 
@@ -43,6 +46,8 @@ export function VisitPrepPanel({
   isExpanded,
   onEnterVisit,
   showEnterVisit = true,
+  visitButtonLabel = "Start Visit",
+  skipAnimation = false,
   className,
 }: VisitPrepPanelProps) {
   const prep = React.useMemo(() => buildPrepData(appointment), [appointment]);
@@ -55,18 +60,10 @@ export function VisitPrepPanel({
         ? "increase"
         : "stable";
 
-  return (
-    <AnimatePresence initial={false}>
-      {isExpanded && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-          className={cn("overflow-hidden", className)}
-        >
-          {/* Divider */}
-          <div className="border-border/40 mx-5 border-t" />
+  const content = (
+    <>
+      {/* Divider — only when not embedded */}
+      {!skipAnimation && <div className="border-border/40 mx-5 border-t" />}
 
           {/* 4-column grid */}
           <div className="grid gap-0 p-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -189,21 +186,39 @@ export function VisitPrepPanel({
             </div>
           </div>
 
-          {/* Enter Visit — bottom right, only shown for arriving patient */}
-          {showEnterVisit && (
-            <div className="flex justify-end px-5 pb-4">
-              <Button
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEnterVisit?.();
-                }}
-                className="h-8 rounded-full px-5 text-xs font-bold"
-              >
-                Enter Session
-              </Button>
-            </div>
-          )}
+      {/* Enter Visit — bottom right, only shown for arriving patient */}
+      {showEnterVisit && (
+        <div className="flex justify-end px-5 pb-4">
+          <Button
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEnterVisit?.();
+            }}
+            className="h-8 rounded-full px-5 text-xs font-bold"
+          >
+            {visitButtonLabel}
+          </Button>
+        </div>
+      )}
+    </>
+  );
+
+  if (skipAnimation) {
+    return isExpanded ? <div className={className}>{content}</div> : null;
+  }
+
+  return (
+    <AnimatePresence initial={false}>
+      {isExpanded && (
+        <motion.div
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          className={cn("overflow-hidden", className)}
+        >
+          {content}
         </motion.div>
       )}
     </AnimatePresence>

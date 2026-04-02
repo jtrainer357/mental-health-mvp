@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { PriorityActionsSection, TodaysActionsHeader } from "./priority-actions-section";
-import { TodaysPatientsList } from "./todays-patients-list";
+import { TodaysActionsHeader } from "./priority-actions-section";
+import { UnifiedSchedule } from "./unified-schedule";
 import { PatientCanvasDetail } from "./patient-canvas-detail";
 import { getTodayAppointments } from "@/src/lib/queries/appointments";
 import { useShallow } from "zustand/react/shallow";
@@ -95,7 +95,7 @@ export function DynamicCanvas({ className }: DynamicCanvasProps) {
       <div className="min-h-0 flex-1 overflow-y-auto px-3">
         {/* Container for views - relative positioning */}
         <div className="relative">
-          {/* Actions View - in normal flow when visible */}
+          {/* Actions View — now a single chronological schedule */}
           <motion.div
             initial={false}
             animate={{
@@ -113,7 +113,7 @@ export function DynamicCanvas({ className }: DynamicCanvasProps) {
               zIndex: isActions ? 1 : 0,
             }}
           >
-            <PriorityActionsSection onSelectPatient={handleSelectPatient} hideHeader />
+            <UnifiedSchedule onSelectPatient={handleSelectPatient} />
           </motion.div>
 
           {/* Detail View - in normal flow when visible */}
@@ -142,11 +142,6 @@ export function DynamicCanvas({ className }: DynamicCanvasProps) {
               />
             )}
           </motion.div>
-        </div>
-
-        {/* Today's Patients */}
-        <div className="mt-10 pb-4">
-          <TodaysPatientsList onSelectPatient={handleSelectPatient} />
         </div>
       </div>
 

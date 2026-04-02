@@ -37,7 +37,7 @@ export function PatientsPage({
   const [selectedPatient, setSelectedPatient] = React.useState<Patient | null>(null);
   const [patientDetails, setPatientDetails] = React.useState<PatientDetail | null>(null);
   const [detailLoading, setDetailLoading] = React.useState(false);
-  const [activeFilter, setActiveFilter] = React.useState("all");
+  const [activeFilter, setActiveFilter] = React.useState("today");
   const [addPatientOpen, setAddPatientOpen] = React.useState(false);
   // Mobile: show roster or detail (push/pop navigation)
   const [mobileShowDetail, setMobileShowDetail] = React.useState(false);

@@ -6,7 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { DynamicCanvas } from "./_components/dynamic-canvas";
 import { ScheduleAlertsWidget } from "./_components/schedule-alerts-widget";
 import { BalanceAlertsWidget } from "./_components/balance-alerts-widget";
-import { FeedbackWidget } from "./_components/feedback-widget";
+// FeedbackWidget removed for user testing
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { WelcomeModal } from "./_components/welcome-modal";
 import { PageShell } from "./_components/shared/page-shell";
@@ -40,7 +40,6 @@ function HomeContent() {
       <aside className="hidden w-[320px] shrink-0 flex-col gap-2 lg:flex xl:w-[380px] 2xl:w-[440px]">
         <ScheduleAlertsWidget />
         <BalanceAlertsWidget />
-        <FeedbackWidget />
       </aside>
     </PageShell>
   );

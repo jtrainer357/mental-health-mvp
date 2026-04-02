@@ -96,7 +96,7 @@ export function TodaysActionsHeader({ appointmentCount, isLoading }: TodaysActio
         />
         <div className="min-w-0 flex-1">
           <Heading level={3} className="text-xl sm:text-2xl">
-            Today&apos;s Actions
+            Today&apos;s Schedule
           </Heading>
           <Text size="xs" muted className="mt-1 tracking-widest uppercase">
             {isLoading ? (
@@ -104,8 +104,8 @@ export function TodaysActionsHeader({ appointmentCount, isLoading }: TodaysActio
             ) : (
               <>
                 {formattedDate} •{" "}
-                <span className="text-card-foreground font-semibold">
-                  {appointmentCount} Appointments
+                <span className="font-medium">
+                  {appointmentCount} appointments
                 </span>
               </>
             )}
@@ -324,7 +324,7 @@ export function PriorityActionsSection({
               avatarInitials={`${arrivingPatient.patient.first_name[0]}${arrivingPatient.patient.last_name[0]}`}
               avatarSrc={arrivingPatient.patient.avatar_url || undefined}
               avatarHref={`/home/patients?patientName=${encodeURIComponent(`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name}`)}`}
-              buttonText="Enter Session"
+              buttonText="Start Visit"
               onButtonClick={() => {
                 router.push(
                   `/home/patients?patientName=${encodeURIComponent(`${arrivingPatient.patient.first_name} ${arrivingPatient.patient.last_name}`)}&startSession=true`

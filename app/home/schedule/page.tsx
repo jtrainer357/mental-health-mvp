@@ -257,7 +257,7 @@ export default function SchedulePage() {
           onTabChange={setActiveFilter}
           className="overflow-x-auto"
         />
-        <Button className="w-full shrink-0 gap-2 sm:w-auto">
+        <Button className="w-full shrink-0 gap-2 opacity-50 cursor-not-allowed sm:w-auto" disabled>
           <Plus className="h-4 w-4" />
           New Appointment
         </Button>
@@ -311,8 +311,8 @@ export default function SchedulePage() {
                 ? `No ${activeFilter} appointments in this time range.`
                 : "No appointments scheduled for this week."
             }
-            actionLabel="Schedule Appointment"
-            onAction={() => {}}
+            actionLabel={undefined}
+            onAction={undefined}
           />
         )}
 
@@ -344,15 +344,15 @@ export default function SchedulePage() {
               />
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Google
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Outlook
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Apple
                 </Button>
@@ -387,15 +387,15 @@ export default function SchedulePage() {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Google
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Outlook
                 </Button>
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
                   <Calendar className="h-3.5 w-3.5" />
                   Connect Apple
                 </Button>
@@ -407,7 +407,7 @@ export default function SchedulePage() {
 
       {/* Mobile FAB */}
       <div className="fixed right-4 bottom-24 z-40 lg:hidden">
-        <Button size="icon" className="h-14 w-14 rounded-full shadow-lg">
+        <Button size="icon" className="h-14 w-14 rounded-full shadow-lg opacity-40 cursor-not-allowed" disabled>
           <Plus className="h-6 w-6" />
         </Button>
       </div>

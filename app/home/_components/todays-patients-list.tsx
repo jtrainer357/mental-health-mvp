@@ -94,36 +94,18 @@ function getPatientOutstandingBalance(patientUUID: string): number {
   ).reduce((sum, inv) => sum + inv.balance, 0);
 }
 
-type AppointmentStatus =
-  | "ENDED"
-  | "IN PROGRESS"
-  | "CHECKED IN"
-  | "SCHEDULED"
-  | "CANCELLED"
-  | "ARRIVING";
+import type { ScheduleStatus } from "@/design-system/components/ui/schedule-row-card";
 
-// Map database status to component status
-function mapStatus(status: string, startTime: string, patientId?: string): AppointmentStatus {
-  if (status === "Completed") return "ENDED";
-  if (status === "Cancelled") return "CANCELLED";
-  if (status === "No-Show") return "ENDED";
+/** Map database status to PRD-aligned ScheduleStatus */
+function mapStatus(status: string, _startTime: string, patientId?: string): ScheduleStatus {
+  if (status === "Completed") return "COMPLETED";
+  if (status === "Cancelled") return "CANCELED";
+  if (status === "No-Show") return "COMPLETED";
 
   // Robert Fitzgerald shows as arrived
   if (patientId) {
     const extId = getExternalIdFromUUID(patientId);
-    if (extId === "robert-fitzgerald") return "ARRIVING";
-  }
-
-  // Check if appointment is in progress based on time
-  const now = new Date();
-  const [hours, minutes] = startTime.split(":").map(Number);
-  const appointmentTime = new Date();
-  appointmentTime.setHours(hours!, minutes!, 0, 0);
-
-  const diffMinutes = (now.getTime() - appointmentTime.getTime()) / 60000;
-
-  if (diffMinutes >= 0 && diffMinutes <= 60) {
-    return "IN PROGRESS";
+    if (extId === "robert-fitzgerald") return "ARRIVED";
   }
 
   return "SCHEDULED";
@@ -304,32 +286,6 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
         >
           Today&apos;s Patients ({appointments.length})
         </Heading>
-        <div className="border-border/50 bg-backbone-1/60 flex items-center gap-0.5 rounded-lg border p-0.5">
-          <button
-            onClick={() => setViewMode("list")}
-            className={cn(
-              "rounded-md p-1.5 transition-all duration-150",
-              viewMode === "list"
-                ? "text-foreground bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
-                : "text-muted-foreground/50 hover:text-muted-foreground"
-            )}
-            aria-label="List view"
-          >
-            <List className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={() => setViewMode("calendar")}
-            className={cn(
-              "rounded-md p-1.5 transition-all duration-150",
-              viewMode === "calendar"
-                ? "text-foreground bg-white shadow-[0_1px_3px_rgba(0,0,0,0.1)]"
-                : "text-muted-foreground/50 hover:text-muted-foreground"
-            )}
-            aria-label="Calendar view"
-          >
-            <CalendarDays className="h-3.5 w-3.5" />
-          </button>
-        </div>
       </div>
 
       {viewMode === "list" ? (
@@ -363,6 +319,9 @@ export function TodaysPatientsList({ className, onSelectPatient }: TodaysPatient
                   appointment={apt}
                   isExpanded={isExpanded}
                   showEnterVisit={getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"}
+                  visitButtonLabel={
+                    apt.location?.toLowerCase().includes("telehealth") ? "Join Telehealth" : "Start Visit"
+                  }
                   onEnterVisit={() => handleEnterVisit(apt)}
                 />
               </Card>

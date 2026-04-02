@@ -12,7 +12,7 @@ export type VoiceEventType =
   | "patient:open" // Open a specific patient
   | "patient:tab" // Switch tab within Patient 360
   | "patient:actions" // Show priority actions for patient (from home)
-  | "actions:complete" // Complete all actions
+  | "actions:complete" // Let AI handle actions
   | "calendar:reschedule" // Reschedule appointment
   | "session:start" // Start session with patient
   | "session:end" // End session

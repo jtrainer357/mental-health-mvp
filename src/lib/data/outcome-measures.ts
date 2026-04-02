@@ -20,6 +20,7 @@ const davidDates = weeklyHistoryDates(3);
 const carmenDates = weeklyHistoryDates(1);
 const kevinDates = weeklyHistoryDates(4);
 const priyaDates = weeklyHistoryDates(5);
+const jordanDates = weeklyHistoryDates(4);
 const robertDates = weeklyHistoryDates(2);
 const aaliyahDates = weeklyHistoryDates(3);
 const danielDates = weeklyHistoryDates(1);
@@ -481,6 +482,86 @@ export const OUTCOME_MEASURES: SeedOutcomeMeasure[] = [
     score: 6,
     max_score: 27,
     measurement_date: robertDates[3]!,
+    administered_by: ADMIN,
+  },
+
+  // ==========================================================================
+  // JORDAN MITCHELL — PHQ-9: 10 -> 8 -> 7 -> 8 (stable/slight uptick)
+  // ==========================================================================
+  {
+    id: "om-jordan-mitchell-phq-1",
+    patient_id: "jordan-mitchell",
+    measure_type: "PHQ-9",
+    score: 10,
+    max_score: 27,
+    measurement_date: jordanDates[0]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-phq-2",
+    patient_id: "jordan-mitchell",
+    measure_type: "PHQ-9",
+    score: 8,
+    max_score: 27,
+    measurement_date: jordanDates[1]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-phq-3",
+    patient_id: "jordan-mitchell",
+    measure_type: "PHQ-9",
+    score: 7,
+    max_score: 27,
+    measurement_date: jordanDates[2]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-phq-4",
+    patient_id: "jordan-mitchell",
+    measure_type: "PHQ-9",
+    score: 8,
+    max_score: 27,
+    measurement_date: jordanDates[3]!,
+    administered_by: ADMIN,
+  },
+
+  // ==========================================================================
+  // JORDAN MITCHELL — GAD-7: 8 -> 7 -> 8 -> 11 (worsening — work stress)
+  // ==========================================================================
+  {
+    id: "om-jordan-mitchell-gad-1",
+    patient_id: "jordan-mitchell",
+    measure_type: "GAD-7",
+    score: 8,
+    max_score: 21,
+    measurement_date: jordanDates[0]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-gad-2",
+    patient_id: "jordan-mitchell",
+    measure_type: "GAD-7",
+    score: 7,
+    max_score: 21,
+    measurement_date: jordanDates[1]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-gad-3",
+    patient_id: "jordan-mitchell",
+    measure_type: "GAD-7",
+    score: 8,
+    max_score: 21,
+    measurement_date: jordanDates[2]!,
+    administered_by: ADMIN,
+  },
+  {
+    id: "om-jordan-mitchell-gad-4",
+    patient_id: "jordan-mitchell",
+    measure_type: "GAD-7",
+    score: 11,
+    max_score: 21,
+    measurement_date: jordanDates[3]!,
     administered_by: ADMIN,
   },
 

@@ -148,7 +148,7 @@ export function LeftNav({ activePage = "home" }: LeftNavProps) {
           height: 23,
         }}
         items={getNavItems(activePage)}
-        showNotifications={true}
+        showNotifications={false}
         user={{
           initials: userInitials,
           name: userName,
