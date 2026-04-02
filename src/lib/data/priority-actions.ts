@@ -325,6 +325,97 @@ export const PRIORITY_ACTIONS: SeedPriorityAction[] = [
     status: "pending",
     created_at: toISO(today()),
   },
+  // ==========================================================================
+  // JORDAN MITCHELL — GAD exacerbation, work stress, family conflict
+  // ==========================================================================
+  {
+    id: "pa-jordan-mitchell-1",
+    patient_id: "jordan-mitchell",
+    practice_id: PRACTICE_ID,
+    title: "GAD-7 spike to 11 — assess work stress escalation and sleep",
+    description:
+      "Jordan Mitchell's GAD-7 jumped from 8 to 11 (moderate range) over the past week. Work stress with new manager and unresolved family conflict are compounding. Sleep disrupted 2 nights. Missed running group — key protective factor lost.",
+    urgency: "high",
+    timeframe: "Today",
+    confidence_score: 0.87,
+    clinical_context:
+      "GAD-7 increase from 8 to 11 represents a clinically meaningful worsening. Jordan has been stable on Sertraline 50mg for 2 years. The current spike is situational (work + family) rather than medication failure. However, if GAD-7 remains elevated at this visit, consider Sertraline dose increase to 75mg. Loss of exercise routine (running group) removes a well-established protective factor.",
+    suggested_actions: [
+      "Assess sleep quality and frequency of anxiety symptoms this week",
+      "Review whether running group attendance has resumed",
+      "Discuss Sertraline dose increase if GAD-7 remains ≥10",
+      "Address family conflict resolution — phone call vs text with brother",
+    ],
+    status: "pending",
+    created_at: toISO(today()),
+  },
+  {
+    id: "pa-jordan-mitchell-2",
+    patient_id: "jordan-mitchell",
+    practice_id: PRACTICE_ID,
+    title: "Outstanding balance: $150 from prior session",
+    description:
+      "Jordan Mitchell has a $150 outstanding balance from a prior encounter. Payment type is cash. Balance has been outstanding for over a week.",
+    urgency: "medium",
+    timeframe: "Today",
+    confidence_score: 0.95,
+    clinical_context:
+      "Cash-pay patient with typically prompt payments. Outstanding balance may be related to current work stress and financial concerns. Address sensitively — billing discussion should not overshadow clinical priorities given current GAD exacerbation.",
+    suggested_actions: [
+      "Mention outstanding balance at end of session, not beginning",
+      "Offer payment plan if financial stress is contributing to anxiety",
+    ],
+    status: "pending",
+    created_at: toISO(today()),
+  },
+
+  // ==========================================================================
+  // DAVID NAKAMURA — Adjustment disorder, treatment plateau
+  // ==========================================================================
+  {
+    id: "pa-david-nakamura-1",
+    patient_id: "david-nakamura",
+    practice_id: PRACTICE_ID,
+    title: "GAD-7 at 4 — approaching treatment completion criteria",
+    description:
+      "David Nakamura's GAD-7 improved from 10 to 4 over 4 weeks. Adjustment disorder following job loss is resolving. New role starts next month. Consider treatment completion planning.",
+    urgency: "low",
+    timeframe: "This week",
+    confidence_score: 0.82,
+    clinical_context:
+      "GAD-7 of 4 is in the minimal range. Adjustment disorder typically resolves within 6 months of stressor resolution. David's new job starting next month addresses the precipitating factor. Treatment completion planning with relapse prevention is appropriate.",
+    suggested_actions: [
+      "Discuss treatment completion timeline (2-3 more sessions)",
+      "Create relapse prevention plan for job transition stress",
+      "Establish check-in plan post-termination (1-month follow-up)",
+    ],
+    status: "pending",
+    created_at: toISO(today()),
+  },
+
+  // ==========================================================================
+  // OMAR HASSAN — MDD moderate, medication monitoring
+  // ==========================================================================
+  {
+    id: "pa-omar-hassan-1",
+    patient_id: "omar-hassan",
+    practice_id: PRACTICE_ID,
+    title: "PHQ-9 at 11 — Citalopram may need dose adjustment",
+    description:
+      "Omar Hassan's PHQ-9 dropped from 14 to 11 over 2 sessions. Improvement is real but slow. At 7 weeks on Citalopram 20mg, most patients show greater improvement. Consider dose increase.",
+    urgency: "medium",
+    timeframe: "This week",
+    confidence_score: 0.79,
+    clinical_context:
+      "Expected PHQ-9 response at 7 weeks on Citalopram 20mg is typically 40-50% reduction. Omar's 21% reduction (14 to 11) suggests partial response. Dose increase to 30mg or augmentation should be discussed if improvement plateaus at next visit.",
+    suggested_actions: [
+      "Discuss Citalopram dose increase to 30mg if no further improvement",
+      "Assess medication side effects and adherence",
+      "Review sleep hygiene and activity levels",
+    ],
+    status: "pending",
+    created_at: toISO(today()),
+  },
 ];
 
 export default PRIORITY_ACTIONS;
