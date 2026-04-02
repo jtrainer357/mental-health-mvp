@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
@@ -107,31 +107,42 @@ export function EmptyNoteEditor({
 
           {/* Sections inside one continuous editor */}
           <div className="flex flex-1 flex-col px-6 pt-4 pb-4">
-            {sections.map((section, idx) => (
-              <div key={section.key} className="flex flex-col">
-                {/* Section header — all sections get the same treatment */}
-                <Text size="xs" className={cn(
-                  "text-foreground mb-2 font-bold tracking-wider uppercase",
-                  idx > 0 && "mt-6"
-                )}>
-                  {section.label}
-                </Text>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={noteType}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                className="flex flex-1 flex-col"
+              >
+                {sections.map((section, idx) => (
+                  <div key={section.key} className="flex flex-col">
+                    {/* Section header — all sections get the same treatment */}
+                    <Text size="xs" className={cn(
+                      "text-foreground mb-2 font-bold tracking-wider uppercase",
+                      idx > 0 && "mt-6"
+                    )}>
+                      {section.label}
+                    </Text>
 
-                {/* Editable area */}
-                <textarea
-                  value={sectionContent[section.key] ?? ""}
-                  onChange={(e) => updateSection(section.key, e.target.value)}
-                  placeholder={section.placeholder}
-                  className="min-h-[80px] w-full resize-none bg-transparent text-sm leading-relaxed outline-none text-foreground/80 placeholder:text-muted-foreground/40"
-                  rows={3}
-                />
+                    {/* Editable area */}
+                    <textarea
+                      value={sectionContent[section.key] ?? ""}
+                      onChange={(e) => updateSection(section.key, e.target.value)}
+                      placeholder={section.placeholder}
+                      className="min-h-[80px] w-full resize-none bg-transparent text-sm leading-relaxed outline-none text-foreground/80 placeholder:text-muted-foreground/40"
+                      rows={3}
+                    />
 
-                {/* Subtle divider between sections */}
-                {idx < sections.length - 1 && (
-                  <div className="border-border/30 border-b" />
-                )}
-              </div>
-            ))}
+                    {/* Subtle divider between sections */}
+                    {idx < sections.length - 1 && (
+                      <div className="border-border/30 border-b" />
+                    )}
+                  </div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       </motion.div>
