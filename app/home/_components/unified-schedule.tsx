@@ -390,7 +390,6 @@ function ActionsNeededPanel({
   patientUUID,
   isOpen,
   onComplete,
-  summaryContent,
 }: {
   patientUUID: string;
   isOpen: boolean;
@@ -400,12 +399,6 @@ function ActionsNeededPanel({
   const actions = getActionsForPatient(patientUUID);
   const items = actions.length > 0 ? actions : FALLBACK_ACTIONS;
   const [checked, setChecked] = React.useState<Set<number>>(new Set());
-  const [showSummary, setShowSummary] = React.useState(false);
-
-  // Reset summary when panel closes
-  React.useEffect(() => {
-    if (!isOpen) setShowSummary(false);
-  }, [isOpen]);
 
   const toggleItem = (idx: number) => {
     setChecked((prev) => {
@@ -428,6 +421,9 @@ function ActionsNeededPanel({
         >
           <div className="border-border/30 mx-5 border-t" />
           <div className="px-5 py-4">
+            <div className="text-foreground-strong mb-2.5 text-[10px] font-bold tracking-widest uppercase">
+              Suggested Actions
+            </div>
             <div className="space-y-2">
               {items.map((item, idx) => (
                 <label
@@ -452,26 +448,7 @@ function ActionsNeededPanel({
                 </label>
               ))}
             </div>
-            <div className="mt-4 flex items-center justify-between">
-              {/* Clinical Summary toggle */}
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowSummary((prev) => !prev);
-                }}
-                className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm font-medium transition-colors"
-              >
-                Clinical Summary
-                <motion.span
-                  animate={{ rotate: showSummary ? 90 : 0 }}
-                  transition={{ duration: 0.15 }}
-                  className="inline-block"
-                >
-                  ›
-                </motion.span>
-              </button>
-
+            <div className="mt-3 flex justify-end">
               <Button
                 size="sm"
                 variant="outline"
@@ -484,23 +461,6 @@ function ActionsNeededPanel({
                 {checked.size === items.length ? "Done" : "Run Suggested Actions"}
               </Button>
             </div>
-
-            {/* Clinical Summary — slides open */}
-            <AnimatePresence>
-              {showSummary && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: [0.4, 0, 0.2, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="border-border/30 mt-3 border-t pt-3">
-                    {summaryContent}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
         </motion.div>
       )}
@@ -694,13 +654,8 @@ export function UnifiedSchedule({ className, onSelectPatient }: UnifiedScheduleP
                 <Card
                   opacity="transparent"
                   onClick={() => {
-                    if (showActionsNeeded) {
-                      // Toggle actions panel for rows with actions
-                      setActionsOpenId((prev) => (prev === apt.id ? null : apt.id));
-                    } else {
-                      // Toggle clinical summary for other rows
-                      handleRowClick(apt.id);
-                    }
+                    // All cards use same expand/collapse — prep first, actions below
+                    handleRowClick(apt.id);
                   }}
                   className={cn(
                     "cursor-pointer overflow-hidden transition-all",
@@ -744,87 +699,49 @@ export function UnifiedSchedule({ className, onSelectPatient }: UnifiedScheduleP
                     }
                     className="border-0 bg-transparent shadow-none hover:bg-transparent hover:shadow-none"
                   />
-                  {showActionsNeeded ? (
+                  {/* Prep view first — always (core value prop) */}
+                  <VisitPrepPanel
+                    appointment={apt}
+                    isExpanded={isExpanded}
+                    showEnterVisit={
+                      status === "ARRIVED" || getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"
+                    }
+                    visitButtonLabel={
+                      apt.location?.toLowerCase().includes("telehealth") ? "Join Telehealth" : "Start Visit"
+                    }
+                    onEnterVisit={() => handleEnterVisit(apt)}
+                  />
+                  {/* Actions checklist — top 3 only, below prep */}
+                  {showActionsNeeded && (
                     <ActionsNeededPanel
                       patientUUID={apt.patient.id}
-                      isOpen={isActionsOpen}
-                      onComplete={() => setActionsOpenId(null)}
-                      summaryContent={
-                        <>
-                          <VisitPrepPanel
-                            appointment={apt}
-                            isExpanded={true}
-                            showEnterVisit={
-                              status === "ARRIVED" || getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"
-                            }
-                            visitButtonLabel={
-                              apt.location?.toLowerCase().includes("telehealth") ? "Join Telehealth" : "Start Visit"
-                            }
-                            onEnterVisit={() => handleEnterVisit(apt)}
-                            skipAnimation
-                          />
-                          {/* Manage Series toggle */}
-                          {!isCancellation && (
-                            <div className="flex justify-start px-5 pb-2">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setSeriesOpenId((prev) => (prev === apt.id ? null : apt.id));
-                                }}
-                                className="text-muted-foreground hover:text-teal flex items-center gap-1.5 text-xs font-medium transition-colors"
-                              >
-                                <Repeat className="h-3 w-3" />
-                                {seriesOpenId === apt.id ? "Hide Series" : "Manage Series"}
-                              </button>
-                            </div>
-                          )}
-                          <RecurringSeriesPanel
-                            appointment={apt}
-                            allAppointments={appointments}
-                            isOpen={seriesOpenId === apt.id}
-                            onClose={() => setSeriesOpenId(null)}
-                          />
-                        </>
-                      }
+                      isOpen={isExpanded}
+                      onComplete={() => handleRowClick(apt.id)}
+                      summaryContent={null}
                     />
-                  ) : (
+                  )}
+                  {/* Manage Series — visible when expanded */}
+                  {isExpanded && !isCancellation && (
                     <>
-                      <VisitPrepPanel
+                      <div className="flex justify-start px-5 pb-2">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSeriesOpenId((prev) => (prev === apt.id ? null : apt.id));
+                          }}
+                          className="text-foreground/70 hover:text-teal flex items-center gap-1.5 text-xs font-semibold transition-colors"
+                        >
+                          <Repeat className="h-3 w-3" />
+                          {seriesOpenId === apt.id ? "Hide Series" : "Manage Series"}
+                        </button>
+                      </div>
+                      <RecurringSeriesPanel
                         appointment={apt}
-                        isExpanded={isExpanded}
-                        showEnterVisit={
-                          status === "ARRIVED" || getExternalIdFromUUID(apt.patient.id) === "robert-fitzgerald"
-                        }
-                        visitButtonLabel={
-                          apt.location?.toLowerCase().includes("telehealth") ? "Join Telehealth" : "Start Visit"
-                        }
-                        onEnterVisit={() => handleEnterVisit(apt)}
+                        allAppointments={appointments}
+                        isOpen={seriesOpenId === apt.id}
+                        onClose={() => setSeriesOpenId(null)}
                       />
-                      {/* Manage Series toggle — visible when row is expanded */}
-                      {isExpanded && !isCancellation && (
-                        <>
-                          <div className="flex justify-start px-5 pb-2">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSeriesOpenId((prev) => (prev === apt.id ? null : apt.id));
-                              }}
-                              className="text-muted-foreground hover:text-teal flex items-center gap-1.5 text-xs font-medium transition-colors"
-                            >
-                              <Repeat className="h-3 w-3" />
-                              {seriesOpenId === apt.id ? "Hide Series" : "Manage Series"}
-                            </button>
-                          </div>
-                          <RecurringSeriesPanel
-                            appointment={apt}
-                            allAppointments={appointments}
-                            isOpen={seriesOpenId === apt.id}
-                            onClose={() => setSeriesOpenId(null)}
-                          />
-                        </>
-                      )}
                     </>
                   )}
                 </Card>

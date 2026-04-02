@@ -11,11 +11,17 @@ import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
 import { PageShell } from "../_components/shared/page-shell";
-import { Plus, Calendar, CalendarX } from "lucide-react";
+import { Plus, Calendar, CalendarX, X, Repeat, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/design-system/components/ui/skeleton";
 import { Heading } from "@/design-system/components/ui/typography";
 import { ErrorState } from "../_components/shared/error-state";
 import { EmptyState } from "../_components/shared/empty-state";
+import { VisitPrepPanel } from "../_components/visit-prep-panel";
+import { RecurringSeriesPanel } from "../_components/recurring-series-panel";
+import { Badge } from "@/design-system/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
+import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/design-system/lib/utils";
 
 // Dynamic imports for heavy calendar components - code splitting for better performance
 const CalendarWeekView = dynamic(
@@ -138,8 +144,24 @@ export default function SchedulePage() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
-  // Voice command integration
+  // Selected event + detail panel
   const [selectedEventId, setSelectedEventId] = React.useState<string | null>(null);
+  const [seriesOpen, setSeriesOpen] = React.useState(false);
+
+  // Find the selected appointment for the detail panel
+  const selectedAppointment = React.useMemo(() => {
+    if (!selectedEventId) return null;
+    return appointments.find((apt) => {
+      // Match by appointment ID (events are created from appointments)
+      const eventId = `apt-${apt.id}`;
+      return apt.id === selectedEventId || eventId === selectedEventId;
+    }) || null;
+  }, [selectedEventId, appointments]);
+
+  // Reset series panel when selection changes
+  React.useEffect(() => {
+    setSeriesOpen(false);
+  }, [selectedEventId]);
 
   // Load appointments from Supabase
   const loadAppointments = React.useCallback(async () => {
@@ -340,8 +362,115 @@ export default function SchedulePage() {
                 onEventClick={(event) => {
                   setSelectedEventId(selectedEventId === event.id ? null : event.id);
                 }}
-                className="min-h-0 flex-1"
+                className={cn(
+                  "min-h-0 transition-all duration-300",
+                  selectedAppointment ? "flex-[0_0_45%]" : "flex-1"
+                )}
               />
+
+              {/* Expand-in-place appointment detail */}
+              <AnimatePresence>
+                {selectedAppointment && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+                    className="min-h-0 flex-1 overflow-hidden"
+                  >
+                    <div className="border-border/40 mt-4 border-t pt-4">
+                      {/* Patient header */}
+                      <div className="mb-4 flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-10 w-10">
+                            {selectedAppointment.patient.avatar_url && (
+                              <AvatarImage
+                                src={selectedAppointment.patient.avatar_url}
+                                alt={`${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`}
+                              />
+                            )}
+                            <AvatarFallback className="bg-avatar-fallback text-xs text-white">
+                              {selectedAppointment.patient.first_name[0]}
+                              {selectedAppointment.patient.last_name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <h3 className="text-sm font-bold">
+                              {selectedAppointment.patient.first_name}{" "}
+                              {selectedAppointment.patient.last_name}
+                            </h3>
+                            <p className="text-muted-foreground text-xs">
+                              {selectedAppointment.service_type} ·{" "}
+                              {format(
+                                parseISO(selectedAppointment.date),
+                                "EEE, MMM d"
+                              )}{" "}
+                              at{" "}
+                              {format(
+                                new Date(
+                                  `2000-01-01T${selectedAppointment.start_time}`
+                                ),
+                                "h:mm a"
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSeriesOpen((prev) => !prev);
+                            }}
+                            className={cn(
+                              "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
+                              seriesOpen
+                                ? "border-teal/30 bg-teal/[0.08] text-teal"
+                                : "border-border text-foreground/70 hover:border-teal/30 hover:text-teal"
+                            )}
+                          >
+                            <Repeat className="h-3.5 w-3.5" />
+                            Edit Series
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedEventId(null)}
+                            className="text-muted-foreground hover:text-foreground rounded-full p-1.5 transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Prep panel — always visible when expanded */}
+                      <VisitPrepPanel
+                        appointment={selectedAppointment}
+                        isExpanded={true}
+                        showEnterVisit={selectedAppointment.status === "Scheduled"}
+                        visitButtonLabel={
+                          selectedAppointment.location
+                            ?.toLowerCase()
+                            .includes("telehealth")
+                            ? "Join Telehealth"
+                            : "Start Visit"
+                        }
+                        onEnterVisit={() => {
+                          const name = `${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`;
+                          window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
+                        }}
+                        skipAnimation
+                      />
+
+                      {/* Recurring series panel */}
+                      <RecurringSeriesPanel
+                        appointment={selectedAppointment}
+                        allAppointments={appointments}
+                        isOpen={seriesOpen}
+                        onClose={() => setSeriesOpen(false)}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div className="mt-4 flex flex-wrap gap-2">
                 <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
