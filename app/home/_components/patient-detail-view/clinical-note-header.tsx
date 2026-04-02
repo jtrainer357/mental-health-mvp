@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Maximize2, Minimize2, Activity } from "lucide-react";
+import { ArrowLeft, Maximize2, Minimize2, Mic } from "lucide-react";
 import { Button } from "@/design-system/components/ui/button";
 import { Heading, Text } from "@/design-system/components/ui/typography";
 import { smoothEase } from "@/design-system/lib/animation-constants";
@@ -76,10 +76,14 @@ export function ClinicalNoteHeader({
         </div>
         <div className="flex items-center gap-3">
           {activity.id === "new-session" && (
-            <Button variant="default" size="sm" className="gap-2 font-bold">
-              <Activity className="h-4 w-4" />
-              Begin Listening
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button variant="default" size="sm" className="font-bold">
+                Start Listening
+              </Button>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm border border-border/40">
+                <Mic className="h-4 w-4 text-foreground" />
+              </div>
+            </div>
           )}
           <motion.div
             whileHover={{ scale: 1.02 }}
