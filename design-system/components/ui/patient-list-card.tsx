@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageSquare, MoreHorizontal } from "lucide-react";
+import { Clock, Mail, MessageSquare, MoreHorizontal } from "lucide-react";
 import { Card } from "@/design-system/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
 import { Badge } from "@/design-system/components/ui/badge";
@@ -20,6 +20,16 @@ const springConfig = {
 
 type PatientStatus = "ACTIVE" | "INACTIVE" | "NEW";
 
+/** Convert "HH:MM" 24h to "H:MM AM/PM" display format */
+function formatTime24to12(time24: string): string {
+  const parts = time24.split(":").map(Number);
+  const h = parts[0] ?? 0;
+  const m = parts[1] ?? 0;
+  const period = h >= 12 ? "PM" : "AM";
+  const hour12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  return `${hour12}:${m.toString().padStart(2, "0")} ${period}`;
+}
+
 interface PatientListCardProps {
   name: string;
   age: number;
@@ -30,6 +40,10 @@ interface PatientListCardProps {
   avatarSrc?: string;
   selected?: boolean;
   compact?: boolean;
+  /** When set, shows clock + time instead of status badge (for Today's Patients) */
+  appointmentTime?: string;
+  /** End time in HH:MM 24h format */
+  appointmentEndTime?: string;
   onSelect?: () => void;
   onMessage?: () => void;
   onEmail?: () => void;
@@ -47,6 +61,8 @@ export function PatientListCard({
   avatarSrc,
   selected = false,
   compact = false,
+  appointmentTime,
+  appointmentEndTime,
   onSelect,
   onMessage,
   onEmail,
@@ -175,12 +191,24 @@ export function PatientListCard({
               >
                 {name}
               </motion.h4>
-              <Badge
-                variant={status === "ACTIVE" ? "active" : status === "NEW" ? "new" : "inactive"}
-                className="shrink-0 rounded-md border-none px-2 py-0.5 text-xs font-bold"
-              >
-                {status}
-              </Badge>
+              {appointmentTime ? (
+                <div className="flex shrink-0 flex-col items-end gap-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="text-muted-foreground h-4 w-4" />
+                    <span className="text-sm font-semibold">{formatTime24to12(appointmentTime)}</span>
+                  </div>
+                  {appointmentEndTime && (
+                    <span className="text-muted-foreground text-[11px]">{formatTime24to12(appointmentEndTime)}</span>
+                  )}
+                </div>
+              ) : (
+                <Badge
+                  variant={status === "ACTIVE" ? "active" : status === "NEW" ? "new" : "inactive"}
+                  className="shrink-0 rounded-md border-none px-2 py-0.5 text-xs font-bold"
+                >
+                  {status}
+                </Badge>
+              )}
             </div>
             <Text size="xs" muted className="mt-0.5">
               Age {age} &bull; {dob}

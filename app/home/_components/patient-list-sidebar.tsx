@@ -14,9 +14,12 @@ const todayAppointments = getDemoTodayAppointments();
 const todayPatientIds = new Set(todayAppointments.map((a) => a.patient.id));
 /** Map patient UUID → earliest appointment start_time for sorting */
 const todayPatientTimeMap = new Map<string, string>();
+/** Map patient UUID → end_time for display */
+const todayPatientEndTimeMap = new Map<string, string>();
 for (const apt of todayAppointments) {
   if (!todayPatientTimeMap.has(apt.patient.id)) {
     todayPatientTimeMap.set(apt.patient.id, apt.start_time);
+    todayPatientEndTimeMap.set(apt.patient.id, apt.end_time);
   }
 }
 
@@ -135,6 +138,8 @@ export function PatientListSidebar({
               avatarSrc={patient.avatarSrc}
               selected={selectedPatientId === patient.id}
               compact={compact}
+              appointmentTime={activeFilter === "today" ? todayPatientTimeMap.get(patient.id) : undefined}
+              appointmentEndTime={activeFilter === "today" ? todayPatientEndTimeMap.get(patient.id) : undefined}
               onSelect={() => onPatientSelect?.(patient)}
             />
           </div>
@@ -149,5 +154,5 @@ export function PatientListSidebar({
   );
 }
 
-export { todayPatientIds, todayPatientTimeMap };
+export { todayPatientIds, todayPatientTimeMap, todayPatientEndTimeMap };
 export type { PatientListSidebarProps };
