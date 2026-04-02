@@ -6,15 +6,15 @@ import { Card } from "@/design-system/components/ui/card";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/design-system/components/ui/select";
 import { cn } from "@/design-system/lib/utils";
 import { smoothEase } from "@/design-system/lib/animation-constants";
+
+const NOTE_TYPE_PILLS = [
+  { id: "dap", label: "DAP" },
+  { id: "soap", label: "SOAP" },
+  { id: "gen-psych", label: "Gen Psych" },
+  { id: "custom", label: "Custom" },
+] as const;
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -90,12 +90,18 @@ export function DAPSection({ section, noteType, onNoteTypeChange, isNewSession }
       {/* Section header row */}
       <div className="mb-2.5 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="bg-foreground flex h-7 w-7 items-center justify-center rounded-lg">
-            <Text size="xs" className="text-card font-bold">
+          <div className={cn(
+            "flex h-7 w-7 items-center justify-center rounded-lg",
+            isNewSession ? "bg-muted/60" : "bg-foreground"
+          )}>
+            <Text size="xs" className={cn("font-bold", isNewSession ? "text-muted-foreground" : "text-card")}>
               {section.prefix}
             </Text>
           </div>
-          <Text size="xs" className="text-foreground font-bold tracking-wider uppercase">
+          <Text size="xs" className={cn(
+            "font-bold tracking-wider uppercase",
+            isNewSession ? "text-muted-foreground" : "text-foreground"
+          )}>
             {section.label}
           </Text>
           {section.key === "plan" &&
@@ -110,26 +116,31 @@ export function DAPSection({ section, noteType, onNoteTypeChange, isNewSession }
             ))}
         </div>
         {section.key === "data" && onNoteTypeChange && (
-          <Select value={noteType} onValueChange={onNoteTypeChange}>
-            <SelectTrigger className="h-8 w-[160px] text-xs" aria-label="Note format">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="dap">DAP Note</SelectItem>
-              <SelectItem value="soap">SOAP Note</SelectItem>
-              <SelectItem value="birp">BIRP Note</SelectItem>
-              <SelectItem value="girp">GIRP Note</SelectItem>
-              <SelectItem value="progress">Progress Note</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-1.5">
+            {NOTE_TYPE_PILLS.map((type) => (
+              <button
+                key={type.id}
+                type="button"
+                onClick={() => onNoteTypeChange(type.id)}
+                className={cn(
+                  "rounded-full px-3.5 py-1.5 text-xs font-semibold transition-all duration-200",
+                  noteType === type.id
+                    ? "bg-foreground text-card shadow-sm"
+                    : "border border-border/60 text-muted-foreground hover:text-foreground hover:border-foreground/30"
+                )}
+              >
+                {type.label}
+              </button>
+            ))}
+          </div>
         )}
       </div>
 
       {/* Section content card */}
       <Card
         className={cn(
-          "border-border/70 bg-card p-5 shadow-sm",
-          isNewSession && "min-h-[120px] py-8"
+          "border-border/50 bg-card p-5 shadow-sm",
+          isNewSession && "min-h-[100px] border-border/30 bg-backbone-1/20 py-6"
         )}
       >
         {section.key === "plan" ? (
@@ -146,17 +157,26 @@ export function DAPSection({ section, noteType, onNoteTypeChange, isNewSession }
                   ease: smoothEase,
                 }}
               >
-                <span className="bg-primary/10 text-primary mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-bold">
+                <span className={cn(
+                  "mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-sm font-bold",
+                  isNewSession ? "bg-muted/50 text-muted-foreground" : "bg-primary/10 text-primary"
+                )}>
                   {i + 1}
                 </span>
-                <Text size="sm" className="text-foreground/80 pt-0.5 leading-relaxed">
+                <Text size="sm" className={cn(
+                  "pt-0.5 leading-relaxed",
+                  isNewSession ? "text-muted-foreground/60" : "text-foreground/80"
+                )}>
                   {item}
                 </Text>
               </motion.li>
             ))}
           </ol>
         ) : (
-          <Text size="sm" className="text-foreground/80 leading-relaxed">
+          <Text size="sm" className={cn(
+            "leading-relaxed",
+            isNewSession ? "text-muted-foreground/60" : "text-foreground/80"
+          )}>
             {section.content}
           </Text>
         )}
@@ -176,7 +196,7 @@ export function DAPSection({ section, noteType, onNoteTypeChange, isNewSession }
           </div>
         )}
 
-        <SectionActionBar />
+        {!isNewSession && <SectionActionBar />}
       </Card>
     </motion.section>
   );
