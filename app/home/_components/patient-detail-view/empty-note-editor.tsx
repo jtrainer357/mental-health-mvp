@@ -84,11 +84,8 @@ export function EmptyNoteEditor({
       >
         {/* Single card containing all sections */}
         <div className="border-border/50 bg-card flex flex-1 flex-col rounded-xl border shadow-sm">
-          {/* Top bar: first section label + note type pills */}
-          <div className="flex items-center justify-between px-6 pt-14 pb-0">
-            <Text size="xs" className="text-foreground font-bold tracking-wider uppercase">
-              {sections[0]!.label}
-            </Text>
+          {/* Note type pills — top right of card */}
+          <div className="flex justify-end px-6 pt-4 pb-0">
             <div className="flex gap-1.5">
               {NOTE_TYPE_PILLS.map((type) => (
                 <button
@@ -109,26 +106,23 @@ export function EmptyNoteEditor({
           </div>
 
           {/* Sections inside one continuous editor */}
-          <div className="flex flex-1 flex-col px-6 pt-8 pb-4">
+          <div className="flex flex-1 flex-col px-6 pt-4 pb-4">
             {sections.map((section, idx) => (
               <div key={section.key} className="flex flex-col">
-                {/* Section header — skip first one since it's in the top bar */}
-                {idx > 0 && (
-                  <Text size="xs" className="text-foreground mt-6 mb-2 font-bold tracking-wider uppercase">
-                    {section.label}
-                  </Text>
-                )}
+                {/* Section header — all sections get the same treatment */}
+                <Text size="xs" className={cn(
+                  "text-foreground mb-2 font-bold tracking-wider uppercase",
+                  idx > 0 && "mt-6"
+                )}>
+                  {section.label}
+                </Text>
 
                 {/* Editable area */}
                 <textarea
                   value={sectionContent[section.key] ?? ""}
                   onChange={(e) => updateSection(section.key, e.target.value)}
                   placeholder={section.placeholder}
-                  className={cn(
-                    "min-h-[80px] w-full resize-none bg-transparent text-sm leading-relaxed outline-none",
-                    "text-foreground/80 placeholder:text-muted-foreground/40",
-                    idx === 0 && "mt-3",
-                  )}
+                  className="min-h-[80px] w-full resize-none bg-transparent text-sm leading-relaxed outline-none text-foreground/80 placeholder:text-muted-foreground/40"
                   rows={3}
                 />
 
