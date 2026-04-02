@@ -20,7 +20,7 @@ import { VisitPrepPanel } from "../_components/visit-prep-panel";
 import { RecurringSeriesPanel } from "../_components/recurring-series-panel";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
-// AnimatePresence removed — simple conditional render for reliability
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/design-system/lib/utils";
 
 // Dynamic imports for heavy calendar components - code splitting for better performance
@@ -396,9 +396,21 @@ export default function SchedulePage() {
       </CardWrapper>
 
       {/* Appointment detail modal */}
+      <AnimatePresence>
       {selectedAppointment && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedEventId(null)}>
-          <div
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+          onClick={() => setSelectedEventId(null)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.97, y: 8 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
             className="bg-card relative mx-4 max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-2xl border shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
@@ -477,9 +489,10 @@ export default function SchedulePage() {
               isOpen={seriesOpen}
               onClose={() => setSeriesOpen(false)}
             />
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
 
       {/* Mobile FAB */}
       <div className="fixed right-4 bottom-24 z-40 lg:hidden">

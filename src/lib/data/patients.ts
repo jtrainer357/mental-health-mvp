@@ -363,7 +363,7 @@ export const PATIENTS: SeedPatient[] = [
     status: "Active",
     avatar_url: "/avatars/m-03.jpg",
     date_created: daysFromNow(-56),
-    preferred_day: 4,
+    preferred_day: 3,
     preferred_time: "08:00",
     session_duration: 45,
     cpt_code: "90834",
