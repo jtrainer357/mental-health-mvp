@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { CardWrapper } from "@/design-system/components/ui/card-wrapper";
 import { cn } from "@/design-system/lib/utils";
 import { smoothEase } from "@/design-system/lib/animation-constants";
+import { useRouter } from "next/navigation";
 import { usePatientViewNavigation, useViewState } from "@/src/lib/stores/patient-view-store";
 import type { PatientDetail } from "./types";
 import type { SelectedActivity } from "./types";
@@ -195,6 +196,7 @@ export function ClinicalNoteView({
   patient,
   className,
 }: ClinicalNoteViewProps) {
+  const router = useRouter();
   const viewState = useViewState();
   const { goBack, toggleFullView } = usePatientViewNavigation();
   const isFullView = viewState === "fullView";
@@ -234,8 +236,8 @@ export function ClinicalNoteView({
         activity={activity}
         sessionNumber={sessionNum}
         isFullView={isFullView}
-        onToggleFullView={toggleFullView}
-        onBack={goBack}
+        onToggleFullView={goBack}
+        onBack={() => router.back()}
         provider={patient?.provider}
       />
 
