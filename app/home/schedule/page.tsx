@@ -11,7 +11,7 @@ import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
 import { PageShell } from "../_components/shared/page-shell";
-import { Plus, CalendarX, X, Repeat, ChevronLeft } from "lucide-react";
+import { Plus, CalendarX, X, Repeat } from "lucide-react";
 import { Skeleton } from "@/design-system/components/ui/skeleton";
 import { Heading } from "@/design-system/components/ui/typography";
 import { ErrorState } from "../_components/shared/error-state";
@@ -339,114 +339,27 @@ export default function SchedulePage() {
           <>
             {/* Desktop View */}
             <div className="hidden h-full flex-col lg:flex">
-              {!selectedAppointment ? (
-                <>
-                  <CalendarHeader
-                    currentDate={currentDate}
-                    dateRange={dateRange}
-                    viewType={viewType}
-                    onPrevious={handlePrevious}
-                    onNext={handleNext}
-                    onToday={handleToday}
-                    className="mb-6"
-                  />
+              <CalendarHeader
+                currentDate={currentDate}
+                dateRange={dateRange}
+                viewType={viewType}
+                onPrevious={handlePrevious}
+                onNext={handleNext}
+                onToday={handleToday}
+                className="mb-6"
+              />
 
-                  <CalendarWeekView
-                    weekDays={weekDays}
-                    events={events}
-                    startHour={6}
-                    endHour={21}
-                    selectedEventId={selectedEventId}
-                    onEventClick={(event) => {
-                      setSelectedEventId(selectedEventId === event.id ? null : event.id);
-                    }}
-                    className="min-h-0 flex-1"
-                  />
-                </>
-              ) : (
-                <div className="flex min-h-0 flex-1 flex-col">
-                  {/* Back to calendar link */}
-                  <button
-                    type="button"
-                    onClick={() => setSelectedEventId(null)}
-                    className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-1.5 self-start text-sm font-medium transition-colors"
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                    Back to calendar
-                  </button>
-
-                  {/* Patient header */}
-                  <div className="mb-5 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        {selectedAppointment.patient.avatar_url && (
-                          <AvatarImage
-                            src={selectedAppointment.patient.avatar_url}
-                            alt={`${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`}
-                          />
-                        )}
-                        <AvatarFallback className="bg-avatar-fallback text-sm text-white">
-                          {selectedAppointment.patient.first_name[0]}
-                          {selectedAppointment.patient.last_name[0]}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <h3 className="text-lg font-bold">
-                          {selectedAppointment.patient.first_name}{" "}
-                          {selectedAppointment.patient.last_name}
-                        </h3>
-                        <p className="text-muted-foreground text-sm">
-                          {selectedAppointment.service_type} ·{" "}
-                          {format(parseISO(selectedAppointment.date), "EEE, MMM d")} at{" "}
-                          {format(new Date(`2000-01-01T${selectedAppointment.start_time}`), "h:mm a")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setSeriesOpen((prev) => !prev)}
-                        className={cn(
-                          "flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-semibold transition-all",
-                          seriesOpen
-                            ? "border-teal/30 bg-teal/[0.08] text-teal"
-                            : "border-border text-foreground/70 hover:border-teal/30 hover:text-teal"
-                        )}
-                      >
-                        <Repeat className="h-4 w-4" />
-                        Edit Series
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Prep panel — fills the space the calendar occupied */}
-                  <div className="min-h-0 flex-1 overflow-y-auto">
-                    <VisitPrepPanel
-                      appointment={selectedAppointment}
-                      isExpanded={true}
-                      showEnterVisit={selectedAppointment.status === "Scheduled"}
-                      visitButtonLabel={
-                        selectedAppointment.location?.toLowerCase().includes("telehealth")
-                          ? "Join Telehealth"
-                          : "Start Visit"
-                      }
-                      onEnterVisit={() => {
-                        const name = `${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`;
-                        window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
-                      }}
-                      skipAnimation
-                    />
-
-                    {/* Recurring series panel */}
-                    <RecurringSeriesPanel
-                      appointment={selectedAppointment}
-                      allAppointments={appointments}
-                      isOpen={seriesOpen}
-                      onClose={() => setSeriesOpen(false)}
-                    />
-                  </div>
-                </div>
-              )}
+              <CalendarWeekView
+                weekDays={weekDays}
+                events={events}
+                startHour={6}
+                endHour={21}
+                selectedEventId={selectedEventId}
+                onEventClick={(event) => {
+                  setSelectedEventId(selectedEventId === event.id ? null : event.id);
+                }}
+                className="min-h-0 flex-1"
+              />
             </div>
 
             {/* Mobile/Tablet View */}
@@ -482,7 +395,91 @@ export default function SchedulePage() {
         )}
       </CardWrapper>
 
-      {/* Old below-card panel removed — detail now replaces calendar in-place */}
+      {/* Appointment detail modal */}
+      {selectedAppointment && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setSelectedEventId(null)}>
+          <div
+            className="bg-card relative mx-4 max-h-[85vh] w-full max-w-3xl overflow-y-auto rounded-2xl border shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Patient header */}
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b bg-white/95 px-6 py-4 backdrop-blur-sm">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-10 w-10">
+                  {selectedAppointment.patient.avatar_url && (
+                    <AvatarImage
+                      src={selectedAppointment.patient.avatar_url}
+                      alt={`${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`}
+                    />
+                  )}
+                  <AvatarFallback className="bg-avatar-fallback text-xs text-white">
+                    {selectedAppointment.patient.first_name[0]}
+                    {selectedAppointment.patient.last_name[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="text-base font-bold">
+                    {selectedAppointment.patient.first_name}{" "}
+                    {selectedAppointment.patient.last_name}
+                  </h3>
+                  <p className="text-muted-foreground text-xs">
+                    {selectedAppointment.service_type} ·{" "}
+                    {format(parseISO(selectedAppointment.date), "EEE, MMM d")} at{" "}
+                    {format(new Date(`2000-01-01T${selectedAppointment.start_time}`), "h:mm a")}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSeriesOpen((prev) => !prev)}
+                  className={cn(
+                    "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
+                    seriesOpen
+                      ? "border-teal/30 bg-teal/[0.08] text-teal"
+                      : "border-border text-foreground/70 hover:border-teal/30 hover:text-teal"
+                  )}
+                >
+                  <Repeat className="h-3.5 w-3.5" />
+                  Edit Series
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedEventId(null)}
+                  className="text-muted-foreground hover:text-foreground rounded-full p-1.5 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Prep panel */}
+            <VisitPrepPanel
+              appointment={selectedAppointment}
+              isExpanded={true}
+              showEnterVisit={selectedAppointment.status === "Scheduled"}
+              visitButtonLabel={
+                selectedAppointment.location?.toLowerCase().includes("telehealth")
+                  ? "Join Telehealth"
+                  : "Start Visit"
+              }
+              onEnterVisit={() => {
+                const name = `${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`;
+                window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
+              }}
+              skipAnimation
+            />
+
+            {/* Recurring series panel */}
+            <RecurringSeriesPanel
+              appointment={selectedAppointment}
+              allAppointments={appointments}
+              isOpen={seriesOpen}
+              onClose={() => setSeriesOpen(false)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Mobile FAB */}
       <div className="fixed right-4 bottom-24 z-40 lg:hidden">
