@@ -255,47 +255,53 @@ export function ClinicalNoteView({
 
         {/* Center: Session Note */}
         <div className="flex min-w-0 flex-1 flex-col">
-          <CardWrapper
-            className={cn(
-              "flex flex-1 flex-col space-y-5",
-              !isFullView && "border-0 bg-transparent px-0 shadow-none backdrop-blur-none"
-            )}
-          >
-            <motion.div
-              variants={containerVariants}
-              initial="hidden"
-              animate="visible"
-              className={cn("space-y-5", activity.id === "new-session" && "flex flex-1 flex-col")}
+          {activity.id === "new-session" ? (
+            <EmptyNoteEditor
+              noteType={noteType}
+              onNoteTypeChange={setNoteType}
+              patientName={patientName}
+              isFullView={isFullView}
+            />
+          ) : (
+            <CardWrapper
+              className={cn(
+                "flex flex-1 flex-col space-y-5",
+                !isFullView && "border-0 bg-transparent px-0 shadow-none backdrop-blur-none"
+              )}
             >
-              {sections.map((section) => (
-                <DAPSection
-                  key={section.key}
-                  section={section}
-                  noteType={noteType}
-                  onNoteTypeChange={section.key === "data" ? setNoteType : undefined}
-                  isNewSession={activity.id === "new-session"}
-                />
-              ))}
               <motion.div
-                variants={sectionVariants}
-                className={cn(
-                  "grid grid-cols-1 gap-2 lg:grid-cols-2",
-                  activity.id === "new-session" && "mt-auto"
-                )}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="space-y-5"
               >
-                <CptApprovalCard
-                  activity={activity}
-                  cptApproved={cptApproved}
-                  onToggleApproval={() => setCptApproved(true)}
-                />
-                <ExtractedActionsCard
-                  actions={actions}
-                  onToggleAction={toggleAction}
-                  isNewSession={activity.id === "new-session"}
-                />
+                {sections.map((section) => (
+                  <DAPSection
+                    key={section.key}
+                    section={section}
+                    noteType={noteType}
+                    onNoteTypeChange={section.key === "data" ? setNoteType : undefined}
+                    isNewSession={false}
+                  />
+                ))}
+                <motion.div
+                  variants={sectionVariants}
+                  className="grid grid-cols-1 gap-2 lg:grid-cols-2"
+                >
+                  <CptApprovalCard
+                    activity={activity}
+                    cptApproved={cptApproved}
+                    onToggleApproval={() => setCptApproved(true)}
+                  />
+                  <ExtractedActionsCard
+                    actions={actions}
+                    onToggleAction={toggleAction}
+                    isNewSession={false}
+                  />
+                </motion.div>
               </motion.div>
-            </motion.div>
-          </CardWrapper>
+            </CardWrapper>
+          )}
         </div>
       </div>
 
