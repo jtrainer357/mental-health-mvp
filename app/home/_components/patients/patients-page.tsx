@@ -40,7 +40,8 @@ export function PatientsPage({
   const [activeFilter, setActiveFilter] = React.useState("today");
   const [addPatientOpen, setAddPatientOpen] = React.useState(false);
   // Mobile: show roster or detail (push/pop navigation)
-  const [mobileShowDetail, setMobileShowDetail] = React.useState(false);
+  // Auto-show detail when startSession is true (navigated from homepage Start Visit)
+  const [mobileShowDetail, setMobileShowDetail] = React.useState(!!startSession);
   const { isTouchDevice } = useMobileDetect();
 
   // Get progressive disclosure state for dynamic layout
