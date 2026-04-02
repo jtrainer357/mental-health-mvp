@@ -151,11 +151,13 @@ export default function SchedulePage() {
   // Find the selected appointment for the detail panel
   const selectedAppointment = React.useMemo(() => {
     if (!selectedEventId) return null;
-    return appointments.find((apt) => {
-      // Match by appointment ID (events are created from appointments)
-      const eventId = `apt-${apt.id}`;
-      return apt.id === selectedEventId || eventId === selectedEventId;
-    }) || null;
+    const found = appointments.find((apt) => apt.id === selectedEventId);
+    if (!found) {
+      // Debug: log the mismatch
+      console.log("[Schedule] selectedEventId:", selectedEventId);
+      console.log("[Schedule] appointment IDs:", appointments.slice(0, 3).map(a => a.id));
+    }
+    return found || null;
   }, [selectedEventId, appointments]);
 
   // Reset series panel when selection changes
@@ -279,7 +281,7 @@ export default function SchedulePage() {
           onTabChange={setActiveFilter}
           className="overflow-x-auto"
         />
-        <Button className="w-full shrink-0 gap-2 opacity-50 cursor-not-allowed sm:w-auto" disabled>
+        <Button className="w-full shrink-0 gap-2 sm:w-auto">
           <Plus className="h-4 w-4" />
           New Appointment
         </Button>
@@ -520,7 +522,7 @@ export default function SchedulePage() {
 
       {/* Mobile FAB */}
       <div className="fixed right-4 bottom-24 z-40 lg:hidden">
-        <Button size="icon" className="h-14 w-14 rounded-full shadow-lg opacity-40 cursor-not-allowed" disabled>
+        <Button size="icon" className="h-14 w-14 rounded-full shadow-lg">
           <Plus className="h-6 w-6" />
         </Button>
       </div>
