@@ -7,7 +7,7 @@ import { MobileNavStack } from "@/design-system/components/ui/mobile";
 import { Plus } from "lucide-react";
 import { Button } from "@/design-system/components/ui/button";
 import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
-import { PatientListSidebar } from "../patient-list-sidebar";
+import { PatientListSidebar, todayPatientIds, todayPatientTimeMap } from "../patient-list-sidebar";
 import { PatientDetailView } from "../patient-detail-view";
 import { AddPatientModal } from "@/src/components/patients/AddPatientModal";
 import { usePatientViewState } from "@/src/hooks/usePatientViewState";
@@ -99,8 +99,19 @@ export function PatientsPage({
 
         if (targetPatient) {
           setSelectedPatient(dbPatientToListItem(targetPatient));
-        } else if (patientsData.length > 0 && patientsData[0]) {
-          setSelectedPatient(dbPatientToListItem(patientsData[0]));
+        } else {
+          // Default: select the first today patient by appointment time
+          const todayPatients = patientsData
+            .filter((p) => todayPatientIds.has(p.id))
+            .sort((a, b) => {
+              const timeA = todayPatientTimeMap.get(a.id) ?? "99:99";
+              const timeB = todayPatientTimeMap.get(b.id) ?? "99:99";
+              return timeA.localeCompare(timeB);
+            });
+          const firstToday = todayPatients[0] ?? patientsData[0];
+          if (firstToday) {
+            setSelectedPatient(dbPatientToListItem(firstToday));
+          }
         }
       } catch {
         // Error loading patients

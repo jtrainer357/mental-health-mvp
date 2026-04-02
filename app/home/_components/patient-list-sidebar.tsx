@@ -9,8 +9,16 @@ import { Text } from "@/design-system/components/ui/typography";
 import { cn } from "@/design-system/lib/utils";
 import { getDemoTodayAppointments } from "@/src/lib/data/adapter";
 
-/** Patient IDs with appointments today — computed once at module level */
-const todayPatientIds = new Set(getDemoTodayAppointments().map((a) => a.patient.id));
+/** Today's appointments — computed once at module level */
+const todayAppointments = getDemoTodayAppointments();
+const todayPatientIds = new Set(todayAppointments.map((a) => a.patient.id));
+/** Map patient UUID → earliest appointment start_time for sorting */
+const todayPatientTimeMap = new Map<string, string>();
+for (const apt of todayAppointments) {
+  if (!todayPatientTimeMap.has(apt.patient.id)) {
+    todayPatientTimeMap.set(apt.patient.id, apt.start_time);
+  }
+}
 
 export interface Patient {
   id: string;
@@ -79,6 +87,15 @@ export function PatientListSidebar({
       );
     }
 
+    // Sort "today" patients by appointment time
+    if (activeFilter === "today") {
+      filtered = [...filtered].sort((a, b) => {
+        const timeA = todayPatientTimeMap.get(a.id) ?? "99:99";
+        const timeB = todayPatientTimeMap.get(b.id) ?? "99:99";
+        return timeA.localeCompare(timeB);
+      });
+    }
+
     return filtered;
   }, [patients, activeFilter, searchQuery]);
 
@@ -132,4 +149,5 @@ export function PatientListSidebar({
   );
 }
 
+export { todayPatientIds, todayPatientTimeMap };
 export type { PatientListSidebarProps };
