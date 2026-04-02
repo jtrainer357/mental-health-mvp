@@ -11,7 +11,7 @@ import { FilterTabs } from "@/design-system/components/ui/filter-tabs";
 import { Button } from "@/design-system/components/ui/button";
 import { Text } from "@/design-system/components/ui/typography";
 import { PageShell } from "../_components/shared/page-shell";
-import { Plus, Calendar, CalendarX, X, Repeat, ChevronRight } from "lucide-react";
+import { Plus, CalendarX, X, Repeat } from "lucide-react";
 import { Skeleton } from "@/design-system/components/ui/skeleton";
 import { Heading } from "@/design-system/components/ui/typography";
 import { ErrorState } from "../_components/shared/error-state";
@@ -20,7 +20,7 @@ import { VisitPrepPanel } from "../_components/visit-prep-panel";
 import { RecurringSeriesPanel } from "../_components/recurring-series-panel";
 import { Badge } from "@/design-system/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/design-system/components/ui/avatar";
-import { motion, AnimatePresence } from "framer-motion";
+// AnimatePresence removed — simple conditional render for reliability
 import { cn } from "@/design-system/lib/utils";
 
 // Dynamic imports for heavy calendar components - code splitting for better performance
@@ -151,13 +151,7 @@ export default function SchedulePage() {
   // Find the selected appointment for the detail panel
   const selectedAppointment = React.useMemo(() => {
     if (!selectedEventId) return null;
-    const found = appointments.find((apt) => apt.id === selectedEventId);
-    if (!found) {
-      // Debug: log the mismatch
-      console.log("[Schedule] selectedEventId:", selectedEventId);
-      console.log("[Schedule] appointment IDs:", appointments.slice(0, 3).map(a => a.id));
-    }
-    return found || null;
+    return appointments.find((apt) => apt.id === selectedEventId) || null;
   }, [selectedEventId, appointments]);
 
   // Reset series panel when selection changes
@@ -367,20 +361,7 @@ export default function SchedulePage() {
                 className="min-h-0 flex-1"
               />
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Google
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Outlook
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Apple
-                </Button>
-              </div>
+              {/* Calendar integrations hidden for testing */}
             </div>
 
             {/* Mobile/Tablet View */}
@@ -410,33 +391,13 @@ export default function SchedulePage() {
                 />
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Google
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Outlook
-                </Button>
-                <Button variant="outline" size="sm" className="gap-2 opacity-40 cursor-not-allowed" disabled>
-                  <Calendar className="h-3.5 w-3.5" />
-                  Connect Apple
-                </Button>
-              </div>
+              {/* Calendar integrations hidden for testing */}
             </div>
           </>
         )}
       </CardWrapper>
 
       {/* Expand-in-place appointment detail — below the calendar card */}
-      {selectedEventId && !selectedAppointment && (
-        <CardWrapper className="mt-4 p-4 sm:p-6">
-          <Text size="sm" muted>
-            Loading appointment detail... (Event: {selectedEventId.slice(0, 12)}…, {appointments.length} appointments loaded)
-          </Text>
-        </CardWrapper>
-      )}
       {selectedAppointment && (
         <CardWrapper className="mt-4 p-4 sm:p-6">
           {/* Patient header */}
