@@ -76,13 +76,13 @@ export function ClinicalNoteHeader({
         </div>
         <div className="flex items-center gap-3">
           {activity.id === "new-session" && (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-sm border border-border/40">
+                <Mic className="h-4 w-4 text-foreground" />
+              </div>
               <Button variant="default" size="sm" className="font-bold">
                 Start Listening
               </Button>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm border border-border/40">
-                <Mic className="h-4 w-4 text-foreground" />
-              </div>
             </div>
           )}
           <motion.div
