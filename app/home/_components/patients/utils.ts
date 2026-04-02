@@ -412,5 +412,6 @@ export function dbActionToUiAction(action: PatientPriorityAction): PriorityActio
     priority: priorityMap[action.urgency] || "medium",
     dueDate: action.timeframe || undefined,
     aiConfidence: action.confidence_score || 85,
+    suggestedActions: action.suggested_actions as string[] | undefined,
   };
 }

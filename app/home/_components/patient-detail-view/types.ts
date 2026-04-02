@@ -14,6 +14,7 @@ export interface PriorityAction {
   priority: PriorityLevel;
   dueDate?: string;
   aiConfidence?: number;
+  suggestedActions?: string[];
 }
 
 export interface PatientMessage {
