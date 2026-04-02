@@ -57,21 +57,12 @@ export function ClinicalNoteHeader({
           >
             <ArrowLeft className="h-5 w-5" />
           </motion.button>
-          {avatarSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={avatarSrc}
-              alt={patientName}
-              className="h-10 w-10 rounded-full object-cover"
-            />
-          ) : (
-            <div className="bg-avatar-fallback flex h-10 w-10 items-center justify-center rounded-full text-xs font-medium text-white">
-              {patientName
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </div>
-          )}
+          <div className="bg-avatar-fallback flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white">
+            {patientName
+              .split(" ")
+              .map((n) => n[0])
+              .join("")}
+          </div>
           <div>
             <Heading level={4} className="text-lg font-semibold sm:text-xl">
               {patientName} &middot; Session #{sessionNumber}

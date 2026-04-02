@@ -85,7 +85,7 @@ export function EmptyNoteEditor({
         {/* Single card containing all sections */}
         <div className="border-border/50 bg-card flex flex-1 flex-col rounded-xl border shadow-sm">
           {/* Top bar: first section label + note type pills */}
-          <div className="flex items-center justify-between px-6 pt-5 pb-0">
+          <div className="flex items-center justify-between px-6 pt-8 pb-0">
             <Text size="xs" className="text-foreground font-bold tracking-wider uppercase">
               {sections[0]!.label}
             </Text>
