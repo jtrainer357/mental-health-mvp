@@ -92,10 +92,14 @@ export function OverviewTab({ patient, onActivitySelect }: OverviewTabProps) {
             </motion.span>
           </div>
           <Button
-            variant="link"
-            className="text-primary hover:text-primary/80 h-auto p-0 text-xs font-medium sm:text-sm"
+            size="sm"
+            className="h-8 rounded-full px-5 text-xs font-bold"
+            onClick={() => {
+              const name = patient.name;
+              window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
+            }}
           >
-            View All
+            Start Visit
           </Button>
         </div>
         <motion.div className="flex flex-col gap-3" variants={containerVariants}>
