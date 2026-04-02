@@ -109,7 +109,7 @@ export function EmptyNoteEditor({
           </div>
 
           {/* Sections inside one continuous editor */}
-          <div className="flex flex-1 flex-col px-6 py-4">
+          <div className="flex flex-1 flex-col px-6 pt-8 pb-4">
             {sections.map((section, idx) => (
               <div key={section.key} className="flex flex-col">
                 {/* Section header — skip first one since it's in the top bar */}
