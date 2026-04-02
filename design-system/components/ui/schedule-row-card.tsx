@@ -123,14 +123,17 @@ export function ScheduleRowCard({
         </div>
 
         {/* Right section — tags and status */}
-        <div className="hidden flex-1 items-center gap-2 pl-8 sm:flex">
-          {/* Action slot — fixed width so status pills align whether or not this is present */}
-          <div className="flex w-[110px] shrink-0">
-            {actionSlot}
-          </div>
+        <div className="hidden min-w-0 flex-1 items-center gap-2 pl-4 sm:flex lg:pl-8">
+          {/* Tags group — wraps together when space is tight */}
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5">
+            {/* Action slot */}
+            {actionSlot && (
+              <div className="flex shrink-0">
+                {actionSlot}
+              </div>
+            )}
 
-          {/* Status pill */}
-          <div className="flex w-[90px] shrink-0">
+            {/* Status pill */}
             <Badge
               variant="outline"
               className={cn(
@@ -147,27 +150,28 @@ export function ScheduleRowCard({
             >
               {status}
             </Badge>
+
+            {/* Other badges */}
+            {rescheduleRequested && (
+              <Badge
+                variant="outline"
+                className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+              >
+                Reschedule
+              </Badge>
+            )}
+
+            {outstandingBalance != null && outstandingBalance > 0 && (
+              <Badge
+                variant="outline"
+                className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
+              >
+                ${outstandingBalance.toFixed(0)}
+              </Badge>
+            )}
           </div>
 
-          {/* Other badges */}
-          {rescheduleRequested && (
-            <Badge
-              variant="outline"
-              className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
-            >
-              Reschedule
-            </Badge>
-          )}
-
-          {outstandingBalance != null && outstandingBalance > 0 && (
-            <Badge
-              variant="outline"
-              className="border-warning/40 bg-warning-bg text-warning-muted shrink-0 rounded-md px-1.5 py-0.5 text-xs font-bold"
-            >
-              ${outstandingBalance.toFixed(0)}
-            </Badge>
-          )}
-
+          {/* Right-pinned action or location */}
           {primaryAction ? (
             <button
               type="button"
@@ -175,14 +179,14 @@ export function ScheduleRowCard({
                 e.stopPropagation();
                 primaryAction.onClick();
               }}
-              className="ml-auto shrink-0 rounded-full bg-primary px-6 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90"
+              className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-white transition-opacity hover:opacity-90 lg:px-6"
             >
               {primaryAction.label}
             </button>
           ) : (
-            <div className="text-muted-foreground ml-auto flex shrink-0 items-center gap-1 text-xs font-bold">
+            <div className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs font-bold">
               <MapPin className="h-3.5 w-3.5" />
-              {room}
+              <span className="truncate max-w-[100px]">{room}</span>
             </div>
           )}
         </div>
