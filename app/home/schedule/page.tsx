@@ -430,95 +430,92 @@ export default function SchedulePage() {
       </CardWrapper>
 
       {/* Expand-in-place appointment detail — below the calendar card */}
-      <AnimatePresence>
-        {selectedAppointment && (
-          <motion.div
-            initial={{ height: 0, opacity: 0, marginTop: 0 }}
-            animate={{ height: "auto", opacity: 1, marginTop: 16 }}
-            exit={{ height: 0, opacity: 0, marginTop: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="overflow-hidden"
-          >
-            <CardWrapper className="p-4 sm:p-6">
-              {/* Patient header */}
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <Avatar className="h-10 w-10">
-                    {selectedAppointment.patient.avatar_url && (
-                      <AvatarImage
-                        src={selectedAppointment.patient.avatar_url}
-                        alt={`${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`}
-                      />
-                    )}
-                    <AvatarFallback className="bg-avatar-fallback text-xs text-white">
-                      {selectedAppointment.patient.first_name[0]}
-                      {selectedAppointment.patient.last_name[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="text-base font-bold">
-                      {selectedAppointment.patient.first_name}{" "}
-                      {selectedAppointment.patient.last_name}
-                    </h3>
-                    <p className="text-muted-foreground text-xs">
-                      {selectedAppointment.service_type} ·{" "}
-                      {format(parseISO(selectedAppointment.date), "EEE, MMM d")} at{" "}
-                      {format(new Date(`2000-01-01T${selectedAppointment.start_time}`), "h:mm a")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setSeriesOpen((prev) => !prev)}
-                    className={cn(
-                      "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
-                      seriesOpen
-                        ? "border-teal/30 bg-teal/[0.08] text-teal"
-                        : "border-border text-foreground/70 hover:border-teal/30 hover:text-teal"
-                    )}
-                  >
-                    <Repeat className="h-3.5 w-3.5" />
-                    Edit Series
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setSelectedEventId(null)}
-                    className="text-muted-foreground hover:text-foreground rounded-full p-1.5 transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
+      {selectedEventId && !selectedAppointment && (
+        <CardWrapper className="mt-4 p-4 sm:p-6">
+          <Text size="sm" muted>
+            Loading appointment detail... (Event: {selectedEventId.slice(0, 12)}…, {appointments.length} appointments loaded)
+          </Text>
+        </CardWrapper>
+      )}
+      {selectedAppointment && (
+        <CardWrapper className="mt-4 p-4 sm:p-6">
+          {/* Patient header */}
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                {selectedAppointment.patient.avatar_url && (
+                  <AvatarImage
+                    src={selectedAppointment.patient.avatar_url}
+                    alt={`${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`}
+                  />
+                )}
+                <AvatarFallback className="bg-avatar-fallback text-xs text-white">
+                  {selectedAppointment.patient.first_name[0]}
+                  {selectedAppointment.patient.last_name[0]}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h3 className="text-base font-bold">
+                  {selectedAppointment.patient.first_name}{" "}
+                  {selectedAppointment.patient.last_name}
+                </h3>
+                <p className="text-muted-foreground text-xs">
+                  {selectedAppointment.service_type} ·{" "}
+                  {format(parseISO(selectedAppointment.date), "EEE, MMM d")} at{" "}
+                  {format(new Date(`2000-01-01T${selectedAppointment.start_time}`), "h:mm a")}
+                </p>
               </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSeriesOpen((prev) => !prev)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition-all",
+                  seriesOpen
+                    ? "border-teal/30 bg-teal/[0.08] text-teal"
+                    : "border-border text-foreground/70 hover:border-teal/30 hover:text-teal"
+                )}
+              >
+                <Repeat className="h-3.5 w-3.5" />
+                Edit Series
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedEventId(null)}
+                className="text-muted-foreground hover:text-foreground rounded-full p-1.5 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
 
-              {/* Prep panel */}
-              <VisitPrepPanel
-                appointment={selectedAppointment}
-                isExpanded={true}
-                showEnterVisit={selectedAppointment.status === "Scheduled"}
-                visitButtonLabel={
-                  selectedAppointment.location?.toLowerCase().includes("telehealth")
-                    ? "Join Telehealth"
-                    : "Start Visit"
-                }
-                onEnterVisit={() => {
-                  const name = `${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`;
-                  window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
-                }}
-                skipAnimation
-              />
+          {/* Prep panel */}
+          <VisitPrepPanel
+            appointment={selectedAppointment}
+            isExpanded={true}
+            showEnterVisit={selectedAppointment.status === "Scheduled"}
+            visitButtonLabel={
+              selectedAppointment.location?.toLowerCase().includes("telehealth")
+                ? "Join Telehealth"
+                : "Start Visit"
+            }
+            onEnterVisit={() => {
+              const name = `${selectedAppointment.patient.first_name} ${selectedAppointment.patient.last_name}`;
+              window.location.href = `/home/patients?patientName=${encodeURIComponent(name)}&startSession=true`;
+            }}
+            skipAnimation
+          />
 
-              {/* Recurring series panel */}
-              <RecurringSeriesPanel
-                appointment={selectedAppointment}
-                allAppointments={appointments}
-                isOpen={seriesOpen}
-                onClose={() => setSeriesOpen(false)}
-              />
-            </CardWrapper>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          {/* Recurring series panel */}
+          <RecurringSeriesPanel
+            appointment={selectedAppointment}
+            allAppointments={appointments}
+            isOpen={seriesOpen}
+            onClose={() => setSeriesOpen(false)}
+          />
+        </CardWrapper>
+      )}
 
       {/* Mobile FAB */}
       <div className="fixed right-4 bottom-24 z-40 lg:hidden">
