@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mc-prototype",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "mc-prototypes", "-l", "4000", "--no-clipboard"],
+      "port": 4000
+    }
+  ]
+}
