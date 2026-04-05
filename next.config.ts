@@ -39,6 +39,7 @@
  *   2. Keep all other src/ subdirectories (they're actively imported)
  */
 
+import path from "path";
 import type { NextConfig } from "next";
 import bundleAnalyzer from "@next/bundle-analyzer";
 
@@ -47,6 +48,8 @@ const withBundleAnalyzer = bundleAnalyzer({
 });
 
 const nextConfig: NextConfig = {
+  // Include vault markdown files in serverless function bundle
+  outputFileTracingRoot: path.resolve(__dirname, '..'),
   // Disable the Next.js DevTools indicator in the corner
   devIndicators: false,
   // Configure allowed image domains

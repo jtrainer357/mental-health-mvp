@@ -1,10 +1,5 @@
 import "@/design-system/styles/globals.css";
-import { PageBackground } from "@/design-system/components/ui/page-background";
-import { ActionOrchestrationModal } from "@/src/components/orchestration/ActionOrchestrationModal";
-import { VoiceProvider } from "@/src/components/voice";
-import { QueryProvider } from "@/src/lib/queries/query-provider";
 import { SkipLink } from "@/src/components/a11y";
-import { SessionProvider } from "@/src/components/auth/SessionProvider";
 import type { Metadata, Viewport } from "next";
 
 export const metadata: Metadata = {
@@ -47,14 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body className="safe-area-inset">
         <SkipLink />
-        <SessionProvider>
-          <QueryProvider>
-            <VoiceProvider>
-              <PageBackground>{children}</PageBackground>
-              <ActionOrchestrationModal />
-            </VoiceProvider>
-          </QueryProvider>
-        </SessionProvider>
+        {children}
       </body>
     </html>
   );
